@@ -1,8 +1,8 @@
-# 🏡 Online Marketplace for Real Estate
+# Online Marketplace for Real Estate
 
 A modern real estate marketplace where users can browse, list, and explore properties with **AI-powered recommendations** and **360° virtual tours**. Built with **Next.js 15, Tailwind CSS, ShadCN UI, and Framer Motion** to provide a seamless and interactive experience.
 
-## 🚀 Features
+## Features
 
 - 🔍 **Advanced Search & Filtering** – Find properties easily with detailed filters.
 - 🏠 **AI-Powered Recommendations** – Personalized property suggestions.
@@ -14,7 +14,7 @@ A modern real estate marketplace where users can browse, list, and explore prope
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Technology    | Purpose  |
 |--------------|----------|
@@ -28,7 +28,7 @@ A modern real estate marketplace where users can browse, list, and explore prope
 
 ---
 
-## 📦 Getting Started
+## Getting Started
 
 ### 1️⃣ Clone the Repository
 
