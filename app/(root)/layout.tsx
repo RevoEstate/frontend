@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "RevoEstate",
+  description: "Find the best properties with 360° virtual tours and AI-powered recommendations.",
 };
 
 export default function RootLayout({
