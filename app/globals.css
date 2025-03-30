@@ -120,3 +120,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+[data-state="open"] .sheet-overlay {
+  animation: fadeIn 0.2s ease-out;
+}
+[data-state="closed"] .sheet-overlay {
+  animation: fadeOut 0.2s ease-in;
+}
+
+@layer utilities {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
