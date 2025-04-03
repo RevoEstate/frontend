@@ -16,10 +16,8 @@ export async function customerSignup(
   error?: string;
 }> {
   try {
-    // Validate form data (already validated client-side but double-checking)
     const validated = customerSignupSchema.parse(values);
 
-    // Call Express backend
     const res = await fetch(`${BASE_URL}/signup/customer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,7 +30,6 @@ export async function customerSignup(
       throw new Error(data.message || 'Signup failed');
     }
 
-    // Set cookie if token exists
     if (data.token) {
       const cookieStore = await cookies(); 
       cookieStore.set('token', data.token, {

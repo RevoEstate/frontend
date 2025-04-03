@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
-import { NAV_ITEMS } from '../lib/constants';
+import { NAV_ITEMS } from '../lib/constants/index.ts';
 // 
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);
@@ -51,7 +51,9 @@ export default function Navbar() {
             {/* Sign In */}
             <div className="flex items-center gap-4">
                 <Button variant="outline" className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white">
-                    Sign In
+                  <Link href='/signup-customer'>
+                      Sign In
+                  </Link>                
                 </Button>
                 <MobileNav /> {/* Mobile Sheet Toggle */}
             </div>
