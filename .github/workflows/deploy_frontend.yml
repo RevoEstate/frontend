@@ -59,7 +59,7 @@ jobs:
             echo "NPM version: $(npm -v)"
             
             # Install dependencies
-            rm -rf node_modules
+            # rm -rf node_modules
             npm ci
             
             # Verify build directory was created
