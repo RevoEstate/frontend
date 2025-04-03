@@ -25,34 +25,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Only needed if you want to run tests in GitHub CI before deployment
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Deploy Code to VPS
+      - name: Deploy Code to VPS (Excluding node_modules)
         run: |
           rsync -avz --delete --exclude='node_modules' --exclude='.next' --exclude='.git' \
             -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
             ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/"
 
-      - name: Build & Restart on VPS
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Install Dependencies, Build & Restart on VPS
+        uses: appleboy/ssh-action@v0.1.7  # Reverting to stable version
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -61,37 +46,88 @@ jobs:
           script: |
             cd "${{ env.PROJECT_PATH }}"
             
-            # Setup node environment and dependencies
+            # Ensure proper PATH for PM2 and Node
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin:$HOME/.nvm/versions/node/v${{ env.NODE_VERSION }}/bin
+            
+            # Setup node environment if using NVM
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             nvm use ${{ env.NODE_VERSION }} || nvm install ${{ env.NODE_VERSION }}
             
-            # Use frozen lockfile for deterministic installs
-            npm ci --production
+            echo "Current directory: $(pwd)"
+            echo "Node version: $(node -v)"
+            echo "NPM version: $(npm -v)"
             
-            # Build the application
+            # Install dependencies
+            rm -rf node_modules
+            npm ci
+            
+            # Verify build directory was created
+            echo "Building application..."
             npm run build
             
-            # Restart the application using PM2
-            pm2 reload revostate-frontend || pm2 start npm --name "revostate-frontend" -- start
+            # Verify the .next directory exists before continuing  
+            if [ ! -d ".next" ]; then
+              echo "Build failed: .next directory not found"
+              exit 1
+            fi
+            
+            # Check if PM2 is installed globally, if not install it
+            if ! command -v pm2 &> /dev/null; then
+              echo "Installing PM2..."
+              npm install -g pm2
+            fi
+            
+            # Stop and restart the application
+            echo "Restarting application with PM2..."
+            pm2 describe revostate-frontend > /dev/null
+            if [ $? -eq 0 ]; then
+              # App exists, reload it
+              pm2 reload revostate-frontend
+            else
+              # App doesn't exist, start it
+              pm2 start npm --name "revostate-frontend" -- start
+            fi
+            
             pm2 save
+            
+            # Verify the app is running
+            pm2 list | grep revostate-frontend
 
       - name: Verify Deployment
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            # Check if service is running
-            pm2 show revostate-frontend
+            # Ensure proper PATH for PM2
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             
-            # Health check - adjust port as needed for your app
-            curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep 200 || exit 1
+            # Check if service is running
+            pm2 list | grep revostate-frontend
+            
+            # Wait for the application to fully start (10 seconds)
+            echo "Waiting for application to start..."
+            sleep 10
+            
+            # Health check
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000)
+            echo "HTTP Status: $HTTP_STATUS"
+            
+            if [[ "$HTTP_STATUS" == "200" ]]; then
+              echo "Deployment successful! Application is responding."
+              exit 0
+            else
+              echo "Health check failed! Application is not responding properly."
+              exit 1
+            fi
 
       - name: Reload Nginx
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
