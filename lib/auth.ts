@@ -4,7 +4,7 @@ import { client } from "./mongo-client";
 
 const auth = betterAuth({
   adapter: mongodbAdapter(client.db("revostate")),
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
   },
