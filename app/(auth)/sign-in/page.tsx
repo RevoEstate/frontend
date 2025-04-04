@@ -71,24 +71,9 @@ export default function SignIn() {
 	const handleSignInWithGithub = async () => {
 		await authClient.signIn.social(
 			{
-				provider: "github",
-			},
-			{
-				onRequest: () => {
-					setPendingGithub(true);
-				},
-				onSuccess: async () => {
-					router.push("/");
-					router.refresh();
-				},
-				onError: (ctx: ErrorContext) => {
-					toast({
-						title: "Something went wrong",
-						description: ctx.error.message ?? "Something went wrong.",
-						variant: "destructive",
-					});
-				},
-			}
+        provider: "github",
+        callbackURL: `http://localhost:5173`,
+      },
 		);
 		setPendingGithub(false);
 	};

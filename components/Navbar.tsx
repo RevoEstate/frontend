@@ -50,10 +50,12 @@ export default function Navbar() {
 
             {/* Sign In */}
             <div className="flex items-center gap-4">
+              <Link href="/sign-in">
                 <Button variant="outline" className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white">
                     Sign In
                 </Button>
                 <MobileNav /> {/* Mobile Sheet Toggle */}
+              </Link>
             </div>
           </div>
          
