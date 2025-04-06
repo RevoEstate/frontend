@@ -70,7 +70,7 @@ export default function FeaturedProperties() {
         >
         <div className="flex gap-2 items-center">
             <hr className="border-2 border-black w-20 hidden md:block" />
-            <h2 className="md:text-5xl text-3xl font-bold mb-2">Featured Properties</h2>
+            <h2 className="md:text-5xl text-3xl font-bold mb-2">*** Featured Properties ***</h2>
         </div>
           <p className="text-lg text-muted-foreground max-w-2xl md:pl-22">
             Discover handpicked homes in prime locations
