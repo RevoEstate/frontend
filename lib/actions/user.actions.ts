@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import { formatError } from '@/utils';
 import { CustomerSignupFormData } from '@/types';
 import { customerSignupSchema } from '../validators';
+import { SERVER_URL } from '../constants/index.ts';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function customerSignup(
   values: CustomerSignupFormData
@@ -18,7 +18,7 @@ export async function customerSignup(
   try {
     const validated = customerSignupSchema.parse(values);
 
-    const res = await fetch(`${BASE_URL}/signup/customer`, {
+    const res = await fetch(`${SERVER_URL}/signup/customer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(validated)
