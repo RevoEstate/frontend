@@ -52,7 +52,7 @@ jobs:
 
       - name: Deploy Code to VPS
         run: |
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/"
+          rsync -avz --delete --exclude "node_modules" -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/"
 
       - name: Build and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
