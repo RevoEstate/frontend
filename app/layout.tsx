@@ -1,6 +1,7 @@
+import type React from "react";
+import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../globals.css";
 import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
@@ -14,9 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RevoEstate",
-  description:
-    "Find the best properties with 360° virtual tours and AI-powered recommendations.",
+  title: "Real Estate Property Listing",
+  description: "Modern 3-Bedroom Apartment in Downtown",
 };
 
 export default function RootLayout({

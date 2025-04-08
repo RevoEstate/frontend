@@ -63,7 +63,7 @@ export function PropertyCard({
       <CardFooter className="flex justify-between items-center px-4 pb-4">
         <span className="text-lg font-bold">{price}</span>
         <Button size="sm" className="bg-sky-500 hover:bg-sky-600">
-          View Details
+        <Link href="/propertyDetailPage">View Details</Link>  
         </Button>
       </CardFooter>
     </Card>
