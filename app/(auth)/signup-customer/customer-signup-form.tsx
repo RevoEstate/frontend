@@ -94,7 +94,7 @@ export function CustomerSignupForm() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-3xl font-bold text-sky-900 mb-2"
+              className="text-3xl font-bold text-sky-600 mb-2"
             >
               Create Your Account
             </motion.h1>
@@ -102,7 +102,7 @@ export function CustomerSignupForm() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-gray-500"
+              className="text-muted-foreground text-sm"
             >
               Join RevoEstate and discover your perfect home
             </motion.p>

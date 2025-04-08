@@ -9,7 +9,7 @@ export default function MobileNav() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden bg-gray-100 border-gray-300 shadow-sm hover:bg-gray-100">
+        <Button variant="outline" size="icon" className="md:hidden bg-gray-100 shadow-sm">
           <Menu className="h-5 w-5 text-sky-500" />
         </Button>
       </SheetTrigger>
