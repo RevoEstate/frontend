@@ -1,14 +1,17 @@
-import FeaturedProperties from '@/components/FeaturedProperties'
-import Hero from '@/components/Hero'
-import React from 'react'
+// import FeaturedProperties from "@/components/FeaturedProperties";
+// import Hero from "@/components/Hero";
+// import Navbar from "@/components/Navbar";
+// import React from "react";
 
-const page = () => {
-  return (
-    <>
-      <Hero />
-      <FeaturedProperties />
-    </>
-  )
-}
+// const page = () => {
+//   return (
+//     <>
+//       <Navbar />
+//       <Hero />
 
-export default page
+//       <FeaturedProperties />
+//     </>
+//   );
+// };
+
+// export default page;
