@@ -35,7 +35,9 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+            <Link href='/'>
+             <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+            </Link>           
           </div>
 
           <div className="flex justify-start items-center gap-5">
