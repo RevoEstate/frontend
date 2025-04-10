@@ -8,12 +8,18 @@ import Link from "next/link";
 interface PropertyCardProps {
   id: number;
   title: string;
-  price: string;
+  description: string;
+  price: number;
   beds: number;
   baths: number;
-  sqft: number;
+  areaSqft: number;
   location: string;
-  image: string;
+  images: string[];
+  type: "For Sale" | "For Rent";
+  yearBuilt?: number;
+  status?: string;
+  featured?: boolean;
+  vrTour?: string;
 }
 
 export function PropertyCard({
@@ -22,28 +28,35 @@ export function PropertyCard({
   price,
   beds,
   baths,
-  sqft,
+  areaSqft,
   location,
-  image,
+  images,
+  type,
 }: PropertyCardProps) {
+  const formattedPrice = type === "For Sale" 
+    ? `$${price.toLocaleString()}` 
+    : `$${price.toLocaleString()}/mo`;
+
   return (
-    <Card className="w-full max-w-sm flex flex-col overflow-hidden group">
+    <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-lg transition-shadow">
       <CardHeader className="p-0 overflow-hidden mt-[-25px]">
-        <Link href={`/product/${id}`} className="block w-full h-[250px]">
-          <div className="relative w-full h-full">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-              priority
-            />
+        <Link href={`/properties/${id}`} className="block w-full h-[250px] relative">
+          <Image
+            src={images[0] || "/images/default-property.jpg"}
+            alt={title}
+            fill
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+          <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-sm font-medium">
+            {type}
           </div>
         </Link>
       </CardHeader>
 
       <CardContent className="mt-4 flex-grow px-4">
-        <h3 className="text-xl font-semibold">{title}</h3>
+        <h3 className="text-xl font-semibold line-clamp-1">{title}</h3>
         <p className="flex items-center text-muted-foreground mt-2">
           <MapPin className="w-4 h-4 mr-1" /> {location}
         </p>
@@ -55,15 +68,15 @@ export function PropertyCard({
             <Bath className="w-4 h-4 mr-1" /> {baths} Baths
           </span>
           <span className="flex items-center">
-            <Ruler className="w-4 h-4 mr-1" /> {sqft} sqft
+            <Ruler className="w-4 h-4 mr-1" /> {areaSqft.toLocaleString()} sqft
           </span>
         </div>
       </CardContent>
 
       <CardFooter className="flex justify-between items-center px-4 pb-4">
-        <span className="text-lg font-bold">{price}</span>
+        <span className="text-lg font-bold">{formattedPrice}</span>
         <Button size="sm" className="bg-sky-500 hover:bg-sky-600">
-          View Details
+          <Link href={`/properties/${id}`}>View Details</Link>
         </Button>
       </CardFooter>
     </Card>
