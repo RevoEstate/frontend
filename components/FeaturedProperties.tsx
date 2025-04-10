@@ -4,47 +4,12 @@ import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PropertyCardSkeleton } from "@/components/PropertyCardSkeleton";
 import { useState, useEffect } from "react";
-
-const mockProperties = [
-  {
-    id: 1,
-    title: "Modern Villa in Beverly Hills",
-    price: "$2,500,000",
-    beds: 4,
-    baths: 3,
-    sqft: 3200,
-    location: "Los Angeles, CA",
-    image: "/images/property1.jpg",
-    type: "sale",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Downtown Luxury Condo",
-    price: "$3,200/month",
-    beds: 2,
-    baths: 2,
-    sqft: 1800,
-    location: "New York, NY",
-    image: "/images/property-2.jpg",
-    type: "rent",
-  },
-  {
-    id: 3,
-    title: "Luxury Appartment",
-    price: "$3,200/month",
-    beds: 2,
-    baths: 2,
-    sqft: 1800,
-    location: "New York, NY",
-    image: "/images/property-3.jpg",
-    type: "rent",
-  },
-];
+import properties from "@/data/property";
+import Link from "next/link";
 
 export default function FeaturedProperties() {
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "For Sale" | "For Rent">("all");
 
   useEffect(() => {
     // Simulate API fetch
@@ -52,10 +17,13 @@ export default function FeaturedProperties() {
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredProperties = mockProperties.filter((property) => {
-    if (activeFilter === "all") return true;
-    return property.type === activeFilter;
-  });
+  // Get first 3 featured properties based on filter
+  const displayedProperties = properties
+    .filter(property => {
+      if (activeFilter === "all") return property.featured;
+      return property.type === activeFilter && property.featured;
+    })
+    .slice(0, 3);
 
   return (
     <section className="container py-10 bg-gray-50 dark:bg-gray-900">
@@ -68,11 +36,12 @@ export default function FeaturedProperties() {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-        <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center">
             <hr className="border-2 border-black w-20 hidden md:block" />
             <h2 className="md:text-5xl text-3xl font-bold mb-2">
-              Featured Properties</h2>
-        </div>
+              Featured Properties
+            </h2>
+          </div>
           <p className="text-lg text-muted-foreground max-w-2xl md:pl-22">
             Discover handpicked homes in prime locations
           </p>
@@ -86,15 +55,15 @@ export default function FeaturedProperties() {
           transition={{ delay: 0.2 }}
           className="flex flex-wrap justify-center gap-2 mb-8"
         >
-          {["all", "sale", "rent"].map((filter) => (
+          {["all", "For Sale", "For Rent"].map((filter) => (
             <Button
               key={filter}
               variant={activeFilter === filter ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveFilter(filter)}
+              onClick={() => setActiveFilter(filter as "all" | "For Sale" | "For Rent")}
               className={activeFilter === filter ? 'bg-sky-500 hover:bg-sky-600 cursor-pointer' : 'cursor-pointer'}
             >
-              {filter === "all" ? "All" : filter === "sale" ? "For Sale" : "For Rent"}
+              {filter === "all" ? "All" : filter}
             </Button>
           ))}
         </motion.div>
@@ -115,7 +84,7 @@ export default function FeaturedProperties() {
                 </motion.div>
               ))
           ) : (
-            filteredProperties.map((property, index) => (
+            displayedProperties.map((property, index) => (
               <motion.div
                 key={property.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -138,9 +107,11 @@ export default function FeaturedProperties() {
           transition={{ delay: 0.4 }}
           className="text-center mt-12"
         >
-          <Button size="lg" className="px-8 bg-sky-500 hover:bg-sky-600 cursor-pointer">
-            Browse All Properties
-          </Button>
+          <Link href='/properties'>
+            <Button size="lg" className="px-8 bg-sky-500 hover:bg-sky-600 cursor-pointer">
+              Browse All Properties
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>
