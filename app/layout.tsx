@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { APP_DESCRIPTION, APP_NAME, SERVER_URL } from "@/lib/constants/index.ts";
-import { Toaster } from '@/components/ui/sonner';
-
-
+import {
+  APP_DESCRIPTION,
+  APP_NAME,
+  SERVER_URL,
+} from "@/lib/constants/index.ts";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
-  subsets: ['latin']
-})
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -26,11 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.className} antialiased`}
-      >
-          {children}
-          <Toaster richColors position="top-center" />
+      <body className={`${inter.className} antialiased`}>
+        {children}
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

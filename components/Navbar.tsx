@@ -5,8 +5,8 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
-import { NAV_ITEMS } from '../lib/constants/index.ts';
-// 
+import { NAV_ITEMS } from "../lib/constants/index.ts";
+//
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -35,32 +35,36 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href='/'>
-             <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
-            </Link>           
+            <Link href="/">
+              <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+            </Link>
           </div>
 
           <div className="flex justify-start items-center gap-5">
             {/* Nav Items (Center - Desktop) */}
             <div className="hidden md:flex gap-3 px-8">
-                { NAV_ITEMS.map((item) => (
-                    <Link className="bg-transparent py-1 px-5 text-lg font-bold hover:font-semibold hover:bg-white/30 hover:rounded-md text-gray-500 hover:text-gray-700" key={item.href} href={item.href}>
-                        { item.name }
-                    </Link>
-                )) }
+              {NAV_ITEMS.map((item) => (
+                <Link
+                  className="bg-transparent py-1 px-5 text-lg font-bold hover:font-semibold hover:bg-white/30 hover:rounded-md text-gray-500 hover:text-gray-700"
+                  key={item.href}
+                  href={item.href}
+                >
+                  {item.name}
+                </Link>
+              ))}
             </div>
 
             {/* Sign In */}
             <div className="flex items-center gap-4">
-                <Button variant="outline" className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white">
-                  <Link href='/signup-customer'>
-                      Sign In
-                  </Link>                
-                </Button>
-                <MobileNav /> {/* Mobile Sheet Toggle */}
+              <Button
+                variant="outline"
+                className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white"
+              >
+                <Link href="/signup-customer">Sign In</Link>
+              </Button>
+              <MobileNav /> {/* Mobile Sheet Toggle */}
             </div>
           </div>
-         
         </div>
       </div>
     </motion.nav>

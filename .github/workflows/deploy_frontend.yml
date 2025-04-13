@@ -17,8 +17,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: '18'
-      PROJECT_PATH: '/home/ubuntu/projects/revostate/frontend'
+      NODE_VERSION: "18"
+      PROJECT_PATH: "/home/ubuntu/projects/revostate/frontend"
 
     steps:
       - name: Checkout Code

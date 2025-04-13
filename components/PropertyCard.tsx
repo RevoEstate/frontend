@@ -1,7 +1,12 @@
 "use client";
 import { MapPin, Bed, Bath, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,14 +38,18 @@ export function PropertyCard({
   images,
   type,
 }: PropertyCardProps) {
-  const formattedPrice = type === "For Sale" 
-    ? `$${price.toLocaleString()}` 
-    : `$${price.toLocaleString()}/mo`;
+  const formattedPrice =
+    type === "For Sale"
+      ? `$${price.toLocaleString()}`
+      : `$${price.toLocaleString()}/mo`;
 
   return (
     <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-lg transition-shadow">
       <CardHeader className="p-0 overflow-hidden mt-[-25px]">
-        <Link href={`/properties/${id}`} className="block w-full h-[250px] relative">
+        <Link
+          href={`/properties/${id}`}
+          className="block w-full h-[250px] relative"
+        >
           <Image
             src={images[0] || "/images/default-property.jpg"}
             alt={title}
