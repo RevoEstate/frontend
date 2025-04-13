@@ -97,10 +97,13 @@ jobs:
 
             # Start or restart the application
             echo "Restarting application with PM2..."
-            pm2 describe revostate-frontend > /dev/null
-            if [ $? -eq 0 ]; then
+
+            if pm2 describe revostate-frontend > /dev/null 2>&1; then
+              echo "Reloading existing PM2 process..."
               pm2 reload revostate-frontend
             else
+              echo "Starting new PM2 process..."
               pm2 start npm --name "revostate-frontend" -- start --watch
             fi
+
             pm2 save
