@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/loading-button";
@@ -26,52 +26,52 @@ import { ErrorContext } from "@better-fetch/fetch";
 import { GithubIcon } from "lucide-react";
 
 export default function SignIn() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [pendingCredentials, setPendingCredentials] = useState(false);
-  const [pendingGithub, setPendingGithub] = useState(false);
+	const router = useRouter();
+	const { toast } = useToast();
+	const [pendingCredentials, setPendingCredentials] = useState(false);
+	const [pendingGithub, setPendingGithub] = useState(false);
 
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+	const form = useForm<z.infer<typeof signInSchema>>({
+		resolver: zodResolver(signInSchema),
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+	});
 
-  const handleCredentialsSignIn = async (
-    values: z.infer<typeof signInSchema>
-  ) => {
-    await authClient.signIn.email(
-      {
-        email: values.email,
-        password: values.password,
-      },
-      {
-        onRequest: () => {
-          setPendingCredentials(true);
-        },
-        onSuccess: async () => {
-          router.push("/");
-          router.refresh();
-        },
-        onError: (ctx: ErrorContext) => {
-          console.log(ctx);
-          toast({
-            title: "Something went wrong",
-            description: ctx.error.message ?? "Something went wrong.",
-            variant: "destructive",
-          });
-        },
-      }
-    );
-    setPendingCredentials(false);
-  };
+	const handleCredentialsSignIn = async (
+		values: z.infer<typeof signInSchema>
+	) => {
+		await authClient.signIn.email(
+			{
+				email: values.email,
+				password: values.password,
+			},
+			{
+				onRequest: () => {
+					setPendingCredentials(true);
+				},
+				onSuccess: async () => {
+					router.push("/");
+					router.refresh();
+				},
+				onError: (ctx: ErrorContext) => {
+					console.log(ctx);
+					toast({
+						title: "Something went wrong",
+						description: ctx.error.message ?? "Something went wrong.",
+						variant: "destructive",
+					});
+				},
+			}
+		);
+		setPendingCredentials(false);
+	};
 
-  const handleSignInWithGithub = async () => {
+	const handleSignInWithGoogle = async () => {
     await authClient.signIn.social({
-      provider: "github",
-      callbackURL: `http://localhost:5173`,
+      provider: "google",
+      callbackURL: `${window.location.origin}/properties`,
     });
     setPendingGithub(false);
   };
@@ -123,10 +123,10 @@ export default function SignIn() {
           <div className="mt-4">
             <LoadingButton
               pending={pendingGithub}
-              onClick={handleSignInWithGithub}
+              onClick={handleSignInWithGoogle}
             >
               <GithubIcon className="w-4 h-4 mr-2" />
-              Continue with GitHub
+              Continue with Google
             </LoadingButton>
           </div>
           <div className="mt-4 text-center text-sm">

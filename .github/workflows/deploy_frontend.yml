@@ -17,8 +17,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: '18'
-      PROJECT_PATH: '/home/ubuntu/projects/revostate/frontend'
+      NODE_VERSION: "18"
+      PROJECT_PATH: "/home/ubuntu/projects/revostate/frontend"
 
     steps:
       - name: Checkout Code
@@ -40,11 +40,6 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Frontend
-        env:
-          NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}
-        run: npm run build
-
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -52,7 +47,12 @@ jobs:
 
       - name: Deploy Code to VPS
         run: |
-          rsync -avz --delete --exclude "node_modules" -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/"
+          rsync -avz --delete --exclude "node_modules" --exclude ".next" \
+            --chmod=ugo=rwX \
+            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
+            ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/" || {
+              echo "Error: rsync failed"; exit 1;
+            }
 
       - name: Build and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
@@ -81,6 +81,7 @@ jobs:
             npm install --legacy-peer-deps
 
             # Build the project
+            export NEXT_PUBLIC_API_ENDPOINT=${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}
             npm run build
 
             # Ensure .next directory exists
@@ -97,10 +98,13 @@ jobs:
 
             # Start or restart the application
             echo "Restarting application with PM2..."
-            pm2 describe revostate-frontend > /dev/null
-            if [ $? -eq 0 ]; then
+
+            if pm2 describe revostate-frontend > /dev/null 2>&1; then
+              echo "Reloading existing PM2 process..."
               pm2 reload revostate-frontend
             else
+              echo "Starting new PM2 process..."
               pm2 start npm --name "revostate-frontend" -- start --watch
             fi
+
             pm2 save

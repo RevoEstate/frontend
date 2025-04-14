@@ -1,0 +1,51 @@
+name: CI for Development Branch
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: "18"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Frontend
+        env:
+          NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}
+        run: npm run build
+
+      - name: Verify .next Directory
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "Error: .next directory is missing."
+            exit 1
+          fi
+          if [ -z "$(ls -A .next)" ]; then
+            echo "Error: .next directory is empty."
+            exit 1
+          fi

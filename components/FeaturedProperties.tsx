@@ -9,7 +9,9 @@ import Link from "next/link";
 
 export default function FeaturedProperties() {
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<"all" | "For Sale" | "For Rent">("all");
+  const [activeFilter, setActiveFilter] = useState<
+    "all" | "For Sale" | "For Rent"
+  >("all");
 
   useEffect(() => {
     // Simulate API fetch
@@ -19,7 +21,7 @@ export default function FeaturedProperties() {
 
   // Get first 3 featured properties based on filter
   const displayedProperties = properties
-    .filter(property => {
+    .filter((property) => {
       if (activeFilter === "all") return property.featured;
       return property.type === activeFilter && property.featured;
     })
@@ -60,8 +62,14 @@ export default function FeaturedProperties() {
               key={filter}
               variant={activeFilter === filter ? "default" : "outline"}
               size="sm"
-              onClick={() => setActiveFilter(filter as "all" | "For Sale" | "For Rent")}
-              className={activeFilter === filter ? 'bg-sky-500 hover:bg-sky-600 cursor-pointer' : 'cursor-pointer'}
+              onClick={() =>
+                setActiveFilter(filter as "all" | "For Sale" | "For Rent")
+              }
+              className={
+                activeFilter === filter
+                  ? "bg-sky-500 hover:bg-sky-600 cursor-pointer"
+                  : "cursor-pointer"
+              }
             >
               {filter === "all" ? "All" : filter}
             </Button>
@@ -70,33 +78,31 @@ export default function FeaturedProperties() {
 
         {/* Property Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            Array(6)
-              .fill(0)
-              .map((_, i) => (
+          {loading
+            ? Array(6)
+                .fill(0)
+                .map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <PropertyCardSkeleton />
+                  </motion.div>
+                ))
+            : displayedProperties.map((property, index) => (
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.1 }}
+                  key={property.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className=""
                 >
-                  <PropertyCardSkeleton />
+                  <PropertyCard {...property} />
                 </motion.div>
-              ))
-          ) : (
-            displayedProperties.map((property, index) => (
-              <motion.div
-                key={property.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className=""
-              >
-                <PropertyCard {...property} />
-              </motion.div>
-            ))
-          )}
+              ))}
         </div>
 
         {/* CTA */}
@@ -107,8 +113,11 @@ export default function FeaturedProperties() {
           transition={{ delay: 0.4 }}
           className="text-center mt-12"
         >
-          <Link href='/properties'>
-            <Button size="lg" className="px-8 bg-sky-500 hover:bg-sky-600 cursor-pointer">
+          <Link href="/properties">
+            <Button
+              size="lg"
+              className="px-8 bg-sky-500 hover:bg-sky-600 cursor-pointer"
+            >
               Browse All Properties
             </Button>
           </Link>

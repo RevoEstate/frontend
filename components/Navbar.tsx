@@ -5,7 +5,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
-import { NAV_ITEMS } from "../lib/constants";
+import { NAV_ITEMS } from "../lib/constants/index.ts";
 //
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);
@@ -35,7 +35,9 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+            <Link href="/">
+              <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+            </Link>
           </div>
 
           <div className="flex justify-start items-center gap-5">
@@ -54,15 +56,13 @@ export default function Navbar() {
 
             {/* Sign In */}
             <div className="flex items-center gap-4">
-              <Link href="/sign-in">
-                <Button
-                  variant="outline"
-                  className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white"
-                >
-                  Sign In
-                </Button>
-                <MobileNav /> {/* Mobile Sheet Toggle */}
-              </Link>
+              <Button
+                variant="outline"
+                className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white"
+              >
+                <Link href="/signup-customer">Sign In</Link>
+              </Button>
+              <MobileNav /> {/* Mobile Sheet Toggle */}
             </div>
           </div>
         </div>
