@@ -7,6 +7,7 @@ const env = createEnv({
     // Database URLs
     DATABASE_URL_DEVELOPMENT: z.string(),
     DATABASE_URL_PRODUCTION: z.string(),
+    
 
     // Authentication credentials
     GITHUB_CLIENT_ID: z.string().optional(),
@@ -20,6 +21,9 @@ const env = createEnv({
     // Application settings
     NEXT_PUBLIC_APP_URL: z.string(),
     NEXT_PUBLIC_CACHE_ENCRYPTION_KEY: z.string(),
+
+    // API urls
+    NEXT_PUBLIC_API_ENDPOINT: z.string().optional(),
 
   },
 
@@ -39,6 +43,9 @@ const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_CACHE_ENCRYPTION_KEY:
       process.env.NEXT_PUBLIC_CACHE_ENCRYPTION_KEY,
+    
+    // API urls
+    NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
 
   },
 });
