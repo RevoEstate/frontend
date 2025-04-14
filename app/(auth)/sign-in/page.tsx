@@ -68,79 +68,77 @@ export default function SignIn() {
 		setPendingCredentials(false);
 	};
 
-	const handleSignInWithGithub = async () => {
-		await authClient.signIn.social(
-			{
-        provider: "github",
-        callbackURL: `http://localhost:5173`,
-      },
-		);
-		setPendingGithub(false);
-	};
+	const handleSignInWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: `${window.location.origin}/properties`,
+    });
+    setPendingGithub(false);
+  };
 
-	return (
-		<div className="grow flex items-center justify-center p-4">
-			<Card className="w-full max-w-md">
-				<CardHeader>
-					<CardTitle className="text-3xl font-bold text-center text-gray-800">
-						Sign In
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<Form {...form}>
-						<form
-							onSubmit={form.handleSubmit(handleCredentialsSignIn)}
-							className="space-y-6"
-						>
-							{["email", "password"].map((field) => (
-								<FormField
-									control={form.control}
-									key={field}
-									name={field as keyof z.infer<typeof signInSchema>}
-									render={({ field: fieldProps }) => (
-										<FormItem>
-											<FormLabel>
-												{field.charAt(0).toUpperCase() + field.slice(1)}
-											</FormLabel>
-											<FormControl>
-												<Input
-													type={field === "password" ? "password" : "email"}
-													placeholder={`Enter your ${field}`}
-													{...fieldProps}
-													autoComplete={
-														field === "password" ? "current-password" : "email"
-													}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							))}
-							<LoadingButton pending={pendingCredentials}>
-								Sign in
-							</LoadingButton>
-						</form>
-					</Form>
-					<div className="mt-4">
-						<LoadingButton
-							pending={pendingGithub}
-							onClick={handleSignInWithGithub}
-						>
-							<GithubIcon className="w-4 h-4 mr-2" />
-							Continue with GitHub
-						</LoadingButton>
-					</div>
-					<div className="mt-4 text-center text-sm">
-						<Link
-							href="/forgot-password"
-							className="text-primary hover:underline"
-						>
-							Forgot password?
-						</Link>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
-	);
+  return (
+    <div className="grow flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold text-center text-gray-800">
+            Sign In
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleCredentialsSignIn)}
+              className="space-y-6"
+            >
+              {["email", "password"].map((field) => (
+                <FormField
+                  control={form.control}
+                  key={field}
+                  name={field as keyof z.infer<typeof signInSchema>}
+                  render={({ field: fieldProps }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type={field === "password" ? "password" : "email"}
+                          placeholder={`Enter your ${field}`}
+                          {...fieldProps}
+                          autoComplete={
+                            field === "password" ? "current-password" : "email"
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+              <LoadingButton pending={pendingCredentials}>
+                Sign in
+              </LoadingButton>
+            </form>
+          </Form>
+          <div className="mt-4">
+            <LoadingButton
+              pending={pendingGithub}
+              onClick={handleSignInWithGoogle}
+            >
+              <GithubIcon className="w-4 h-4 mr-2" />
+              Continue with Google
+            </LoadingButton>
+          </div>
+          <div className="mt-4 text-center text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-primary hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

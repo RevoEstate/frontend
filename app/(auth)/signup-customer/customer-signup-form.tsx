@@ -288,10 +288,10 @@ export function CustomerSignupForm() {
               <p className="text-gray-500">
                 Already have an account?{" "}
                 <Link
-                  href="/login"
+                  href="/sign-in"
                   className="font-medium text-sky-600 hover:text-sky-500 underline underline-offset-4 transition-colors"
                 >
-                  Log in
+                  Sign in
                 </Link>
               </p>
             </div>
