@@ -50,9 +50,25 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
+      - name: Verify .next Directory
+        run: |
+          if [ ! -d ".next" ]; then
+            echo "Error: .next directory is missing."
+          exit 1
+          fi
+          if [ -z "$(ls -A .next)" ]; then
+            echo "Error: .next directory is empty."
+          exit 1
+          fi
+
       - name: Deploy Code to VPS
         run: |
-          rsync -avz --delete --exclude "node_modules" -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/"
+          rsync -avz --delete --exclude "node_modules" \
+            --chmod=ugo=rwX \
+            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
+            ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/" || {
+              echo "Error: rsync failed"; exit 1;
+            }
 
       - name: Build and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
