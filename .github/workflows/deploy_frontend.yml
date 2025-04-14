@@ -80,6 +80,7 @@ jobs:
 
             # Build the project
             export NEXT_PUBLIC_API_ENDPOINT=${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}
+            export NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
             npm run build
 
             # Ensure .next directory exists
