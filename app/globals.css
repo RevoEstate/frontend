@@ -4,7 +4,6 @@
 @import "@radix-ui/themes/styles.css";
 
 
-@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -132,8 +131,9 @@
   animation: fadeOut 0.2s ease-in;
 }
 
-@layer utilities {
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
+
+
+.no-animations * {
+  transition: none !important;
+  animation: none !important;
 }
