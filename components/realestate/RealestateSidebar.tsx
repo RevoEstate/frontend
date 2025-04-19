@@ -14,15 +14,12 @@ import {
     SidebarMenuItem,
     useSidebar,
   } from "@/components/ui/sidebar"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
   
 import Link from "next/link"
 import { Home, LineChart, Package, Settings, Users, PlusSquare, Menu, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { usePathname } from 'next/navigation'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { usePathname, useRouter } from 'next/navigation'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { signOut, useSession } from '@/lib/auth-client'
@@ -62,22 +59,20 @@ const navItems = [
   ]
 
 const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-    const pathname = usePathname()
+    const router = useRouter()
     const { data: session, status } = useSession();
     const user = session?.user;
     const {
         state,
-        open,
-        setOpen,
-        openMobile,
-        setOpenMobile,
-        isMobile,
-        toggleSidebar,
       } = useSidebar()
 
         const handleSignOut = async () => {
           try {
-            await signOut({ callbackUrl: '/' });
+            await signOut({ fetchOptions: {
+              onSuccess: () => {
+                router.push('/')
+              }
+            } });
           } catch (error) {
             console.error('Logout failed:', error);
           }
@@ -159,7 +154,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
                         >
                         <DropdownMenuLabel className="font-normal px-2 py-1.5">
                             <motion.div variants={itemVariants} className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">{user?.name}</p>
+                            <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
                             <p className="text-xs leading-none text-muted-foreground">
                                 {user?.email}
                             </p>

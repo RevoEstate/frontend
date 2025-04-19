@@ -10,12 +10,6 @@ export default async function RealestateDashboardLayout({
 }: { 
   children: React.ReactNode 
 }) {
-  // const session = await useSession()
-  
-  // Redirect if not a real estate agent
-  // if (session?.user?.role !== "REALESTATE_AGENT") {
-  //   redirect("/")
-  // }
 
   return (
     <SidebarProvider className="container">

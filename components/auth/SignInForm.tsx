@@ -23,6 +23,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { FaGoogle } from "react-icons/fa";
+import AuthGuard from "./AuthGuard";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -44,6 +45,31 @@ export default function SignInForm() {
       password: "",
     },
   });
+
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const session = await authClient.getSession();
+  //       console.log("Login Session: ", session);
+
+  //       if (session) {
+  //         const userRole = session?.data?.user?.role;
+  //         if (userRole === "systemAdmin") {
+  //           router.replace("/systemAdmin");
+  //         } else if (userRole === "support") {
+  //           router.replace("/systemManager");
+  //         } else if (userRole === "agent") {
+  //           router.replace("/realestate");
+  //         } else {
+  //           router.replace("/");
+  //         }
+  //       }
+  //     } catch (err) {
+  //       setError("Session check failed:");
+  //     }
+  //   };
+  //   checkSession();
+  // }, [router]);
 
   const resetState = () => {
     setError(null);
@@ -82,14 +108,28 @@ export default function SignInForm() {
             resetState();
             setLoading(true);
           },
-          onSuccess: () => {
+          onSuccess: async () => {
             setSuccess("Logged in successfully");
             toast.success("Logged in successfully!", {
               description: "Welcome back to RevoEstate!",
-              duration: 5000,
+              duration: 2000,
             });
-            router.replace("/");
-            router.refresh();
+            try {
+              const session = await authClient.getSession();
+              const userRole = session?.data?.user?.role;
+              if (userRole === "systemAdmin") {
+                router.replace("/systemAdmin");
+              } else if (userRole === "support") {
+                router.replace("/systemManager");
+              } else if (userRole === "agent") {
+                router.replace("/realestate");
+              } else {
+                router.replace("/");
+              }
+            } catch (err) {
+              console.error("Failed to fetch session:", err);
+              router.replace("/"); // Fallback redirect
+            }
           },
           onError: (ctx) => {
             if (ctx.error.status === 403) {
@@ -353,6 +393,6 @@ export default function SignInForm() {
           </motion.div>
         </motion.div>
       </motion.div>
-    </div>   
+    </div>
   );
 }

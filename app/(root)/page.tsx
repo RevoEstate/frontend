@@ -1,3 +1,4 @@
+
 import BackToTopButton from '@/components/BackToTopButton'
 import FeaturedProperties from '@/components/FeaturedProperties'
 import Footer from '@/components/Footer'
