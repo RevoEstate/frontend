@@ -1,11 +1,12 @@
-import React from 'react'
+import { RealEstateAnalytics } from "@/components/realestate/RealEstateAnalytics"
 
-const page = () => {
+const DashboardPage = () => {
   return (
-    <div>
-      Realestate Dashboard!
+    <div className="">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6">Real Estate Dashboard</h1>
+      <RealEstateAnalytics />
     </div>
   )
 }
 
-export default page
+export default DashboardPage

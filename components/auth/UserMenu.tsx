@@ -41,8 +41,8 @@ const itemVariants = {
 };
 
 const UserMenu = () => {
-  const { data: session, status } = useSession();
-  const user = session?.user;
+ const { data: session, status } = useSession();
+  const user = session?.user; 
 
 
   const handleSignOut = async () => {

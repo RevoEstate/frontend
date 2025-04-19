@@ -1,26 +1,40 @@
-
 import { RealestateDashboardHeader } from "@/components/realestate/RealestateDashboardHeader"
 import RealestateSidebar from "@/components/realestate/RealestateSidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { useSession } from "@/lib/auth-client"
-import { redirect } from "next/navigation"
 
 export default async function RealestateDashboardLayout({ 
   children 
 }: { 
   children: React.ReactNode 
 }) {
-
   return (
-    <SidebarProvider className="container">
-      <RealestateSidebar />
-      <main className="w-full">
-        <div className="flex items-center justify-between py-3 bg-sky-50/60">
-          <SidebarTrigger className="cursor-pointer text-sky-700 font-extrabold hover:text-sky-600" />
-          <RealestateDashboardHeader />
+    <SidebarProvider>
+      <div className="flex md:w-screen">
+        {/* Sidebar - Fixed width */}
+          <RealestateSidebar />
+        
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col w-sm md:max-w-7xl md:w-5xl">
+          {/* Fixed Header */}
+          <header className="sticky top-0 z-10 bg-gray-50 ">
+            <div className="flex items-center justify-between px-6 py-3">
+              <div className="flex items-center space-x-4">
+                {/* Mobile sidebar toggle (hidden on desktop) */}
+                <SidebarTrigger className="cursor-pointer text-sky-700 font-extrabold hover:text-sky-600" />
+                {/* Optional: Add breadcrumbs or title here */}
+              </div>
+              <RealestateDashboardHeader />
+            </div>
+          </header>
+
+          {/* Scrollable Content */}
+          <main className="flex-1 overflow-y-auto p-6">
+            <div className="max-w-7xl mx-auto">
+              {children}
+            </div>
+          </main>
         </div>
-        {children}
-      </main>
+      </div>
     </SidebarProvider>
   )
 }

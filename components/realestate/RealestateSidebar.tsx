@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { signOut, useSession } from '@/lib/auth-client'
+import { RiProfileFill } from 'react-icons/ri'
 
 // Animation variants
 const dropdownVariants = {
@@ -50,21 +51,23 @@ const dropdownVariants = {
   
 
 const navItems = [
-    { name: "Dashboard", href: "/realestate/dashboard", icon: Home },
+    { name: "Dashboard", href: "/realestate", icon: Home },
     { name: "Properties", href: "/realestate/properties", icon: Package },
     { name: "Add Property", href: "/realestate/properties/create", icon: PlusSquare },
-    { name: "Analytics", href: "/realestate/analytics", icon: LineChart },
-    { name: "Clients", href: "/realestate/clients", icon: Users },
-    { name: "Settings", href: "/realestate/settings", icon: Settings },
+    // { name: "Analytics", href: "/realestate/analytics", icon: LineChart },
+    { name: "Customers", href: "/realestate/customers", icon: Users },
+    { name: "Profile", href: "/realestate/profile", icon: RiProfileFill },
   ]
 
 const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
     const router = useRouter()
+    const pathname = usePathname()
     const { data: session, status } = useSession();
     const user = session?.user;
     const {
         state,
       } = useSidebar()
+
 
         const handleSignOut = async () => {
           try {
@@ -82,7 +85,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
 
 
     return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props} className=''>
         { state === 'expanded' && (
             <SidebarHeader className='container py-6'>
                 {/* Logo */}
@@ -101,7 +104,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
                 <SidebarMenu>
                 {navItems.map((item) => (
                     <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton asChild >
+                    <SidebarMenuButton asChild className={`hover:bg-sky-100/60 text-normal ${ pathname === item.href && 'bg-sky-200/50 hover:bg-sky-200/70 font-semibold' }`}>
                         <Link href={item.href}>
                         <item.icon />
                         <span>{item.name}</span>
