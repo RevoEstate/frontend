@@ -4,9 +4,8 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Link from "next/link";
-import { NAV_ITEMS } from '../lib/constants/index.ts';
-import UserMenu from "./auth/UserMenu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import UserMenu from "../auth/UserMenu";
 
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);

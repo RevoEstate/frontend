@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import LoadingButton from "@/components/loading-button";
+import LoadingButton from "@/components/shared/loading-button";
 import Link from "next/link";
 import { signUpSchema } from "@/lib/zod";
 import { useForm } from "react-hook-form";

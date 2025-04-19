@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Bed, Bath, Ruler, Home, Car, Layers, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import properties from "@/data/property";
-import { PropertyImageGallery } from "@/components/property-image-gallery";
+import { PropertyImageGallery } from "@/components/shared/property-image-gallery";
 
 const PropertyDetailsPage = async (props: {
   params: Promise<{ id: string }>;

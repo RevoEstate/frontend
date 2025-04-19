@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Search, Filter, MapPin } from "lucide-react";
 import { useState } from "react";
 import properties from "@/data/property";
-import { PropertyCard } from "@/components/PropertyCard";
+import { PropertyCard } from "@/components/shared/PropertyCard";
 const PropertyPage = () => {
   // Mock filter states (replace with real state management)
   const [searchQuery, setSearchQuery] = useState("");

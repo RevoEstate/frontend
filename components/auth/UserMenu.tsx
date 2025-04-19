@@ -43,7 +43,6 @@ const itemVariants = {
 const UserMenu = () => {
   const { data: session, status } = useSession();
   const user = session?.user;
-  console.log("User: ", user)
 
 
   const handleSignOut = async () => {

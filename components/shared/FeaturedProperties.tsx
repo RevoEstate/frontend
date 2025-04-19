@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { PropertyCard } from "@/components/PropertyCard";
-import { PropertyCardSkeleton } from "@/components/PropertyCardSkeleton";
+import { PropertyCard } from "@/components/shared/PropertyCard";
+import { PropertyCardSkeleton } from "@/components/shared/PropertyCardSkeleton";
 import { useState, useEffect, useRef } from "react";
 import properties from "@/data/property";
 import Link from "next/link";
@@ -30,7 +30,7 @@ export default function FeaturedProperties() {
     return () => clearTimeout(timer);
   }, []);
 
-  const featuredProperties = properties.filter(property => property.featured);
+  const featuredProperties = properties.filter((property) => property.featured);
 
   return (
     <section className="py-10 bg-gray-100/40 dark:bg-gray-900">
@@ -44,8 +44,14 @@ export default function FeaturedProperties() {
           className=""
         >
           <div className="flex gap-2 items-center">
-            <motion.hr className="border-2 border-black w-20 hidden md:block" {...motionTextProps} />
-            <motion.h1 {...motionTextProps} className="md:text-5xl text-3xl font-bold mb-2">
+            <motion.hr
+              className="border-2 border-black w-20 hidden md:block"
+              {...motionTextProps}
+            />
+            <motion.h1
+              {...motionTextProps}
+              className="md:text-5xl text-3xl font-bold mb-2"
+            >
               Featured Properties
             </motion.h1>
           </div>
@@ -61,20 +67,21 @@ export default function FeaturedProperties() {
         {/* Property Carousel */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(3).fill(0).map((_, i) => (
-              <PropertyCardSkeleton key={i} />
-            ))}
+            {Array(3)
+              .fill(0)
+              .map((_, i) => (
+                <PropertyCardSkeleton key={i} />
+              ))}
           </div>
         ) : (
-          
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             className="swiper"
           >
-             {/* Navigation Buttons */}
-             <div className="hidden md:flex items-center justify-center lg:justify-end gap-5 mb-">
+            {/* Navigation Buttons */}
+            <div className="hidden md:flex items-center justify-center lg:justify-end gap-5 mb-">
               <motion.button
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -183,4 +190,3 @@ export default function FeaturedProperties() {
     </section>
   );
 }
-
