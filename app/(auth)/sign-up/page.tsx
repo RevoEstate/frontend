@@ -128,7 +128,7 @@ export default function SignUp() {
                   </button>
                 </div>
               )}
-              <LoadingButton pending={pending} type="submit">
+              <LoadingButton pending={pending}>
                 Sign up
               </LoadingButton>
             </form>

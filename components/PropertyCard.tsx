@@ -1,12 +1,7 @@
 "use client";
 import { MapPin, Bed, Bath, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -38,18 +33,14 @@ export function PropertyCard({
   images,
   type,
 }: PropertyCardProps) {
-  const formattedPrice =
-    type === "For Sale"
-      ? `$${price.toLocaleString()}`
-      : `$${price.toLocaleString()}/mo`;
+  const formattedPrice = type === "For Sale" 
+    ? `$${price.toLocaleString()}` 
+    : `$${price.toLocaleString()}/mo`;
 
   return (
-    <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-lg transition-shadow">
+    <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-md rounded-sm transition-shadow">
       <CardHeader className="p-0 overflow-hidden mt-[-25px]">
-        <Link
-          href={`/properties/${id}`}
-          className="block w-full h-[250px] relative"
-        >
+        <Link href={`/properties/${id}`} className="block w-full h-[250px] relative">
           <Image
             src={images[0] || "/images/default-property.jpg"}
             alt={title}
@@ -58,7 +49,7 @@ export function PropertyCard({
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-sm font-medium">
+          <div className="absolute top-2 right-2 bg-sky-500/60 text-white px-2 py-1 rounded-md text-xs font-medium">
             {type}
           </div>
         </Link>
@@ -84,9 +75,9 @@ export function PropertyCard({
 
       <CardFooter className="flex justify-between items-center px-4 pb-4">
         <span className="text-lg font-bold">{formattedPrice}</span>
-        <Button size="sm" className="bg-sky-500 hover:bg-sky-600">
+        {/* <Button size="sm" className="bg-sky-500 hover:bg-sky-600">
           <Link href={`/properties/${id}`}>View Details</Link>
-        </Button>
+        </Button> */}
       </CardFooter>
     </Card>
   );

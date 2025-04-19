@@ -1,17 +1,20 @@
 "use client";
+
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
 import { useState } from "react";
-import MobileNav from "./MobileNav";
 import Link from "next/link";
-import { NAV_ITEMS } from "../lib/constants/index.ts";
-//
+import { NAV_ITEMS } from '../lib/constants/index.ts';
+import UserMenu from "./auth/UserMenu";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
-  // Hide navbar on scroll down, show on scroll up
+  const user = useCurrentUser();
+
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() || 0;
     if (latest > previous && latest > 50) {
@@ -29,41 +32,74 @@ export default function Navbar() {
       }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="fixed top-0 w-full bg-white/20 dark:bg-gray-900/80 z-50 backdrop-blur-md"
+      className="fixed top-0 w-screen bg-white/30 dark:bg-gray-900/80 z-50 backdrop-blur-md overflow-hidden"
     >
-      <div className="container">
-        <div className="flex justify-between items-center h-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/">
-              <h1 className="text-3xl font-extrabold text-black">RevoEstate</h1>
+          <Link href="/" className="flex-shrink-0 flex items-center">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-800 bg-clip-text text-transparent">
+              RevoEstate
+            </h1>
+          </Link>
+
+           {/* Desktop Navigation */}
+           <div className="hidden md:flex items-center space-x-6">
+            {/* Always visible links */}
+            <Link
+              href="/properties"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+            >
+              Browse Properties
             </Link>
+
+            {user && (
+              <Link
+                href="/bookmarks"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+              >
+                Saved Properties
+              </Link>
+            )}
+
+            {/* Role-based links */}
+            {user?.role === 'REALESTATE_AGENT' && (
+              <>
+                {/* <Link
+                  href="/properties/create"
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                >
+                  Create Listing
+                </Link> */}
+                <Link
+                  href="/realestate"
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              </>
+            )}
+
+            {user?.role === 'ADMIN' && (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+              >
+                Admin Panel
+              </Link>
+            )}
           </div>
 
-          <div className="flex justify-start items-center gap-5">
-            {/* Nav Items (Center - Desktop) */}
-            <div className="hidden md:flex gap-3 px-8">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  className="bg-transparent py-1 px-5 text-lg font-bold hover:font-semibold hover:bg-white/30 hover:rounded-md text-gray-500 hover:text-gray-700"
-                  key={item.href}
-                  href={item.href}
-                >
-                  {item.name}
-                </Link>
-              ))}
+          {/* Right side - User menu and mobile button */}
+          <div className="flex items-center gap-4">
+            <div className="md:flex items-center mr-3 md:mr-10">
+              <UserMenu />
             </div>
-
-            {/* Sign In */}
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="hidden md:block px-8 cursor-pointer bg-sky-500 hover:bg-sky-600 text-white hover:text-white"
-              >
-                <Link href="/signup-customer">Sign In</Link>
-              </Button>
-              <MobileNav /> {/* Mobile Sheet Toggle */}
-            </div>
+            
+            {/* Mobile menu button */}
+            {/* <div className="md:hidden">
+              <MobileNav />
+            </div> */}
           </div>
         </div>
       </div>
