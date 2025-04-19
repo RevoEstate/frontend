@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,6 +23,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the schema for signup with firstName and lastName
 const customerSignupSchema = z
@@ -29,13 +31,18 @@ const customerSignupSchema = z
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address"),
+    isRealestate: z.boolean().default(false),
     password: z.string().min(8, "Password must be at least 8 characters"),
     passwordConfirm: z.string().min(8, "Password confirmation is required"),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "Passwords do not match",
     path: ["passwordConfirm"],
-  });
+  })
+  .transform(data => ({
+    ...data,
+    role: data.isRealestate ? "agent" : "customer",
+  }));
 
 export function CustomerSignupForm() {
   const router = useRouter();
@@ -49,6 +56,7 @@ export function CustomerSignupForm() {
       firstName: "",
       lastName: "",
       email: "",
+      role: "customer",
       password: "",
       passwordConfirm: "",
     },
@@ -64,6 +72,7 @@ export function CustomerSignupForm() {
       interface SignupValues {
         email: string;
         password: string;
+        role: string;
         firstName: string;
         lastName: string;
         callbackURL: string;
@@ -79,6 +88,7 @@ export function CustomerSignupForm() {
       await authClient.signUp.email(
         {
           email: values.email,
+          role: values.role,
           password: values.password,
           firstName: values.firstName,
           lastName: values.lastName,
@@ -89,6 +99,7 @@ export function CustomerSignupForm() {
             setLoading(false);
           },
           onRequest: () => {
+            console.log("Signup values", values)
             resetState();
             setLoading(true);
           },
@@ -125,7 +136,7 @@ export function CustomerSignupForm() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+        className="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
       >
         {/* Beautiful Real Estate Image */}
         <div className="hidden md:block relative">
@@ -312,6 +323,31 @@ export function CustomerSignupForm() {
                     </FormItem>
                   )}
                 />
+
+              <FormField
+                control={form.control}
+                name="isRealestate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 mt-3">
+                    <FormControl>
+                      <Checkbox
+                        className='cursor-pointer'
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I am a real estate agent
+                      </FormLabel>
+                      <FormDescription>
+                        Check this box if you're registering as a real estate professional
+                      </FormDescription>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               </motion.div>
 
               <motion.div

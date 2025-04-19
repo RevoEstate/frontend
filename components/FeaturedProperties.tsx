@@ -1,4 +1,5 @@
 "use client";
+
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/PropertyCard";

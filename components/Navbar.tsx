@@ -63,7 +63,7 @@ export default function Navbar() {
             )}
 
             {/* Role-based links */}
-            {user?.role === 'REALESTATE_AGENT' && (
+            {user?.role === 'agent' && (
               <>
                 {/* <Link
                   href="/properties/create"
@@ -80,7 +80,7 @@ export default function Navbar() {
               </>
             )}
 
-            {user?.role === 'ADMIN' && (
+            {user?.role === 'systemAdmin' && (
               <Link
                 href="/admin"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"

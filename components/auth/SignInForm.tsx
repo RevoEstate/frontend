@@ -140,7 +140,7 @@ export default function SignInForm() {
   };
 
   return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -343,7 +343,7 @@ export default function SignInForm() {
               <p className="text-gray-500">
                 Don’t have an account?{" "}
                 <Link
-                  href="/sign-up"
+                  href="/signup-customer"
                   className="font-medium text-sky-600 hover:text-sky-500 underline underline-offset-4 transition-colors"
                 >
                   Sign up
@@ -353,6 +353,6 @@ export default function SignInForm() {
           </motion.div>
         </motion.div>
       </motion.div>
-      </div>   
+    </div>   
   );
 }
