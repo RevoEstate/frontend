@@ -81,14 +81,24 @@ export default function SignIn() {
             resetState();
             setLoading(true);
           },
-          onSuccess: () => {
+          onSuccess: async () => {
             setSuccess("Logged in successfully");
             toast.success("Logged in successfully!", {
               description: "Welcome back to RevoEstate!",
               duration: 5000,
             });
-            router.replace("/");
-            router.refresh();
+            const session = await authClient.getSession();
+            // console.log("Session:", session);
+            const userRole = session?.user?.role;
+
+            // enum: ['systemAdmin', 'companyAdmin', 'agent', 'support', 'customer'],
+            userRole === "systemAdmin"
+              ? router.push("/systemAdmin")
+              : userRole === "support"
+                ? router.push("/systemManager")
+                : userRole === "agent"
+                  ? router.push("/realesatetAgent")
+                  : router.push("/");
           },
           onError: (ctx) => {
             if (ctx.error.status === 403) {

@@ -93,6 +93,7 @@ export function CustomerSignupForm() {
             setLoading(true);
           },
           onSuccess: () => {
+            
             setSuccess("Verification link has been sent to your email");
             toast.success("Verification link sent!", {
               description: `A verification email has been sent to ${values.email}. Please check your inbox and verify your email to continue.`,
