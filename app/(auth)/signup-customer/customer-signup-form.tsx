@@ -26,7 +26,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the schema for signup with firstName and lastName
-const customerSignupSchema = z
+export const customerSignupSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),

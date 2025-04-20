@@ -10,24 +10,19 @@ export default async function RealestateDashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex md:w-screen">
-        {/* Sidebar - Fixed width */}
           <RealestateSidebar />
         
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col w-sm md:max-w-7xl md:w-5xl">
-          {/* Fixed Header */}
+        <div className="flex-1 flex flex-col w-sm md:max-w-7xl md:w-4xl">
           <header className="sticky top-0 z-10 bg-gray-50 ">
             <div className="flex items-center justify-between px-6 py-3">
               <div className="flex items-center space-x-4">
-                {/* Mobile sidebar toggle (hidden on desktop) */}
                 <SidebarTrigger className="cursor-pointer text-sky-700 font-extrabold hover:text-sky-600" />
-                {/* Optional: Add breadcrumbs or title here */}
               </div>
               <RealestateDashboardHeader />
             </div>
           </header>
 
-          {/* Scrollable Content */}
           <main className="flex-1 overflow-y-auto p-6">
             <div className="max-w-7xl mx-auto">
               {children}

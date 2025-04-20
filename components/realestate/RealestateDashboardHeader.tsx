@@ -11,7 +11,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { TooltipArrow } from "@radix-ui/react-tooltip";
 
 
 export function RealestateDashboardHeader() {
@@ -27,7 +26,8 @@ export function RealestateDashboardHeader() {
     <header className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         {/* Notification button with badge */}
-        <Button variant="ghost" size="icon" className="relative cursor-pointer rounded-full h-10 w-10">
+        { isRealestate && isVerified && (
+          <Button variant="ghost" size="icon" className="relative cursor-pointer rounded-full h-10 w-10">
           <BellIcon size={24} className="text-foreground" />
           {notificationCount > 0 && (
             <Badge 
@@ -37,11 +37,13 @@ export function RealestateDashboardHeader() {
               {notificationCount}
             </Badge>
           )}
-        </Button>
+          </Button>
+        ) }
+      
 
         {/* Verification status */}
         {isRealestate && !isVerified ? (
-          <Button asChild variant="default" size="sm">
+          <Button asChild variant="ghost" size="sm" className="bg-sky-600 hover:bg-sky-600/80 text-white hover:text-white">
             <Link href="/realestate/profile">
               Verify your account
             </Link>
