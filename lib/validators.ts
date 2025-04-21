@@ -1,15 +1,12 @@
 import { z } from "zod";
 
 // Realestate Information Schema
-
-const CompanySchema = z.object({
-  id: z.string().min(3, "Id required"),
+const realestateSchema = z.object({
   realEstateName: z.string().min(3, "Company name must be at least 3 characters"),
-  agentId: z.string().min(1, "User ID is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(5, "Phone number must be at least 5 characters"),
+  phone: z.string().min(10, "Phone number must be 10 digits"),
   description: z.string().optional(),
-  logo: z.string().url("Invalid URL format").optional(),
+  imageUrl: z.instanceof(File).optional(),
 
   // Address Information
   address: z.object({
@@ -32,25 +29,26 @@ const CompanySchema = z.object({
   }).optional(),
 
   // Verification and Licensing
-  verificationDocuments: z.array(z.string().url("Invalid document URL")),
-  verificationStatus: z.enum(["pending", "approved", "rejected"]),
-  isVerified: z.boolean(),
-  verifiedBy: z.string().optional(),
-  verifiedAt: z.date().optional(),
+  documentUrl: z.instanceof(File).refine(
+    file => file?.type === 'application/pdf', 
+    { message: "Only PDF files are accepted" }
+  ).optional()
+  
+ // verificationStatus: z.enum(["pending", "approved", "rejected"]),
+  // isVerified: z.boolean(),
+  // verifiedBy: z.string().optional(),
+  // verifiedAt: z.date().optional(),
 });
 
-// Infer the TypeScript type from Zod schema
-type ICompany = z.infer<typeof CompanySchema> & Document;
 
-// For forms that don't need MongoDB Document extension
-type ICompanyForm = z.infer<typeof CompanySchema>;
 
-// Create a partial schema for updates (all fields optional)
-const CompanyUpdateSchema = CompanySchema.partial();
+
+// a partial schema for updates (all fields optional)
+const realestateUpdateSchema = realestateSchema.partial();
 
 // Verification form schema (fields needed for verification)
-const VerificationFormSchema = CompanySchema.pick({
-  verificationDocuments: true,
+const VerificationFormSchema = realestateSchema.pick({
+  documentUrl: true,
 }).extend({
   termsAccepted: z.boolean().refine(val => val, {
     message: "You must accept the terms and conditions",
@@ -59,9 +57,7 @@ const VerificationFormSchema = CompanySchema.pick({
 
 // Export everything
 export {
-  CompanySchema,
-  CompanyUpdateSchema,
+  realestateSchema,
+  realestateUpdateSchema,
   VerificationFormSchema,
-  type ICompany,
-  type ICompanyForm,
 };

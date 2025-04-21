@@ -1,6 +1,6 @@
-import { ICompany } from "@/lib/validators";
+import { Realestate } from "@/types";
 
-export const mockCompany: ICompany = {
+export const mockCompany: Realestate = {
   id: "comp_507f1f77bcf86cd799439011", // Matches min(3) requirement
   realEstateName: "Ovid Real Estate", // Matches min(3) requirement
   agentId: "agent_user123", // Matches min(1) requirement
@@ -35,10 +35,10 @@ export const mockCompany: ICompany = {
   isVerified: true,
   verifiedBy: "admin@revoestate.com",
   verifiedAt: new Date("2023-10-15T10:00:00Z")
-} as unknown as ICompany; // Type assertion for MongoDB Document
+} as unknown as Realestate; // Type assertion for MongoDB Document
 
 // Unverified version (status "pending")
-export const mockUnverifiedCompany: ICompany = {
+export const mockUnverifiedCompany: Realestate = {
   ...mockCompany,
   verificationDocuments: [
     "https://example.com/documents/tax-certificate.pdf" // At least one document
@@ -47,17 +47,17 @@ export const mockUnverifiedCompany: ICompany = {
   isVerified: false,
   verifiedBy: undefined,
   verifiedAt: undefined
-} as unknown as ICompany;
+} as unknown as Realestate;
 
 // Rejected version
-export const mockRejectedCompany: ICompany = {
+export const mockRejectedCompany: Realestate = {
   ...mockCompany,
   verificationStatus: "rejected", // All enum cases covered
   isVerified: false,
   verifiedBy: "admin@revoestate.com",
   verifiedAt: new Date("2023-10-16T14:30:00Z"),
   description: "Application rejected due to incomplete documents"
-} as unknown as ICompany;
+} as unknown as Realestate;
 
 // Partial update example
 export const mockCompanyUpdate = {
