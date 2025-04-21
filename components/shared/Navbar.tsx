@@ -4,9 +4,8 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Link from "next/link";
-import { NAV_ITEMS } from '../lib/constants/index.ts';
-import UserMenu from "./auth/UserMenu";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import UserMenu from "../auth/UserMenu";
 
 export default function Navbar() {
   const [hidden, setHidden] = useState(false);
@@ -63,7 +62,7 @@ export default function Navbar() {
             )}
 
             {/* Role-based links */}
-            {user?.role === 'REALESTATE_AGENT' && (
+            {user?.role === 'agent' && (
               <>
                 {/* <Link
                   href="/properties/create"
@@ -80,7 +79,7 @@ export default function Navbar() {
               </>
             )}
 
-            {user?.role === 'ADMIN' && (
+            {user?.role === 'systemAdmin' && (
               <Link
                 href="/admin"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"

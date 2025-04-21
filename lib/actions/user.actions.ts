@@ -3,8 +3,8 @@
 import { cookies } from "next/headers";
 import { formatError } from "@/utils";
 import { CustomerSignupFormData } from "@/types";
-import { customerSignupSchema } from "../validators";
 import { SERVER_URL } from "../constants/index.ts";
+import { customerSignupSchema } from "@/app/(auth)/signup-customer/customer-signup-form.jsx";
 
 export async function customerSignup(values: CustomerSignupFormData): Promise<{
   success: boolean;

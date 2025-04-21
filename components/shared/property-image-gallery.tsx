@@ -10,7 +10,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 interface PropertyImageGalleryProps {
   images: string[];

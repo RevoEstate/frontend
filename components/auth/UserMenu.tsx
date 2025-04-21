@@ -12,7 +12,7 @@ import { LogOut, User, Home, Bookmark, PlusSquare, LayoutDashboard, Shield } fro
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { signOut, useSession } from '@/lib/auth-client';
+import { authClient, signOut, useSession } from '@/lib/auth-client';
 
 
 
@@ -41,8 +41,8 @@ const itemVariants = {
 };
 
 const UserMenu = () => {
-  const { data: session, status } = useSession();
-  const user = session?.user;
+ const { data: session, status } = useSession();
+  const user = session?.user; 
 
 
   const handleSignOut = async () => {
@@ -162,7 +162,7 @@ const UserMenu = () => {
                   </motion.div>
                 )}
 
-                {user?.role === 'REALESTATE_AGENT' && (
+                {user?.role === 'agent' && (
                   <>
                     <motion.div variants={itemVariants}>
                       <DropdownMenuItem asChild>
@@ -189,7 +189,7 @@ const UserMenu = () => {
                   </>
                 )}
 
-                {user?.role === 'ADMIN' && (
+                {user?.role === 'systemAdmin' && (
                   <motion.div variants={itemVariants}>
                     <DropdownMenuItem asChild>
                       <Link 
