@@ -16,26 +16,29 @@ const PackagePage = () => {
     const fetchPackages = async () => {
       try {
         const response = await fetch('http://localhost:3000/api/v1/system-admin/getallpackages', {
-            method: 'GET',
-           credentials: "include",
-          })
+          method: 'GET',
+          credentials: "include",
+        });
         
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const data = await response.json()
-        setPackages(data)
+  
+        const result = await response.json();
+        console.log("API Response: ", result);
+        
+        setPackages(result.data || []); 
+        
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred')
-        console.error('Error fetching packages:', err)
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        console.error('Error fetching packages:', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-
-    fetchPackages()
-  }, [])
+    };
+  
+    fetchPackages();
+  }, []);
 
   if (loading) {
     return (
@@ -64,18 +67,18 @@ const PackagePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Pricing Packages</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">Our Pricing Packages</h1>
+          <p className="text-sm md:text-normal text-muted-foreground max-w-3xl mx-auto">
             Choose the perfect package for your business needs.
           </p>
         </div>
 
         {packages.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No packages available at the moment.</p>
+          <div className="text-center border-1 py-8 rounded-2xl md:mx-20 px-3 shadow-xl">
+            <p className="text-muted-foreground text-lg">No packages available at the moment.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
