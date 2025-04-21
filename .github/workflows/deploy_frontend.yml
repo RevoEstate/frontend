@@ -70,10 +70,10 @@ jobs:
             fi
 
             # Ensure Node.js is set up properly
-            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin:$HOME/.nvm/versions/node/v18/bin
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin:$HOME/.nvm/versions/node/v22/bin
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 18 || nvm install 18
+            nvm use 22 || nvm install 22
 
             # Install dependencies
             npm install --legacy-peer-deps
