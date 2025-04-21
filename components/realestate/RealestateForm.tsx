@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import {  useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,26 +11,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { realestateSchema, realestateUpdateSchema } from "@/lib/validators"
-import { Realestate } from "@/types"
-import { useRouter } from "next/navigation"
-import { realestateDefaultValues } from "@/lib/constants/index.ts"
-import { toast } from "sonner"
-import { useState } from "react"
-import 'leaflet/dist/leaflet.css';
-import { MapPinIcon } from "lucide-react"
-import { LatLngTuple } from 'leaflet';
-
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { realestateSchema, realestateUpdateSchema } from "@/lib/validators";
+import { Realestate } from "@/types";
+import { useRouter } from "next/navigation";
+import { realestateDefaultValues } from "@/lib/constants/index.ts";
+import { toast } from "sonner";
+import { useState } from "react";
+import "leaflet/dist/leaflet.css";
+import { MapPinIcon } from "lucide-react";
+import { LatLngTuple } from "leaflet";
 
 // Mock data for regions and cities
 const REGIONS = [
@@ -38,7 +37,7 @@ const REGIONS = [
   { value: "new_york", label: "New York" },
   { value: "texas", label: "Texas" },
   { value: "florida", label: "Florida" },
-]
+];
 
 const CITIES_BY_REGION = {
   california: [
@@ -61,114 +60,157 @@ const CITIES_BY_REGION = {
     { value: "orlando", label: "Orlando" },
     { value: "tampa", label: "Tampa" },
   ],
-}
-
-
+};
 
 export function RealestateForm({
-    type,
-    realestate,
-    realestateId
+  type,
+  realestate,
+  realestateId,
 }: {
-    type: 'Create' | 'Update',
-    realestate?: Realestate,
-    realestateId?: string
+  type: "Create" | "Update";
+  realestate?: Realestate;
+  realestateId?: string;
 }) {
-    const router = useRouter();
-    const [preview, setPreview] = useState<string | null>(null);
+  const router = useRouter();
+  const [preview, setPreview] = useState<string | null>(null);
 
-    const form = useForm<z.infer<typeof realestateSchema>>({
-      resolver:
-        type === 'Update'
-          ? zodResolver(realestateUpdateSchema)
-          : zodResolver(realestateSchema),
-      defaultValues:
-        realestate && type === 'Update' ? realestate : realestateDefaultValues,
-    });
+  const form = useForm<z.infer<typeof realestateSchema>>({
+    resolver:
+      type === "Update"
+        ? zodResolver(realestateUpdateSchema)
+        : zodResolver(realestateSchema),
+    defaultValues:
+      realestate && type === "Update" ? realestate : realestateDefaultValues,
+  });
 
+  const onSubmit = async (values: z.infer<typeof realestateSchema>) => {
+    try {
+      const formData = new FormData();
 
-    const onSubmit = async (values: z.infer<typeof realestateSchema>) => {
-      try {
-        const formData = new FormData();
-    
-        // Append all simple fields
-        Object.entries(values).forEach(([key, value]) => {
-          if (key === 'address' || key === 'socialMedia') {
-            // Handle nested objects
+      // Round coordinates to 7 decimal places
+      if (values.address?.coordinates) {
+        values.address.coordinates = {
+          lat: values.address.coordinates.lat
+            ? Number(values.address.coordinates.lat.toFixed(6))
+            : undefined,
+          lng: values.address.coordinates.lng
+            ? Number(values.address.coordinates.lng.toFixed(6))
+            : undefined,
+        };
+      }
+
+      // Append all fields to FormData
+      Object.entries(values).forEach(([key, value]) => {
+        if (key === "address" || key === "socialMedia") {
+          // Stringify nested objects
+          if (value !== undefined && value !== null) {
             formData.append(key, JSON.stringify(value));
-          } else if (key === 'imageUrl' && value instanceof File) {
-            // Handle logo file
-            formData.append('logo', value);
-          } else if (key === 'documentUrl' && value instanceof File) {
-            // Handle single PDF file
-            formData.append('document', value);
-          } else if (value !== undefined && value !== null) {
-            // Handle all other fields
-            formData.append(key, value.toString());
           }
-        });
-    
-        const endpoint = type === 'Create' 
-          ? '/api/realestate' 
-          : `/api/realestate/${realestateId}`;
-        const method = type === 'Create' ? 'POST' : 'PUT';
-    
-        const response = await fetch(endpoint, {
+        } else if (key === "imageUrl" && value instanceof File) {
+          // Handle image file
+          formData.append("image", value);
+        } else if (key === "documentUrl" && value instanceof File) {
+          // Handle document file
+          formData.append("document", value);
+        } else if (value !== undefined && value !== null) {
+          // Append simple fields
+          formData.append(key, value.toString());
+        }
+      });
+
+      // Log FormData contents for debugging
+      console.log("DEBUG: Form Data Entries:");
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(
+            `DEBUG: ${key}: File(name: ${value.name}, size: ${value.size} bytes)`
+          );
+        } else {
+          console.log(`DEBUG: ${key}: ${value}`);
+        }
+      }
+
+      // Log FormData as object (excluding File objects for readability)
+      const formDataObject = {};
+      for (const [key, value] of formData.entries()) {
+        formDataObject[key] =
+          value instanceof File ? `File(${value.name})` : value;
+      }
+      console.log("DEBUG: Form Data as Object:", formDataObject);
+
+      // Submit to API
+      // const endpoint =
+      //   type === "Create"
+      //     ? "/api/realestate"
+      //     : `/api/realestate/${realestateId}`;
+      const method = type === "Create" ? "POST" : "PATCH";
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/register`,
+        {
           method,
           body: formData,
-        });
-    
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Submission failed');
+          credentials: "include",
         }
-    
-        const data = await response.json();
-        
-        toast.success(`Real estate ${type === 'Create' ? 'created' : 'updated'} successfully!`);
-        router.push('/realestate/profile');
-        
-      } catch (error) {
-        console.error('Submission error:', error);
-        toast.error('Submission failed', {
-          description: error instanceof Error ? error.message : 'An unknown error occurred',
-        });
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Submission failed");
       }
-    };
 
+      const data = await response.json();
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {
-        e.preventDefault();
-        const fileReader = new FileReader();
-        
-        if (e.target.files && e.target.files.length > 0) {
-          const file = e.target.files[0];
-          
-          if (!file.type.includes("image")) {
-            toast.error("Please upload an image file");
-            return;
-          }
-      
-          fileReader.onload = async (event) => {
-            const imageDataUrl = event.target?.result?.toString() || "";
-            setPreview(imageDataUrl);
-            fieldChange(imageDataUrl);
-          };
-      
-          fileReader.readAsDataURL(file);
-        }
+      toast.success(
+        `Real estate ${type === "Create" ? "created" : "updated"} successfully!`
+      );
+      router.push("/realestate/profile");
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast.error("Submission failed", {
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    }
+  };
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldChange: (value: string) => void
+  ) => {
+    e.preventDefault();
+    const fileReader = new FileReader();
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      if (!file.type.includes("image")) {
+        toast.error("Please upload an image file");
+        return;
+      }
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+        setPreview(imageDataUrl);
+        fieldChange(imageDataUrl);
       };
-  
 
-  const selectedRegion = form.watch("address.region")
+      fileReader.readAsDataURL(file);
+    }
+  };
+
+  const selectedRegion = form.watch("address.region");
 
   const getCurrentLocation = () => {
-    if (typeof window !== 'undefined' && navigator.geolocation) {
+    if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const coords: LatLngTuple = [position.coords.latitude, position.coords.longitude];
-          form.setValue('address.coordinates.lat', coords[0]);
-          form.setValue('address.coordinates.lng', coords[1]);
+          const coords: LatLngTuple = [
+            position.coords.latitude,
+            position.coords.longitude,
+          ];
+          form.setValue("address.coordinates.lat", coords[0]);
+          form.setValue("address.coordinates.lng", coords[1]);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -179,7 +221,10 @@ export function RealestateForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-3 my-5">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 p-3 my-5"
+      >
         {/* Company Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
@@ -203,7 +248,11 @@ export function RealestateForm({
               <FormItem>
                 <FormLabel>Realestate Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="contact@company.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="contact@company.com"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -249,7 +298,8 @@ export function RealestateForm({
                         field.onChange(file);
                         // Create preview
                         const reader = new FileReader();
-                        reader.onload = () => setPreview(reader.result as string);
+                        reader.onload = () =>
+                          setPreview(reader.result as string);
                         reader.readAsDataURL(file);
                       }
                     }}
@@ -296,8 +346,8 @@ export function RealestateForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>City</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     value={field.value}
                     disabled={!selectedRegion}
                   >
@@ -307,11 +357,14 @@ export function RealestateForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {selectedRegion && CITIES_BY_REGION[selectedRegion as keyof typeof CITIES_BY_REGION]?.map((city) => (
-                        <SelectItem key={city.value} value={city.value}>
-                          {city.label}
-                        </SelectItem>
-                      ))}
+                      {selectedRegion &&
+                        CITIES_BY_REGION[
+                          selectedRegion as keyof typeof CITIES_BY_REGION
+                        ]?.map((city) => (
+                          <SelectItem key={city.value} value={city.value}>
+                            {city.label}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -356,39 +409,41 @@ export function RealestateForm({
 
         {/* Social Media */}
         <div className="space-y-6">
-            <h3 className="text-lg font-medium">Social Media</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {([
+          <h3 className="text-lg font-medium">Social Media</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {(
+              [
                 { platform: "instagram", name: "socialMedia.instagram" },
                 { platform: "facebook", name: "socialMedia.facebook" },
                 { platform: "linkedin", name: "socialMedia.linkedin" },
                 { platform: "tiktok", name: "socialMedia.tiktok" },
                 { platform: "whatsapp", name: "socialMedia.whatsapp" },
-                ] as const).map(({ platform, name }) => (
-                <FormField
-                    key={platform}
-                    control={form.control}
-                    name={name}
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel className="capitalize">{platform}</FormLabel>
-                        <FormControl>
-                        <Input
-                            placeholder={
-                            platform === "whatsapp"
-                                ? "+251 91 234 5678"
-                                : `https://${platform}.com/yourusername`
-                            }
-                            {...field}
-                            value={field.value ?? ""}
-                        />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                ))}
-            </div>
+              ] as const
+            ).map(({ platform, name }) => (
+              <FormField
+                key={platform}
+                control={form.control}
+                name={name}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="capitalize">{platform}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={
+                          platform === "whatsapp"
+                            ? "+251 91 234 5678"
+                            : `https://${platform}.com/yourusername`
+                        }
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
         </div>
 
         <FormField
@@ -416,76 +471,78 @@ export function RealestateForm({
             </FormItem>
           )}
         />
-          {/* Coordinates Section */}
-          <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium">Location Coordinates</h4>
-                <Button 
-                  type="button" 
-                  onClick={getCurrentLocation}
-                  variant="outline"
-                  size="sm"
-                >
-                  <MapPinIcon className="mr-2 h-4 w-4" />
-                  Auto-detect
-                </Button>
-            </div>
-
-            {/* Manual Input Fields */}
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="address.coordinates.lat"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Latitude</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={-90}
-                        max={90}
-                        step="0.000001"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address.coordinates.lng"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Longitude</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={-180}
-                        max={180}
-                        step="0.000001"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+        {/* Coordinates Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium">Location Coordinates</h4>
+            <Button
+              type="button"
+              onClick={getCurrentLocation}
+              variant="outline"
+              size="sm"
+            >
+              <MapPinIcon className="mr-2 h-4 w-4" />
+              Auto-detect
+            </Button>
           </div>
 
-         {/* SUBMIT BUTTON */}
-            <Button
-                type='submit'
-                size='lg'
-                disabled={form.formState.isSubmitting}
-                className='bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full'
-            >
-                {form.formState.isSubmitting ? 'Submitting' : `${type} Realestate Account`}
-            </Button>
+          {/* Manual Input Fields */}
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="address.coordinates.lat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Latitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={-90}
+                      max={90}
+                      step="0.000001"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address.coordinates.lng"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Longitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={-180}
+                      max={180}
+                      step="0.000001"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* SUBMIT BUTTON */}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={form.formState.isSubmitting}
+          className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full"
+        >
+          {form.formState.isSubmitting
+            ? "Submitting"
+            : `${type} Realestate Account`}
+        </Button>
       </form>
     </Form>
-  )
+  );
 }
