@@ -103,8 +103,8 @@ export default function SignUp() {
                             field.includes("password")
                               ? "password"
                               : field === "email"
-                              ? "email"
-                              : "text"
+                                ? "email"
+                                : "text"
                           }
                           placeholder={`Enter your ${field}`}
                           {...fieldProps}
@@ -128,9 +128,7 @@ export default function SignUp() {
                   </button>
                 </div>
               )}
-              <LoadingButton pending={pending}>
-                Sign up
-              </LoadingButton>
+              <LoadingButton pending={pending}>Sign up</LoadingButton>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
