@@ -117,7 +117,8 @@ jobs:
             fi
             
             # Install only production dependencies
-            npm ci --omit=dev --legacy-peer-deps
+            # npm ci --omit=dev --legacy-peer-deps
+            npm install --legacy-peer-deps
             
             # Start or restart the application
             echo "Restarting application with PM2..."
