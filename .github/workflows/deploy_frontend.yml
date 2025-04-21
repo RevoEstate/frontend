@@ -15,7 +15,7 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'development' || github.event.action == 'deploy_frontend'
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: "18"
+      NODE_VERSION: "22"
       PROJECT_PATH: "/home/ubuntu/projects/revostate/frontend"
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: ${ env.NODE_VERSION }
 
       - name: Cache Dependencies
         uses: actions/cache@v3
