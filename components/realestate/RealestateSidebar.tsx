@@ -16,7 +16,7 @@ import {
   } from "@/components/ui/sidebar"
   
 import Link from "next/link"
-import { Home, LineChart, Package, Settings, Users, PlusSquare, Menu, User, LogOut } from "lucide-react"
+import { Home, LineChart, Package, Settings, Users, PlusSquare, Menu, User, LogOut, PackageOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePathname, useRouter } from 'next/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../ui/dropdown-menu'
@@ -54,9 +54,10 @@ const navItems = [
     { name: "Dashboard", href: "/realestate", icon: Home },
     { name: "Properties", href: "/realestate/properties", icon: Package },
     { name: "Add Property", href: "/realestate/properties/create", icon: PlusSquare },
-    // { name: "Analytics", href: "/realestate/analytics", icon: LineChart },
     { name: "Customers", href: "/realestate/customers", icon: Users },
     { name: "Profile", href: "/realestate/profile", icon: RiProfileFill },
+    { name: "Packages", href: "/realestate/packages", icon: PackageOpen },
+
   ]
 
 const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
