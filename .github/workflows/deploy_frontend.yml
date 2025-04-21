@@ -75,7 +75,7 @@ jobs:
           # Copy the .next directory (built files)
           rsync -avz --chmod=ugo=rwX \
             -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            .next/ public/ \
+            .next/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/.next/" || {
               echo "Error: rsync failed for .next directory"; exit 1;
             }
@@ -99,11 +99,40 @@ jobs:
             set -e
             cd "${{ env.PROJECT_PATH }}"
             
+            # Source profile to ensure NVM/Node is available
+            source ~/.profile
+            source ~/.bashrc
+            
+            # Print Node.js version for debugging
+            echo "Node.js version:"
+            which node || echo "Node not found in PATH"
+            node -v || true
+            
+            # If using NVM, explicitly use it
+            if [ -f "$HOME/.nvm/nvm.sh" ]; then
+              echo "Using NVM to set Node version"
+              export NVM_DIR="$HOME/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+              nvm use ${{ env.NODE_VERSION }} || nvm install ${{ env.NODE_VERSION }}
+            fi
+            
             # Install only production dependencies
             npm ci --omit=dev --legacy-peer-deps
             
             # Start or restart the application
             echo "Restarting application with PM2..."
+            
+            # Ensure PM2 is available in PATH
+            export PATH="$PATH:$HOME/.npm-global/bin:$HOME/.nvm/versions/node/v${{ env.NODE_VERSION }}/bin"
+            
+            which pm2 || echo "PM2 not found in PATH"
+            
+            if command -v pm2 >/dev/null 2>&1; then
+              echo "PM2 found in PATH"
+            else
+              echo "Installing PM2 globally"
+              npm install -g pm2
+            fi
             
             if pm2 describe revostate-frontend > /dev/null 2>&1; then
               echo "Reloading existing PM2 process..."
