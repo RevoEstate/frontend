@@ -3,10 +3,10 @@ name: CI for Development Branch
 on:
   push:
     branches:
-      - ci
+      - development
   pull_request:
     branches:
-      - ci
+      - development
 
 jobs:
   build:
