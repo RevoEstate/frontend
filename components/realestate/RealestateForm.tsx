@@ -27,11 +27,9 @@ import { useRouter } from "next/navigation"
 import { realestateDefaultValues } from "@/lib/constants/index.ts"
 import { toast } from "sonner"
 import { useState } from "react"
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import { MapPinIcon } from "lucide-react"
-import { LatLngExpression, LatLngTuple } from 'leaflet';
-import dynamic from "next/dynamic"
+import { LatLngTuple } from 'leaflet';
 
 
 // Mock data for regions and cities
@@ -65,18 +63,7 @@ const CITIES_BY_REGION = {
   ],
 }
 
-// Dynamic import for the map component with SSR disabled
-const MapWithNoSSR = dynamic(
-  () => import('@/components/realestate/MapComponent'), // Create this component separately
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="h-64 w-full bg-gray-100 rounded-md flex items-center justify-center">
-        <p>Loading map...</p>
-      </div>
-    )
-  }
-);
+
 
 export function RealestateForm({
     type,
@@ -89,7 +76,6 @@ export function RealestateForm({
 }) {
     const router = useRouter();
     const [preview, setPreview] = useState<string | null>(null);
-    const [mapCenter] = useState<LatLngTuple>([9.1450, 40.4897]);
 
     const form = useForm<z.infer<typeof realestateSchema>>({
       resolver:
@@ -189,11 +175,6 @@ export function RealestateForm({
         }
       );
     }
-  };
-
-  const handleLocationSelect = (coords: LatLngTuple) => {
-    form.setValue('address.coordinates.lat', coords[0]);
-    form.setValue('address.coordinates.lng', coords[1]);
   };
 
   return (
@@ -448,14 +429,6 @@ export function RealestateForm({
                   <MapPinIcon className="mr-2 h-4 w-4" />
                   Auto-detect
                 </Button>
-            </div>
-
-            {/* Map Picker */}
-            <div className="h-64 rounded-md overflow-hidden border">
-              <MapWithNoSSR 
-                center={mapCenter} 
-                onLocationSelect={handleLocationSelect}
-              />
             </div>
 
             {/* Manual Input Fields */}
