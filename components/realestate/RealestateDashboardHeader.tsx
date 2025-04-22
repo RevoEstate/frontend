@@ -56,8 +56,8 @@ export function RealestateDashboardHeader() {
   const profileImage = realestate?.data?.imageUrl || defaultProfileImage;
 
   return (
-    <header className="flex items-center justify-between py-4">
-      <div className="flex items-center gap-4">
+    <header className="flex items-center justify-between">
+      <div className="flex items-center gap-15">
         {/* Show verification prompt if NOT verified */}
         {!isVerified ? (
           <Dialog>
@@ -105,17 +105,18 @@ export function RealestateDashboardHeader() {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center gap-2 bg-sky-100/50 hover:bg-sky-100/70 py-2 px-3 rounded-lg relative"
-                  >
-                    {/* Circular Profile Image */}
-                    <div className="relative">
-                      <img
-                        src={profileImage}
-                        alt={realestateName}
-                        className="h-12 w-12 rounded-full object-cover"
-                      />
-                      {/* Telegram-style Verification Badge */}
-                      <div className="absolute bottom-0 right-0 bg-[#0088CC] rounded-full p-1">
+                    size="lg"
+                    className="flex items-center gap-3 bg-sky-100/50 hover:bg-sky-100/70 py-2 px-3 rounded-lg relative"
+                  >   
+                    {/* Real Estate Name */}
+                    <Link
+                      href="/realestate/profile"
+                      className="text-lg font-medium"
+                    >
+                      {realestateName}
+                    </Link>
+                    <div className="">                
+                      <div className="bg-green-500 rounded-full p-0.5">
                         <svg
                           width="14"
                           height="14"
@@ -130,13 +131,6 @@ export function RealestateDashboardHeader() {
                         </svg>
                       </div>
                     </div>
-                    {/* Real Estate Name */}
-                    <Link
-                      href="/realestate/profile"
-                      className="text-sm font-medium"
-                    >
-                      {realestateName}
-                    </Link>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="font-semibold">

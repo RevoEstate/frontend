@@ -4,7 +4,7 @@ import React from 'react'
 
 const RealestateProfilePage = () => {
   return (
-    <div></div>
+    <div>Realestate profile page </div>
   //  <RealEstateProfile company={mockCompany} />
   )
 }

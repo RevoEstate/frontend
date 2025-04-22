@@ -1,12 +1,60 @@
+"use client"
+
 import { RealestateDashboardHeader } from "@/components/realestate/RealestateDashboardHeader"
 import RealestateSidebar from "@/components/realestate/RealestateSidebar"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { useSession } from "@/lib/auth-client"
+import { useEffect, useId, useState } from "react"
 
-export default async function RealestateDashboardLayout({ 
+export default function RealestateDashboardLayout({ 
   children 
 }: { 
   children: React.ReactNode 
 }) {
+    const [realestates, setRealestates] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const { data: session } = useSession();
+    const user = session?.user; 
+    const userId = session?.user?.id
+ 
+   useEffect(() => {
+    if (!userId) return;
+      const fetchRealestates = async () => {
+        try {
+          setLoading(true)
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/getCompanyByUserId/${userId}`, {
+            method: 'GET',
+            credentials: "include", 
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+    
+          const result = await response.json();
+          console.log("Realestates: ", result)
+          console.log("API Response: ", result);
+          
+          setRealestates(result.data || []); 
+          
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'An unknown error occurred');
+          console.error('Error fetching packages:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      fetchRealestates();
+    }, [useId]);
+
+    if(loading === true) {
+      return(
+        <div>Loading ....</div>
+      )
+    }
+
   return (
     <SidebarProvider>
       <div className="flex md:w-screen">

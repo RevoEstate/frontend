@@ -19,7 +19,7 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
-  const isPremium = packageData.packageType === "premium";
+  const isPremium = packageData?.packageType === "premium";
 
   return (
     <Card
@@ -43,7 +43,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
             <span className="text-lg font-normal text-muted-foreground">
               {" "}
               / {packageData.packageDuration}
-              {packageData.packageDuration === 1 ? "month" : "months"}
+              {packageData.packageDuration === 1 ? " month" : " months"}
             </span>
           </div>
           <div className="text-lg text-muted-foreground">

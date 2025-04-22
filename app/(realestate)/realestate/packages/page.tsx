@@ -81,7 +81,7 @@ const PackagePage = () => {
             <p className="text-muted-foreground text-lg">No packages available at the moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {packages.map((pkg) => (
               <PackageCard key={pkg._id} packageData={pkg} id={pkg._id} />
             ))}
