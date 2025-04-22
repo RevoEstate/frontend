@@ -15,7 +15,7 @@ const PackagePage = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/system-admin/getallpackages', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/system-admin/getallpackages`, {
           method: 'GET',
           credentials: "include",
         });

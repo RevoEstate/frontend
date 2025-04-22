@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
 import Link from "next/link";
 
 interface PackageCardProps {
@@ -21,11 +20,6 @@ interface PackageCardProps {
 
 const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
   const isPremium = packageData.packageType === "premium";
-
-  const handleSubmit = () => {
-    // Redirect to payment gateway
-    toast.success(`${packageData.packageName} purchased!`);
-  };
 
   return (
     <Card
@@ -81,10 +75,9 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
 
       <CardFooter>
         <Button
-          onClick={handleSubmit}
-          type="submit"
-          className={`w-full cursor-pointer ${isPremium ? "bg-amber-700 hover:bg-amber-700/80" : "bg-sky-600 hover:bg-sky-600/70"}`}
-        >
+          asChild
+            className={`w-full cursor-pointer ${isPremium ? "bg-amber-700 hover:bg-amber-700/80" : "bg-sky-600 hover:bg-sky-600/70"}`}
+          >
           <Link href={`/realestate/packages/${id}`}>
             Get Started
           </Link>
