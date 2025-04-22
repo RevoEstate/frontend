@@ -75,7 +75,7 @@ export default function RecentOrders() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Recent Activities
           </h3>
         </div>
 
@@ -144,13 +144,13 @@ export default function RecentOrders() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Price
+                By
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Status
+                Action
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -194,8 +194,8 @@ export default function RecentOrders() {
                       product.status === "Delivered"
                         ? "success"
                         : product.status === "Pending"
-                        ? "warning"
-                        : "error"
+                          ? "warning"
+                          : "error"
                     }
                   >
                     {product.status}
