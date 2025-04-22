@@ -118,31 +118,6 @@ export function RealestateForm({
         }
       });
 
-      // Log FormData contents for debugging
-      console.log("DEBUG: Form Data Entries:");
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(
-            `DEBUG: ${key}: File(name: ${value.name}, size: ${value.size} bytes)`
-          );
-        } else {
-          console.log(`DEBUG: ${key}: ${value}`);
-        }
-      }
-
-      // Log FormData as object (excluding File objects for readability)
-      const formDataObject = {};
-      for (const [key, value] of formData.entries()) {
-        formDataObject[key] =
-          value instanceof File ? `File(${value.name})` : value;
-      }
-      console.log("DEBUG: Form Data as Object:", formDataObject);
-
-      // Submit to API
-      // const endpoint =
-      //   type === "Create"
-      //     ? "/api/realestate"
-      //     : `/api/realestate/${realestateId}`;
       const method = type === "Create" ? "POST" : "PATCH";
 
       const response = await fetch(
