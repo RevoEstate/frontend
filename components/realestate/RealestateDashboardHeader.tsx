@@ -53,7 +53,7 @@ export function RealestateDashboardHeader() {
 
   const isVerified = realestate?.data?.isVerified || false;
   const realestateName = realestate?.data?.realEstateName;
-  const profileImage = realestate?.data?.imageUrl || defaultProfileImage;
+  // const profileImage = realestate?.data?.imageUrl || defaultProfileImage;
 
   return (
     <header className="flex items-center justify-between">
@@ -107,7 +107,7 @@ export function RealestateDashboardHeader() {
                     variant="ghost"
                     size="lg"
                     className="flex items-center gap-3 bg-sky-100/50 hover:bg-sky-100/70 py-2 px-3 rounded-lg relative"
-                  >   
+                  >
                     {/* Real Estate Name */}
                     <Link
                       href="/realestate/profile"
@@ -115,7 +115,7 @@ export function RealestateDashboardHeader() {
                     >
                       {realestateName}
                     </Link>
-                    <div className="">                
+                    <div className="">
                       <div className="bg-green-500 rounded-full p-0.5">
                         <svg
                           width="14"
