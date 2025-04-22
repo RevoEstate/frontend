@@ -5,18 +5,15 @@ import { IPackage } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 interface PackageCardProps {
     packageData: IPackage;
+    id: string
   }
 
-const PackageCard: React.FC<PackageCardProps> = ({ packageData }) => {
+const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
 const isPremium = packageData.packageType === 'premium';
-
-const handleSubmit = () => {
-    // Redirect to payment gateway
-    toast.success(`${packageData.packageName} purchased!`)
-}
 
   return (
     <Card className={`relative overflow-hidden ${isPremium ? 'border-2 border-amber-500' : 'border-1 border-sky-600'}`}>
@@ -54,12 +51,12 @@ const handleSubmit = () => {
       </CardContent>
 
       <CardFooter>
-        <Button 
-            onClick={handleSubmit}
-            type='submit'
+        <Button asChild
             className={`w-full cursor-pointer ${ isPremium ? 'bg-amber-700 hover:bg-amber-700/80' : 'bg-sky-600 hover:bg-sky-600/70' }`}
             >
-          Get Started
+              <Link href={`/realestate/packages/${id}`}>
+                Get Started
+              </Link>
         </Button>
       </CardFooter>
     </Card>
