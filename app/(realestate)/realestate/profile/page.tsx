@@ -1,11 +1,9 @@
 import { RealEstateProfile } from '@/components/realestate/RealestateProfile'
-import { mockCompany } from '@/data/realestate'
 import React from 'react'
 
 const RealestateProfilePage = () => {
   return (
-    <div>Realestate profile page </div>
-  //  <RealEstateProfile company={mockCompany} />
+   <RealEstateProfile />
   )
 }
 
