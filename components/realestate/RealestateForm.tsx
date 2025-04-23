@@ -200,7 +200,7 @@ export function RealestateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 p-3 my-5"
+        className="space-y-8 my-5 bg-gray-50/40 p-10 rounded-2xl"
       >
         {/* Company Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
