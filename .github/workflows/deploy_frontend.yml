@@ -58,13 +58,13 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             whoami
-            sudo mkdir -p "${{ env.PROJECT_PATH }}"
-            sudo chown -R $USER:$USER "${{ env.PROJECT_PATH }}"
+            mkdir -p "${{ env.PROJECT_PATH }}"
+            chown -R $USER:$USER "${{ env.PROJECT_PATH }}"
 
       - name: Deploy Built Files to VPS
         run: |
           # Copy package.json files (needed for runtime)
-          sudo rsync -avz --chmod=ugo=rwX \
+          rsync -avz --chmod=ugo=rwX \
             -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
             package.json package-lock.json \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/" || {
@@ -72,7 +72,7 @@ jobs:
             }
             
           # Copy the .next directory (built files)
-          sudo rsync -avz --chmod=ugo=rwX \
+          rsync -avz --chmod=ugo=rwX \
             -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
             .next/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/.next/" || {
@@ -80,7 +80,7 @@ jobs:
             }
             
           # Copy public directory
-          sudo rsync -avz --chmod=ugo=rwX \
+          rsync -avz --chmod=ugo=rwX \
             -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
             public/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/public/" || {
