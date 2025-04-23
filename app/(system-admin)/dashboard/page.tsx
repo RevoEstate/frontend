@@ -8,8 +8,8 @@ import {
 import { SummaryCard } from "@/components/system-admin/SummaryCard";
 import DataTable from "@/components/system-admin/DataTable";
 import StatisticsChart from "@/components/system-admin/StatisticsChart";
-import RecentActivities from "@/components/system-admin/RecentActivities";
 // import QuickActions from "@/components/admin/QuickActions";
+import RecentActivity from "@/components/system-admin/RecentActivity";
 
 export const metadata: Metadata = {
   title: {
@@ -47,7 +47,7 @@ export default function Ecommerce() {
       </div> */}
 
       <div className="col-span-12 xl:col-span-12">
-        <RecentActivities />
+        <RecentActivity />
       </div>
 
       <div className="col-span-12 xl:col-span-12">
