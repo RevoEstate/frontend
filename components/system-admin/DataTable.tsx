@@ -11,7 +11,7 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
 
-export default function MonthlySalesChart() {
+export default function DataTable() {
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
