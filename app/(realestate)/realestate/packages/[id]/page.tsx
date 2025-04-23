@@ -1,8 +1,10 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
+import { usePackageById } from "@/hooks/usePackageById";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -10,34 +12,38 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const Params = React.use(params);
   const id = Params.id;
 
-  const [packageData, setPackageData] = useState<any>();
+  const { data: packageData, isLoading, error } = usePackageById(id);
 
-  useEffect(() => {
-    // const fetchPackage = async () => {
-    //   const res = await fetch(
-    //     `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/system-admin/getpackage/${id}`,
-    //     {
-    //       method: "GET",
-    //       credentials: "include",
-    //     }
-    //   );
-    const fetchPackage = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/system-admin/getpackage/${id}`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (res.status !== 200) throw new Error("Failed to fetch package");
-        setPackageData(res?.data?.data);
-      } catch (error) {
-        console.error("Error fetching package data:", error);
-      }
-    };
-    fetchPackage();
-  }, [id]);
-  // console.log("PackageData: ", packageData )
+  if (isLoading) {
+    return (
+      <header className="flex items-center justify-center mt-10">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-gray-100 hover:bg-gray-100 cursor-wait"
+            disabled
+          >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Loading...
+          </Button>
+        </div>
+      </header>
+    );
+  }
+
+  if (error) {
+    return (
+      <header className="flex items-center justify-between">
+        <Alert variant="destructive" className="w-auto">
+          <AlertDescription className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {error.message}
+          </AlertDescription>
+        </Alert>
+      </header>
+    );
+  }
   const Handlepayment = async (paymentMethod: string) => {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
@@ -73,6 +79,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
     window.location.href = res.data?.data;
   };
+
   return (
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto">
@@ -203,7 +210,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       />
                     </svg>
                     <span>
-                      {packageData?.packageType === "premiunm"
+                      {packageData?.packageType === "premium"
                         ? "Priority"
                         : "Standard"}{" "}
                       customer support
@@ -224,7 +231,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       />
                     </svg>
                     <span>
-                      {packageData?.packageType === "premiunm"
+                      {packageData?.packageType === "premium"
                         ? "Featured"
                         : "Standard"}{" "}
                       property listings

@@ -30,6 +30,7 @@ import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { MapPinIcon } from "lucide-react";
 import { LatLngTuple } from "leaflet";
+import Image from "next/image";
 
 // Mock data for regions and cities
 const REGIONS = [
@@ -139,6 +140,7 @@ export function RealestateForm({
       toast.success(
         `Real estate ${type === "Create" ? "created" : "updated"} successfully!`
       );
+      form.reset()
       router.push("/realestate/profile");
     } catch (error) {
       console.error("Submission error:", error);
@@ -198,7 +200,7 @@ export function RealestateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 p-3 my-5"
+        className="space-y-8 my-5 bg-gray-50/40 p-10 rounded-2xl"
       >
         {/* Company Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -255,11 +257,11 @@ export function RealestateForm({
               <FormItem>
                 <FormLabel>Realestate Logo</FormLabel>
                 {preview && (
-                  <div className="mt-4">
+                  <div className="flex justify-center items-center border-1 py-3">
                     <img
                       src={preview}
                       alt="Preview"
-                      className="h-32 w-32 rounded-full object-cover"
+                      className="h-32 w-32 object-cover"
                     />
                   </div>
                 )}
@@ -297,7 +299,7 @@ export function RealestateForm({
                 <FormItem>
                   <FormLabel>Region/State</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
+                    <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select a region" />
                       </SelectTrigger>
@@ -326,7 +328,7 @@ export function RealestateForm({
                     value={field.value}
                     disabled={!selectedRegion}
                   >
-                    <FormControl>
+                    <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select a city" />
                       </SelectTrigger>
@@ -373,7 +375,7 @@ export function RealestateForm({
               <FormControl>
                 <Textarea
                   placeholder="Tell us about your realestate..."
-                  className="min-h-[120px]"
+                  className="min-h-[120px] h-40"
                   {...field}
                 />
               </FormControl>
@@ -432,7 +434,7 @@ export function RealestateForm({
                   Selected file: {field.value.name}
                 </div>
               )}
-              <FormControl>
+              <FormControl className="h-32">
                 <Input
                   type="file"
                   accept=".pdf,application/pdf"
@@ -511,7 +513,7 @@ export function RealestateForm({
           type="submit"
           size="lg"
           disabled={form.formState.isSubmitting}
-          className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full"
+          className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full md:text-lg md:font-bold md:py-6"
         >
           {form.formState.isSubmitting
             ? "Submitting"

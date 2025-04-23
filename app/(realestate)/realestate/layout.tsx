@@ -2,61 +2,56 @@
 
 import { RealestateDashboardHeader } from "@/components/realestate/RealestateDashboardHeader"
 import RealestateSidebar from "@/components/realestate/RealestateSidebar"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { useSession } from "@/lib/auth-client"
-import { useEffect, useId, useState } from "react"
+import { useRealestateByUserId } from "@/hooks/useRealestateByUser"
+import { Loader2 } from "lucide-react"
 
 export default function RealestateDashboardLayout({ 
   children 
 }: { 
   children: React.ReactNode 
 }) {
-    const [realestates, setRealestates] = useState([])
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const { data: session } = useSession();
-    const user = session?.user; 
-    const userId = session?.user?.id
- 
-   useEffect(() => {
-    if (!userId) return;
-      const fetchRealestates = async () => {
-        try {
-          setLoading(true)
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/getCompanyByUserId/${userId}`, {
-            method: 'GET',
-            credentials: "include", 
-          });
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-    
-          const result = await response.json();
-          console.log("Realestates: ", result)
-          console.log("API Response: ", result);
-          
-          setRealestates(result.data || []); 
-          
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'An unknown error occurred');
-          console.error('Error fetching packages:', err);
-        } finally {
-          setLoading(false);
-        }
-      };
-    
-      fetchRealestates();
-    }, [useId]);
+  const { 
+    realestate, 
+    isLoading, 
+    error 
+  } = useRealestateByUserId();
 
-    if(loading === true) {
-      return(
-        <div>Loading ....</div>
-      )
-    }
+  if (isLoading) {
+    return (
+      <header className="flex items-center justify-center h-[80vh]">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-transparent cursor-wait text-black"
+            disabled
+          >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Loading...
+          </Button>
+        </div>
+      </header>
+    );
+  }
+
+  if (error) {
+    return (
+      <header className="flex items-center justify-between">
+        <Alert variant="destructive" className="w-auto">
+          <AlertDescription className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+              {error.message}
+          </AlertDescription>
+        </Alert>
+      </header>
+    );
+  }
 
   return (
-    <SidebarProvider>
+      <SidebarProvider>
       <div className="flex md:w-screen">
           <RealestateSidebar />
         
@@ -67,7 +62,7 @@ export default function RealestateDashboardLayout({
               <div className="flex items-center space-x-4">
                 <SidebarTrigger className="cursor-pointer text-sky-700 font-extrabold hover:text-sky-600" />
               </div>
-              <RealestateDashboardHeader />
+              <RealestateDashboardHeader realestate={realestate} error={error} isLoading={isLoading} />
             </div>
           </header>
 
@@ -78,6 +73,6 @@ export default function RealestateDashboardLayout({
           </main>
         </div>
       </div>
-    </SidebarProvider>
+      </SidebarProvider>   
   )
 }
