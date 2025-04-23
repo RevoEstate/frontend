@@ -17,6 +17,15 @@ import {
   TableIcon,
   UserCircleIcon,
 } from "../icons/index";
+import {
+  FaFile,
+  FaBuilding,
+  FaFlag,
+  FaUsers,
+  FaShieldAlt,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import { IoBarChartSharp, IoChatboxEllipses, IoHome } from "react-icons/io5";
 
 type NavItem = {
   name: string;
@@ -27,33 +36,33 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
+    icon: <IoHome size={22} />,
     name: "Overview",
     path: "/",
   },
   {
-    icon: <CalenderIcon />,
+    icon: <FaFile size={22} />,
     name: "Company Applications",
     path: "/company-applications",
   },
   {
-    icon: <UserCircleIcon />,
+    icon: <FaBuilding size={22} />,
     name: "Registered Companies",
     path: "/registered-companies",
   },
 
   {
-    icon: <ListIcon />,
+    icon: <FaFlag size={22} />,
     name: "Content Reports",
     path: "/content-reports",
   },
   {
-    icon: <TableIcon />,
+    icon: <IoChatboxEllipses size={22} />,
     name: "Issue Resolution",
     path: "/issue-resolution",
   },
   {
-    icon: <PageIcon />,
+    icon: <IoBarChartSharp size={22} />,
     name: "Analytics",
     path: "/analytics",
   },
@@ -61,17 +70,17 @@ const navItems: NavItem[] = [
 
 const othersItems: NavItem[] = [
   {
-    icon: <PieChartIcon />,
+    icon: <FaUsers size={22} />,
     name: "Account Management",
     path: "/account-management",
   },
   {
-    icon: <BoxCubeIcon />,
+    icon: <FaShieldAlt size={22} />,
     name: "Platform Policy",
     path: "/platform-policy",
   },
   {
-    icon: <PlugInIcon />,
+    icon: <FaSignOutAlt size={22} />,
     name: "Logout",
     path: "/logout",
   },

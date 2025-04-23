@@ -130,25 +130,25 @@ export default function RecentOrders() {
             <TableRow>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-2 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Products
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-2 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Category
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-2 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 By
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-2 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
                 Action
               </TableCell>
@@ -160,8 +160,8 @@ export default function RecentOrders() {
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
             {tableData.map((product) => (
               <TableRow key={product.id} className="">
-                <TableCell className="py-3">
-                  <div className="flex items-center gap-3">
+                <TableCell className="py-2">
+                  <div className="flex items-center gap-4">
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
                       <Image
                         width={50}
