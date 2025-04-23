@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { format } from "date-fns"
 import { Ban, Building2, ChevronDown, ChevronLeft, ChevronRight, Eye, MoreHorizontal, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,8 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { CompanyProfileDialog } from "./company-profile-dialog"
+} from "@/components/ui/dropdown-menu";
 import { SuspendCompanyDialog } from "./suspend-company-dialog"
 import { DeactivateCompanyDialog } from "./deactivate-company-dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -174,8 +174,10 @@ const companies = [
 ]
 
 export function CompaniesTable() {
-  const [selectedCompany, setSelectedCompany] = useState<(typeof companies)[0] | null>(null)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const router = useRouter();
+  const [selectedCompany, setSelectedCompany] = useState<
+    (typeof companies)[0] | null
+  >(null);
   const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false)
   const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false)
 
@@ -198,8 +200,8 @@ export function CompaniesTable() {
   }
 
   const handleViewProfile = (company: (typeof companies)[0]) => {
-    setSelectedCompany(company)
-    setIsProfileOpen(true)
+    // Navigate to the company profile page instead of opening a modal
+    router.push(`/dashboard/companies/${company.id}`);
   }
 
   const handleSuspend = (company: (typeof companies)[0]) => {
@@ -264,7 +266,9 @@ export function CompaniesTable() {
             <table className="w-full">
               <thead className="bg-muted/50">
                 <tr className="text-left">
-                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground w-[60px]">#</th>
+                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground w-[60px]">
+                    #
+                  </th>
                   <th
                     className="px-4 py-3.5 text-sm font-medium text-muted-foreground cursor-pointer"
                     onClick={() => handleSort("name")}
@@ -278,7 +282,9 @@ export function CompaniesTable() {
                       )}
                     </div>
                   </th>
-                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground">Contact Email</th>
+                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground">
+                    Contact Email
+                  </th>
                   <th
                     className="px-4 py-3.5 text-sm font-medium text-muted-foreground cursor-pointer"
                     onClick={() => handleSort("registrationDate")}
@@ -318,13 +324,20 @@ export function CompaniesTable() {
                       )}
                     </div>
                   </th>
-                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground text-right">Actions</th>
+                  <th className="px-4 py-3.5 text-sm font-medium text-muted-foreground text-right">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
                 {currentCompanies.map((company, index) => (
-                  <tr key={company.id} className="group hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-4 text-sm text-muted-foreground">{indexOfFirstRow + index + 1}</td>
+                  <tr
+                    key={company.id}
+                    className="group hover:bg-muted/50 transition-colors"
+                  >
+                    <td className="px-4 py-4 text-sm text-muted-foreground">
+                      {indexOfFirstRow + index + 1}
+                    </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9 bg-primary/10 text-primary">
@@ -334,34 +347,53 @@ export function CompaniesTable() {
                         </Avatar>
                         <div>
                           <div className="font-medium">{company.name}</div>
-                          <div className="text-xs text-muted-foreground">{company.location}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {company.location}
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm">
-                      <a href={`mailto:${company.contactEmail}`} className="text-primary hover:underline">
+                      <a
+                        href={`mailto:${company.contactEmail}`}
+                        className="text-primary hover:underline"
+                      >
                         {company.contactEmail}
                       </a>
                     </td>
-                    <td className="px-4 py-4 text-sm">{format(company.registrationDate, "MMM d, yyyy")}</td>
-                    <td className="px-4 py-4 text-sm font-medium">{company.numberOfListings}</td>
-                    <td className="px-4 py-4 text-sm">{getStatusBadge(company.status)}</td>
+                    <td className="px-4 py-4 text-sm">
+                      {format(company.registrationDate, "MMM d, yyyy")}
+                    </td>
+                    <td className="px-4 py-4 text-sm font-medium">
+                      {company.numberOfListings}
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      {getStatusBadge(company.status)}
+                    </td>
                     <td className="px-4 py-4 text-right">
                       <div className="flex justify-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 opacity-0 group-hover:opacity-100"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewProfile(company)}>
+                            <DropdownMenuItem
+                              onClick={() => handleViewProfile(company)}
+                            >
                               <Eye className="mr-2 h-4 w-4" />
                               <span>View Profile</span>
                             </DropdownMenuItem>
                             {company.status !== "suspended" && (
-                              <DropdownMenuItem onClick={() => handleSuspend(company)}>
+                              <DropdownMenuItem
+                                onClick={() => handleSuspend(company)}
+                              >
                                 <Ban className="mr-2 h-4 w-4" />
                                 <span>Suspend</span>
                               </DropdownMenuItem>
@@ -387,16 +419,30 @@ export function CompaniesTable() {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between px-4 py-4 border-t">
             <div className="text-sm text-muted-foreground">
-              Showing <span className="font-medium">{indexOfFirstRow + 1}</span> to{" "}
-              <span className="font-medium">{Math.min(indexOfLastRow, companies.length)}</span> of{" "}
-              <span className="font-medium">{companies.length}</span> companies
+              Showing <span className="font-medium">{indexOfFirstRow + 1}</span>{" "}
+              to{" "}
+              <span className="font-medium">
+                {Math.min(indexOfLastRow, companies.length)}
+              </span>{" "}
+              of <span className="font-medium">{companies.length}</span>{" "}
+              companies
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={goToPrevPage} disabled={currentPage === 1}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Previous Page</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={goToNextPage} disabled={currentPage === totalPages}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
                 <ChevronRight className="h-4 w-4" />
                 <span className="sr-only">Next Page</span>
               </Button>
@@ -407,27 +453,15 @@ export function CompaniesTable() {
 
       {selectedCompany && (
         <>
-          <CompanyProfileDialog
-            company={selectedCompany}
-            isOpen={isProfileOpen}
-            onClose={() => setIsProfileOpen(false)}
-            onSuspend={() => {
-              setIsProfileOpen(false)
-              setIsSuspendDialogOpen(true)
-            }}
-            onDeactivate={() => {
-              setIsProfileOpen(false)
-              setIsDeactivateDialogOpen(true)
-            }}
-          />
-
           <SuspendCompanyDialog
             company={selectedCompany}
             isOpen={isSuspendDialogOpen}
             onClose={() => setIsSuspendDialogOpen(false)}
             onSuspend={(reason) => {
-              console.log(`Suspending company ${selectedCompany.id} with reason: ${reason}`)
-              setIsSuspendDialogOpen(false)
+              console.log(
+                `Suspending company ${selectedCompany.id} with reason: ${reason}`
+              );
+              setIsSuspendDialogOpen(false);
               // In a real application, you would call an API to update the status
             }}
           />
@@ -437,13 +471,13 @@ export function CompaniesTable() {
             isOpen={isDeactivateDialogOpen}
             onClose={() => setIsDeactivateDialogOpen(false)}
             onDeactivate={() => {
-              console.log(`Deactivating company ${selectedCompany.id}`)
-              setIsDeactivateDialogOpen(false)
+              console.log(`Deactivating company ${selectedCompany.id}`);
+              setIsDeactivateDialogOpen(false);
               // In a real application, you would call an API to update the status
             }}
           />
         </>
       )}
     </Card>
-  )
+  );
 }
