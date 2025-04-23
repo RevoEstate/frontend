@@ -22,7 +22,9 @@ export default function RecentActivity() {
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white px-6 pb-4 pt-5 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">Recent Activities</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+            Recent Activities
+          </h3>
         </div>
 
         <div className="flex items-center gap-3">
@@ -37,7 +39,7 @@ export default function RecentActivity() {
         </div>
       </div>
 
-      <RecentTable columns={columns} data={formattedData} />
+      <RecentTable columns={columns} data={formattedData} rowsPerPage={5} />
     </div>
-  )
+  );
 }
