@@ -61,19 +61,20 @@ export function SuspendCompanyDialog({ company, isOpen, onClose, onSuspend }: Su
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-lg max-h-[100vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
             <AlertTriangle className="h-5 w-5" />
             Suspend Company
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to suspend <strong>{company.name}</strong>. This will temporarily disable their account and
-            prevent them from accessing the platform.
+            You are about to suspend <strong>{company.name}</strong>. This will
+            temporarily disable their account and prevent them from accessing
+            the platform.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="py-4 space-y-4 overflow-visible">
           <div className="space-y-2">
             <Label htmlFor="suspension-reason-type">
               Reason Type <span className="text-red-500">*</span>
@@ -81,11 +82,14 @@ export function SuspendCompanyDialog({ company, isOpen, onClose, onSuspend }: Su
             <Select
               value={reasonType}
               onValueChange={(value) => {
-                setReasonType(value)
-                if (value) setError("")
+                setReasonType(value);
+                if (value) setError("");
               }}
             >
-              <SelectTrigger id="suspension-reason-type" className={error && !reasonType ? "border-red-500" : ""}>
+              <SelectTrigger
+                id="suspension-reason-type"
+                className={error && !reasonType ? "border-red-500" : ""}
+              >
                 <SelectValue placeholder="Select reason type" />
               </SelectTrigger>
               <SelectContent>
@@ -107,10 +111,10 @@ export function SuspendCompanyDialog({ company, isOpen, onClose, onSuspend }: Su
               placeholder="Please provide specific details about the suspension reason..."
               value={reasonDetails}
               onChange={(e) => {
-                setReasonDetails(e.target.value)
-                if (e.target.value.trim()) setError("")
+                setReasonDetails(e.target.value);
+                if (e.target.value.trim()) setError("");
               }}
-              className={`min-h-[120px] ${error && !reasonDetails.trim() ? "border-red-500" : ""}`}
+              className={`min-h-[20px] ${error && !reasonDetails.trim() ? "border-red-500" : ""}`}
             />
           </div>
 
@@ -120,18 +124,21 @@ export function SuspendCompanyDialog({ company, isOpen, onClose, onSuspend }: Su
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
-              setReasonType("")
-              setReasonDetails("")
-              setError("")
+              setReasonType("");
+              setReasonDetails("");
+              setError("");
             }}
           >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleSuspend} className="bg-amber-600 hover:bg-amber-700">
+          <AlertDialogAction
+            onClick={handleSuspend}
+            className="bg-amber-600 hover:bg-amber-700"
+          >
             Suspend Company
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

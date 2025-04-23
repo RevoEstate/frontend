@@ -3,18 +3,30 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
-import { ArrowLeft, Ban, Building2, Calendar, ExternalLink, Globe, Mail, MapPin, Phone, Trash2 } from "lucide-react"
+import {
+  ArrowLeft,
+  Ban,
+  Building2,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Trash2,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { SuspendCompanyDialog } from "@/components/system-admin/companies/suspend-company-dialog"
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { SuspendCompanyDialog } from "@/components/system-admin/companies/suspend-company-dialog";
 import { DeactivateCompanyDialog } from "@/components/system-admin/companies/deactivate-company-dialog";
 import { use } from "react";
-
 
 // Mock data for demonstration - in a real app, you would fetch this from an API
 const companies = [
@@ -53,81 +65,298 @@ const companies = [
 
 // Mock listings data
 const mockListings = [
-  { id: "1", title: "Modern Downtown Apartment", type: "Apartment", price: "$2,500/mo", date: new Date(2023, 9, 15) },
-  { id: "2", title: "Luxury Waterfront Condo", type: "Condo", price: "$750,000", date: new Date(2023, 9, 10) },
-  { id: "3", title: "Spacious Family Home", type: "House", price: "$450,000", date: new Date(2023, 9, 5) },
-  { id: "4", title: "Commercial Office Space", type: "Commercial", price: "$35/sqft/yr", date: new Date(2023, 8, 28) },
-]
+  {
+    id: "1",
+    title: "Modern Downtown Apartment",
+    type: "Apartment",
+    price: "$2,500/mo",
+    date: new Date(2023, 9, 15),
+  },
+  {
+    id: "2",
+    title: "Luxury Waterfront Condo",
+    type: "Condo",
+    price: "$750,000",
+    date: new Date(2023, 9, 10),
+  },
+  {
+    id: "3",
+    title: "Spacious Family Home",
+    type: "House",
+    price: "$450,000",
+    date: new Date(2023, 9, 5),
+  },
+  {
+    id: "4",
+    title: "Commercial Office Space",
+    type: "Commercial",
+    price: "$35/sqft/yr",
+    date: new Date(2023, 8, 28),
+  },
+  {
+    id: "5",
+    title: "Beachfront Villa",
+    type: "House",
+    price: "$1,200,000",
+    date: new Date(2023, 8, 20),
+  },
+  {
+    id: "6",
+    title: "Studio Apartment",
+    type: "Apartment",
+    price: "$1,800/mo",
+    date: new Date(2023, 8, 15),
+  },
+  {
+    id: "7",
+    title: "Retail Space",
+    type: "Commercial",
+    price: "$28/sqft/yr",
+    date: new Date(2023, 8, 10),
+  },
+  {
+    id: "8",
+    title: "Mountain Cabin",
+    type: "House",
+    price: "$350,000",
+    date: new Date(2023, 8, 5),
+  },
+  {
+    id: "9",
+    title: "Luxury Penthouse",
+    type: "Condo",
+    price: "$3,500,000",
+    date: new Date(2023, 7, 28),
+  },
+  {
+    id: "10",
+    title: "Office Building",
+    type: "Commercial",
+    price: "$5,200,000",
+    date: new Date(2023, 7, 20),
+  },
+  {
+    id: "11",
+    title: "Suburban Home",
+    type: "House",
+    price: "$425,000",
+    date: new Date(2023, 7, 15),
+  },
+  {
+    id: "12",
+    title: "Downtown Loft",
+    type: "Apartment",
+    price: "$2,200/mo",
+    date: new Date(2023, 7, 10),
+  },
+];
 
 // Mock activity log
 const mockActivityLog = [
-  { id: "1", action: "New listing added", date: new Date(2023, 9, 15), details: "Modern Downtown Apartment" },
+  {
+    id: "1",
+    action: "New listing added",
+    date: new Date(2023, 9, 15),
+    details: "Modern Downtown Apartment",
+  },
   {
     id: "2",
     action: "Responded to inquiry",
     date: new Date(2023, 9, 12),
     details: "From John Smith regarding Luxury Waterfront Condo",
   },
-  { id: "3", action: "Updated company profile", date: new Date(2023, 9, 8), details: "Changed contact information" },
-  { id: "4", action: "New listing added", date: new Date(2023, 9, 5), details: "Spacious Family Home" },
-  { id: "5", action: "Verification documents submitted", date: new Date(2023, 8, 30), details: "License renewal" },
-]
+  {
+    id: "3",
+    action: "Updated company profile",
+    date: new Date(2023, 9, 8),
+    details: "Changed contact information",
+  },
+  {
+    id: "4",
+    action: "New listing added",
+    date: new Date(2023, 9, 5),
+    details: "Spacious Family Home",
+  },
+  {
+    id: "5",
+    action: "Verification documents submitted",
+    date: new Date(2023, 8, 30),
+    details: "License renewal",
+  },
+  {
+    id: "6",
+    action: "New listing added",
+    date: new Date(2023, 8, 25),
+    details: "Commercial Office Space",
+  },
+  {
+    id: "7",
+    action: "Customer inquiry",
+    date: new Date(2023, 8, 20),
+    details: "Regarding Beachfront Villa",
+  },
+  {
+    id: "8",
+    action: "Updated listing",
+    date: new Date(2023, 8, 15),
+    details: "Price reduced on Studio Apartment",
+  },
+  {
+    id: "9",
+    action: "New listing added",
+    date: new Date(2023, 8, 10),
+    details: "Retail Space",
+  },
+  {
+    id: "10",
+    action: "Attended training",
+    date: new Date(2023, 8, 5),
+    details: "Platform usage webinar",
+  },
+  {
+    id: "11",
+    action: "New listing added",
+    date: new Date(2023, 7, 28),
+    details: "Luxury Penthouse",
+  },
+  {
+    id: "12",
+    action: "Updated company logo",
+    date: new Date(2023, 7, 25),
+    details: "Uploaded new branding",
+  },
+  {
+    id: "13",
+    action: "New listing added",
+    date: new Date(2023, 7, 20),
+    details: "Office Building",
+  },
+  {
+    id: "14",
+    action: "Customer feedback",
+    date: new Date(2023, 7, 15),
+    details: "Positive review from client",
+  },
+  {
+    id: "15",
+    action: "New listing added",
+    date: new Date(2023, 7, 10),
+    details: "Downtown Loft",
+  },
+];
 
-export default function CompanyProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default function CompanyProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const router = useRouter();
+  const { id } = use(params);
+  const [company, setCompany] = useState<(typeof companies)[0] | null>(null);
+  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
+  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);
 
-  const router = useRouter()
-  const { id } = use(params)
-  const [company, setCompany] = useState<(typeof companies)[0] | null>(null)
-  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false)
-  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false)
+  // Pagination state for listings
+  const [listingsPage, setListingsPage] = useState(1);
+  const listingsPerPage = 4;
+  const totalListingsPages = Math.ceil(mockListings.length / listingsPerPage);
+
+  // Pagination state for activity log
+  const [activityPage, setActivityPage] = useState(1);
+  const activitiesPerPage = 5;
+  const totalActivityPages = Math.ceil(
+    mockActivityLog.length / activitiesPerPage
+  );
 
   useEffect(() => {
     // In a real app, you would fetch the company data from an API
-    const foundCompany = companies.find((c) => c.id === id)
-    setCompany(foundCompany || null)
-  }, [id])
+    const foundCompany = companies.find((c) => c.id === id);
+    setCompany(foundCompany || null);
+  }, [id]);
 
   const getVerificationBadge = (status: string) => {
     switch (status) {
       case "verified":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Verified</Badge>
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            Verified
+          </Badge>
+        );
       case "pending":
         return (
-          <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+          <Badge
+            variant="secondary"
+            className="bg-amber-100 text-amber-800 hover:bg-amber-100"
+          >
             Pending Verification
           </Badge>
-        )
+        );
       case "unverified":
         return (
           <Badge variant="outline" className="text-muted-foreground">
             Unverified
           </Badge>
-        )
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            Active
+          </Badge>
+        );
       case "suspended":
         return (
-          <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+          <Badge
+            variant="secondary"
+            className="bg-amber-100 text-amber-800 hover:bg-amber-100"
+          >
             Suspended
           </Badge>
-        )
+        );
       case "inactive":
         return (
           <Badge variant="outline" className="text-muted-foreground">
             Inactive
           </Badge>
-        )
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
+
+  // Calculate current page data for listings
+  const indexOfLastListing = listingsPage * listingsPerPage;
+  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
+  const currentListings = mockListings.slice(
+    indexOfFirstListing,
+    indexOfLastListing
+  );
+
+  // Calculate current page data for activity log
+  const indexOfLastActivity = activityPage * activitiesPerPage;
+  const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
+  const currentActivities = mockActivityLog.slice(
+    indexOfFirstActivity,
+    indexOfLastActivity
+  );
+
+  // Pagination controls for listings
+  const goToNextListingsPage = () =>
+    setListingsPage((prev) => Math.min(prev + 1, totalListingsPages));
+  const goToPrevListingsPage = () =>
+    setListingsPage((prev) => Math.max(prev - 1, 1));
+
+  // Pagination controls for activity log
+  const goToNextActivityPage = () =>
+    setActivityPage((prev) => Math.min(prev + 1, totalActivityPages));
+  const goToPrevActivityPage = () =>
+    setActivityPage((prev) => Math.max(prev - 1, 1));
 
   if (!company) {
     return (
@@ -138,7 +367,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
           Back to companies
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -164,7 +393,9 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
                   </Avatar>
                   <div>
                     <CardTitle>{company.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{company.location}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {company.location}
+                    </p>
                   </div>
                 </div>
                 {getStatusBadge(company.status)}
@@ -172,10 +403,15 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-muted-foreground">Contact Information</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Contact Information
+                </h3>
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <a href={`mailto:${company.contactEmail}`} className="text-sm text-primary hover:underline">
+                  <a
+                    href={`mailto:${company.contactEmail}`}
+                    className="text-sm text-primary hover:underline"
+                  >
                     {company.contactEmail}
                   </a>
                 </div>
@@ -204,23 +440,37 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
               <Separator />
 
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-muted-foreground">Company Details</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Company Details
+                </h3>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-xs text-muted-foreground">Verification</p>
-                    <p className="text-sm">{getVerificationBadge(company.verificationStatus)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Verification
+                    </p>
+                    <p className="text-sm">
+                      {getVerificationBadge(company.verificationStatus)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">License Number</p>
-                    <p className="text-sm font-medium">{company.licenseNumber}</p>
+                    <p className="text-xs text-muted-foreground">
+                      License Number
+                    </p>
+                    <p className="text-sm font-medium">
+                      {company.licenseNumber}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Listings</p>
-                    <p className="text-sm font-medium">{company.numberOfListings}</p>
+                    <p className="text-sm font-medium">
+                      {company.numberOfListings}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Registered</p>
-                    <p className="text-sm">{format(company.registrationDate, "MMM d, yyyy")}</p>
+                    <p className="text-sm">
+                      {format(company.registrationDate, "MMM d, yyyy")}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -260,7 +510,7 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
 
             <TabsContent value="listings" className="space-y-4 pt-4">
               <div className="space-y-4">
-                {mockListings.map((listing) => (
+                {currentListings.map((listing) => (
                   <Card key={listing.id}>
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start">
@@ -268,7 +518,9 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
                           <h3 className="font-medium">{listing.title}</h3>
                           <div className="flex items-center gap-4 mt-1">
                             <Badge variant="outline">{listing.type}</Badge>
-                            <span className="text-sm font-medium">{listing.price}</span>
+                            <span className="text-sm font-medium">
+                              {listing.price}
+                            </span>
                           </div>
                         </div>
                         <div className="flex items-center text-sm text-muted-foreground">
@@ -280,22 +532,100 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
                   </Card>
                 ))}
               </div>
+
+              {/* Listings Pagination Controls */}
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="text-sm text-muted-foreground">
+                  Showing{" "}
+                  <span className="font-medium">{indexOfFirstListing + 1}</span>{" "}
+                  to{" "}
+                  <span className="font-medium">
+                    {Math.min(indexOfLastListing, mockListings.length)}
+                  </span>{" "}
+                  of <span className="font-medium">{mockListings.length}</span>{" "}
+                  listings
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPrevListingsPage}
+                    disabled={listingsPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Previous Page</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextListingsPage}
+                    disabled={listingsPage === totalListingsPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Next Page</span>
+                  </Button>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="activity" className="space-y-4 pt-4">
               <div className="space-y-4">
-                {mockActivityLog.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-3 p-3 border rounded-md">
+                {currentActivities.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-start gap-3 p-3 border rounded-md"
+                  >
                     <div className="h-2 w-2 rounded-full bg-primary mt-2" />
                     <div className="flex-1">
                       <div className="flex justify-between">
                         <span className="font-medium">{activity.action}</span>
-                        <span className="text-sm text-muted-foreground">{format(activity.date, "MMM d, yyyy")}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {format(activity.date, "MMM d, yyyy")}
+                        </span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{activity.details}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {activity.details}
+                      </p>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Activity Log Pagination Controls */}
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="text-sm text-muted-foreground">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {indexOfFirstActivity + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-medium">
+                    {Math.min(indexOfLastActivity, mockActivityLog.length)}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium">{mockActivityLog.length}</span>{" "}
+                  activities
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPrevActivityPage}
+                    disabled={activityPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Previous Page</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextActivityPage}
+                    disabled={activityPage === totalActivityPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Next Page</span>
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
@@ -308,8 +638,10 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
         isOpen={isSuspendDialogOpen}
         onClose={() => setIsSuspendDialogOpen(false)}
         onSuspend={(reason) => {
-          console.log(`Suspending company ${company.id} with reason: ${reason}`)
-          setIsSuspendDialogOpen(false)
+          console.log(
+            `Suspending company ${company.id} with reason: ${reason}`
+          );
+          setIsSuspendDialogOpen(false);
           // In a real application, you would call an API to update the status
         }}
       />
@@ -319,11 +651,11 @@ export default function CompanyProfilePage({ params }: { params: Promise<{ id: s
         isOpen={isDeactivateDialogOpen}
         onClose={() => setIsDeactivateDialogOpen(false)}
         onDeactivate={() => {
-          console.log(`Deactivating company ${company.id}`)
-          setIsDeactivateDialogOpen(false)
+          console.log(`Deactivating company ${company.id}`);
+          setIsDeactivateDialogOpen(false);
           // In a real application, you would call an API to update the status
         }}
       />
     </div>
-  )
+  );
 }

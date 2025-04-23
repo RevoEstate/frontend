@@ -46,14 +46,15 @@ export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-lg max-h-[100vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
             Deactivate Company
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to permanently deactivate <strong>{company.name}</strong>. This action cannot be undone. All
+            You are about to permanently deactivate{" "}
+            <strong>{company.name}</strong>. This action cannot be undone. All
             company data, listings, and account information will be archived.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -65,14 +66,18 @@ export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate
 
           <div className="space-y-2">
             <Label htmlFor="confirm-deactivation">
-              Type <span className="font-mono bg-muted px-1 rounded">{expectedText}</span> to confirm
+              Type{" "}
+              <span className="font-mono bg-muted px-1 rounded">
+                {expectedText}
+              </span>{" "}
+              to confirm
             </Label>
             <Input
               id="confirm-deactivation"
               value={confirmText}
               onChange={(e) => {
-                setConfirmText(e.target.value)
-                setError("")
+                setConfirmText(e.target.value);
+                setError("");
               }}
               className={error ? "border-red-500" : ""}
             />
@@ -83,17 +88,21 @@ export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
-              setConfirmText("")
-              setError("")
+              setConfirmText("");
+              setError("");
             }}
           >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeactivate} className="bg-red-600 hover:bg-red-700" disabled={!isConfirmed}>
+          <AlertDialogAction
+            onClick={handleDeactivate}
+            className="bg-red-600 hover:bg-red-700"
+            disabled={!isConfirmed}
+          >
             Deactivate Company
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
