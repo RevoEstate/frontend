@@ -122,9 +122,11 @@ const AppHeader: React.FC = () => {
 
           <div className="w-full hidden lg:block">
             <div className="hidden lg:block">
-              <div className="relative flex gap-4 items-center justify-center bg-gradient-to-b from-blue-500 to-indigo-700 text-white rounded-lg p-4 shadow-lg">
-                <div className="text-2xl font-semibold">Welcome, Admin</div>
-                <div className="text-sm font-light mt-1">
+              <div className="relative flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/30 backdrop-blur-md text-gray-800 dark:text-white rounded-lg p-6 shadow-sm">
+                <div className="text-3xl font-bold tracking-wide">
+                  Welcome, Admin
+                </div>
+                <div className="text-sm font-light mt-2">
                   {new Date().toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
