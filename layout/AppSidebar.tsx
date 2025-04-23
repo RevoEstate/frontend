@@ -50,8 +50,8 @@ const navItems: NavItem[] = [
   },
   {
     icon: <FaBuilding size={22} />,
-    name: "Registered Companies",
-    path: "/registered-companies",
+    name: "Companies",
+    path: "/companies",
   },
 
   {
@@ -84,8 +84,8 @@ const othersItems: NavItem[] = [
   },
   {
     icon: <FaSignOutAlt size={22} />,
-    name: "Logout",
-    path: "/logout",
+    name: "Sign out",
+    path: "/sign-out",
   },
 ];
 
@@ -139,7 +139,7 @@ const AppSidebar: React.FC = () => {
           ) : (
             nav.path && (
               <Link
-                href={nav.path}
+                href={`/dashboard${nav.path}`}
                 className={`menu-item group ${
                   isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
                 }`}

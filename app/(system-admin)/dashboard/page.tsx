@@ -5,11 +5,11 @@ import {
   APP_NAME,
   SERVER_URL,
 } from "@/lib/constants/index.ts";
-import { SummaryCard } from "@/components/system-admin/SummaryCard";
-import DataTable from "@/components/system-admin/DataTable";
-import StatisticsChart from "@/components/system-admin/StatisticsChart";
-import RecentActivities from "@/components/system-admin/RecentActivities";
+import { SummaryCard } from "@/components/system-admin/overview/SummaryCard";
+import DataTable from "@/components/system-admin/overview/DataTable";
+import StatisticsChart from "@/components/system-admin/overview/StatisticsChart";
 // import QuickActions from "@/components/admin/QuickActions";
+import RecentActivity from "@/components/system-admin/overview/RecentActivity";
 
 export const metadata: Metadata = {
   title: {
@@ -47,7 +47,7 @@ export default function Ecommerce() {
       </div> */}
 
       <div className="col-span-12 xl:col-span-12">
-        <RecentActivities />
+        <RecentActivity />
       </div>
 
       <div className="col-span-12 xl:col-span-12">
