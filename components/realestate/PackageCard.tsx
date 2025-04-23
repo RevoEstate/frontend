@@ -11,19 +11,15 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
+import Link from "next/link";
 
 interface PackageCardProps {
   packageData: IPackage;
+  id: string
 }
 
-const PackageCard: React.FC<PackageCardProps> = ({ packageData }) => {
-  const isPremium = packageData.packageType === "premium";
-
-  const handleSubmit = () => {
-    // Redirect to payment gateway
-    toast.success(`${packageData.packageName} purchased!`);
-  };
+const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
+  const isPremium = packageData?.packageType === "premium";
 
   return (
     <Card
@@ -47,7 +43,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData }) => {
             <span className="text-lg font-normal text-muted-foreground">
               {" "}
               / {packageData.packageDuration}
-              {packageData.packageDuration === 1 ? "month" : "months"}
+              {packageData.packageDuration === 1 ? " month" : " months"}
             </span>
           </div>
           <div className="text-lg text-muted-foreground">
@@ -79,11 +75,12 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData }) => {
 
       <CardFooter>
         <Button
-          onClick={handleSubmit}
-          type="submit"
-          className={`w-full cursor-pointer ${isPremium ? "bg-amber-700 hover:bg-amber-700/80" : "bg-sky-600 hover:bg-sky-600/70"}`}
-        >
-          Get Started
+          asChild
+            className={`w-full cursor-pointer ${isPremium ? "bg-amber-700 hover:bg-amber-700/80" : "bg-sky-600 hover:bg-sky-600/70"}`}
+          >
+          <Link href={`/realestate/packages/${id}`}>
+            Get Started
+          </Link>
         </Button>
       </CardFooter>
     </Card>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,7 @@ const itemVariants = {
 const UserMenu = () => {
  const { data: session, status } = useSession();
   const user = session?.user; 
-
+console.log("User Menu: ", user)
 
   const handleSignOut = async () => {
     try {

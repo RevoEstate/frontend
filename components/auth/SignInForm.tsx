@@ -117,12 +117,16 @@ export default function SignInForm() {
             try {
               const session = await authClient.getSession();
               const userRole = session?.data?.user?.role;
+              const userId = session?.data?.user?.id
+
               if (userRole === "systemAdmin") {
-                router.replace("/systemAdmin");
+                // router.replace("/systemAdmin");
+                router.replace(`/systemAdmin/${userId}`);
               } else if (userRole === "support") {
-                router.replace("/systemManager");
+                // router.replace("/systemManager");
+                router.replace(`/systemManager/${userId}`);
               } else if (userRole === "agent") {
-                router.replace("/realestate");
+                router.replace(`/realestate/${userId}`);
               } else {
                 router.replace("/");
               }
