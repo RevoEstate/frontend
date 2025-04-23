@@ -21,12 +21,12 @@ export default function RealestateDashboardLayout({
 
   if (isLoading) {
     return (
-      <header className="flex items-center justify-center mt-15">
+      <header className="flex items-center justify-center h-[80vh]">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
-            className="bg-gray-100 hover:bg-gray-100 cursor-wait"
+            className="bg-transparent cursor-wait text-black"
             disabled
           >
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
