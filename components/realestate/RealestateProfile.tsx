@@ -36,6 +36,18 @@ export function RealEstateProfile() {
     );
   }
 
+  if(!realestate?.isVerified) {
+    return(
+      <div className="border-1 py-10 px-5 text-gray-900">
+      <div className="flex flex-col items-center justify-center gap-2">
+      <h1 className="font-medium text-center md:text-xl">Your Document is Under revision for Verification!</h1>
+      <p className="text-muted-foreground text-xs md:text-sm">Wait for sometime</p>
+      </div>
+    </div>
+    )
+   
+  }
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row gap-6">
@@ -117,9 +129,7 @@ export function RealEstateProfile() {
         </div>
 
         {/* Main Content */}
-        <div className="md:w-2/3 space-y-6">
-          {/* Verification Status */}
-          {realestate?.isVerified ? (
+        <div className="md:w-2/3 space-y-6">        
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
@@ -161,14 +171,7 @@ export function RealEstateProfile() {
                     )}
                 </div>
               </CardContent>
-            </Card>
-          ) : (
-            <div className="border-1 py-10 px-5 text-sky-500 flex gap-3 justify-center items-center">
-              <SquareChartGantt size={36} strokeWidth={2} />
-              <h1 className="font-medium text-xl">Your Document is Under revision for Verification!</h1>
-              <Hourglass size={28} />
-            </div>
-          )}
+            </Card>          
 
           {/* Location Map */}
           <Card>

@@ -21,42 +21,12 @@ import { RealestateForm } from "./RealestateForm";
 import { ScrollArea } from "../ui/scroll-area";
 import { useRealestateByUserId } from "@/hooks/useRealestateByUser";
 import { Alert, AlertDescription } from "../ui/alert";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function RealestateDashboardHeader({realestate, error, isLoading}) {
-  
   const notificationCount = 5; 
-
-  // if (isLoading) {
-  //   return (
-  //     <header className="flex items-center justify-between">
-  //       <div className="flex items-center gap-4">
-  //         <Button
-  //           variant="ghost"
-  //           size="sm"
-  //           className="bg-gray-100 hover:bg-gray-100 cursor-wait"
-  //           disabled
-  //         >
-  //           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-  //           Loading...
-  //         </Button>
-  //       </div>
-  //     </header>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <header className="flex items-center justify-between">
-  //       <Alert variant="destructive" className="w-auto">
-  //         <AlertDescription className="flex items-center gap-2">
-  //           <Loader2 className="h-4 w-4 animate-spin" />
-  //           Failed to load profile: {error.message}
-  //         </AlertDescription>
-  //       </Alert>
-  //     </header>
-  //   );
-  // }
-
+  const router = useRouter()
 
   return (
     <header className="flex items-center justify-between">
@@ -70,27 +40,18 @@ export function RealestateDashboardHeader({realestate, error, isLoading}) {
         ) : (
           <div>   
             {!realestate?.isVerified ? (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="bg-sky-600 hover:bg-sky-600/80 text-white hover:text-white cursor-pointer"
-                >
-                  Verify account
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-h-[90vh] overflow-hidden w-[80vw]">
-                <DialogHeader className="border-b p-3 mt-3">
-                  <DialogTitle className="text-center">
-                    Create Your Realestate Profile
-                  </DialogTitle>
-                </DialogHeader>
-                <ScrollArea className="h-[70vh]">
-                  <RealestateForm type="Create" />
-                </ScrollArea>
-              </DialogContent>
-            </Dialog>
+
+          <>
+           <Button
+              onClick={() => router.push('/realestate/profile/create')}
+              variant="ghost"
+              size="sm"
+              className="bg-sky-600 hover:bg-sky-600/80 text-white hover:text-white cursor-pointer"
+            >
+              Verify account
+          </Button>
+          </>
+             
           ) : (
             /* Show notifications and profile when verified */
             <div className="flex justify-center items-center gap-8">
