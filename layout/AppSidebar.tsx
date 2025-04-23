@@ -26,6 +26,9 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { IoBarChartSharp, IoChatboxEllipses, IoHome } from "react-icons/io5";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 type NavItem = {
   name: string;
@@ -151,7 +154,9 @@ const AppSidebar: React.FC = () => {
                   {nav.icon}
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className={`menu-item-text`}>{nav.name}</span>
+                  <span className={`${inter.className} menu-item-text`}>
+                    {nav.name}
+                  </span>
                 )}
               </Link>
             )

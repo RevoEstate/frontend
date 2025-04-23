@@ -43,17 +43,13 @@ export default function Ecommerce() {
       <div className="col-span-12 space-y-6 xl:col-span-12">
         <EcommerceMetrics />
       </div>
+      {/* 
+      <div className="col-span-12 xl:col-span-12">
+        <QuickActions />
+      </div> */}
 
       <div className="col-span-12 xl:col-span-12">
         <RecentOrders />
-      </div>
-
-      <div className="col-span-12 xl:col-span-7">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="hidden sm:block">
-            <QuickActions />
-          </div>
-        </div>
       </div>
 
       <div className="col-span-12 xl:col-span-12">
@@ -66,10 +62,6 @@ export default function Ecommerce() {
 
       <div className="col-span-12">
         <StatisticsChart />
-      </div>
-
-      <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
       </div>
     </div>
   );

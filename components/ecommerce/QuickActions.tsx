@@ -14,7 +14,19 @@ export default function QuickActions() {
           </h3>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex gap-4">
+        <button
+          onClick={() => router.push("/company-applications")}
+          className="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition duration-200"
+        >
+          View Pending Applications
+        </button>
+        <button
+          onClick={() => router.push("/content-reports")}
+          className="w-full px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow transition duration-200"
+        >
+          Check New Reports
+        </button>
         <button
           onClick={() => router.push("/company-applications")}
           className="w-full px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition duration-200"

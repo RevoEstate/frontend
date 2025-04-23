@@ -120,9 +120,9 @@ const AppHeader: React.FC = () => {
             </svg>
           </button>
 
-          <div className="hidden lg:block">
+          <div className="w-full hidden lg:block">
             <div className="hidden lg:block">
-              <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg p-4 shadow-lg">
+              <div className="relative flex gap-4 items-center justify-center bg-gradient-to-b from-blue-500 to-indigo-700 text-white rounded-lg p-4 shadow-lg">
                 <div className="text-2xl font-semibold">Welcome, Admin</div>
                 <div className="text-sm font-light mt-1">
                   {new Date().toLocaleDateString("en-US", {
