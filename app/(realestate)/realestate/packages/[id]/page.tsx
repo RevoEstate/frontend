@@ -50,10 +50,29 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         withCredentials: true,
       }
     );
-    console.log("Payment Response: ", res);
+    // console.log("Payment Response: ", res);
     window.location.href = res.data?.data;
   };
+  const HandlepaymentChappa = async (paymentMethod: string) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
+      {
+        paymentMethod,
+        packageId: packageData?._id,
+        price: packageData?.packagePrice,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log("Payment Response: ", res);
+    if (!res.data?.data) {
+      console.error("Redirect URL is undefined or null:", res.data);
+      throw new Error("Invalid redirect URL from payment API");
+    }
 
+    window.location.href = res.data?.data;
+  };
   return (
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto">
@@ -217,6 +236,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 <Button
                   size="lg"
                   className="w-full bg-emerald-600 text-lg font-semibold hover:bg-emerald-600/80 cursor-pointer"
+                  onClick={() => HandlepaymentChappa("chapa")}
                 >
                   Pay with Chapa
                 </Button>
