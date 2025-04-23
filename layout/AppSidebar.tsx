@@ -50,8 +50,8 @@ const navItems: NavItem[] = [
   },
   {
     icon: <FaBuilding size={22} />,
-    name: "Registered Companies",
-    path: "/registered-companies",
+    name: "Companies",
+    path: "/companies",
   },
 
   {
