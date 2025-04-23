@@ -126,7 +126,7 @@ export default function SignInForm() {
                 // router.replace("/systemManager");
                 router.replace(`/systemManager/${userId}`);
               } else if (userRole === "agent") {
-                router.replace(`/realestate/${userId}`);
+                router.replace(`/realestate`);
               } else {
                 router.replace("/");
               }

@@ -7,6 +7,7 @@ import {
   SERVER_URL,
 } from "@/lib/constants/index.ts";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/lib/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,11 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
-        {children}
-        <Toaster richColors position="top-center" />
-      </body>
-    </html>
+    <Providers>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.className} antialiased`}>
+          {children}
+          <Toaster richColors position="top-center" />
+        </body>
+      </html>
+    </Providers>
+   
   );
 }

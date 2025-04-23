@@ -139,6 +139,7 @@ export function RealestateForm({
       toast.success(
         `Real estate ${type === "Create" ? "created" : "updated"} successfully!`
       );
+      form.reset()
       router.push("/realestate/profile");
     } catch (error) {
       console.error("Submission error:", error);
