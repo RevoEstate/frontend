@@ -5,7 +5,7 @@ type ApiResponse = {
   success: boolean;
   statusCode: number;
   message: string;
-  data: RealEstate | null;
+  data: any;
 };
 
 export const useRealestateById = (realestateId?: string) => {

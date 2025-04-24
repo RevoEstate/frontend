@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 type Package = {
+    _id: string;
     packageName: string;
     packagePrice: {
       usd: number;

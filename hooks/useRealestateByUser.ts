@@ -48,7 +48,7 @@ type ApiResponse = {
   success: boolean;
   statusCode: number;
   message: string;
-  data: RealEstate | null;
+  data: any;
 };
 
 // Main hook
