@@ -59,7 +59,7 @@ export function RealEstateProfile() {
                 <Avatar className="h-25 w-25">
                   <AvatarImage
                     alt="company logo"
-                    src="/images/realestate logo.jpg"
+                    src={realestate?.imageUrl}
                     />
                   <AvatarFallback className="text-7xl text-sky-800 font-bold bg-sky-50/90">
                     {realestate?.realEstateName.charAt(0)}
@@ -74,7 +74,7 @@ export function RealEstateProfile() {
                         <Badge></Badge>
                     )}
                   </CardTitle>
-                  <p className="text-muted-foreground text-sm mt-3">{realestate?.description}</p>
+                  <p className="text-muted-foreground text-sm mt-3 text-justify">{realestate?.description}</p>
                 </div>
               </div>
             </CardHeader>
@@ -142,7 +142,7 @@ export function RealEstateProfile() {
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Verified On</p>
                     <p className="font-medium">
-                      {new Date(realestate.verifiedAt).toLocaleDateString()}
+                      {new Date(realestate?.verifiedAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="space-y-1">
