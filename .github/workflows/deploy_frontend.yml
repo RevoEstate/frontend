@@ -61,23 +61,24 @@ jobs:
             mkdir -p "${{ env.PROJECT_PATH }}"
             chown -R $USER:$USER "${{ env.PROJECT_PATH }}"
 
-      - name: Rsync Files to VPS
+      - name: Copy frontend files to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          source: "."
+          target: "/home/ubuntu/projects/revostate/frontend"
+
+      - name: List files on VPS
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            mkdir -p "${{ env.PROJECT_PATH }}"
-            exit 0
-          rsync: true
-          source: |
-            package.json
-            package-lock.json
-            .next/
-            public/
-          target: ${{ env.PROJECT_PATH }}/
+            ls -la /home/ubuntu/projects/revostate/frontend
 
       - name: Install Production Dependencies and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
