@@ -12,12 +12,13 @@ export default function PaymentSuccess() {
   const sessionId = searchParams.get("session_id");
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSession = async () => {
       if (!sessionId) {
         setError("No Transaction ID provided.");
+        setLoading(false)
         return;
       }
 
@@ -46,16 +47,8 @@ export default function PaymentSuccess() {
     fetchSession();
   }, [sessionId]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
-        <p className="ml-2 text-gray-600">Loading transaction details...</p>
-      </div>
-    );
-  }
 
-  if (error || !transactionDetails) {
+  if (error ) {
     return (
       <div className="h-[50vh] mt-10 flex items-center justify-center p-4">
         <Card className="max-w-md w-full shadow-lg">
@@ -92,78 +85,82 @@ export default function PaymentSuccess() {
     );
   }
 
-  // Format price based on payment method
+  if(transactionDetails) {
+    // Format price based on payment method
   const price =
-    transactionDetails.paymentMethod === "stripe"
-      ? `$${transactionDetails.price.usd.toFixed(2)}`
-      : `${transactionDetails.price.etb.toFixed(2)} ETB`;
+  transactionDetails.paymentMethod === "stripe"
+    ? `$${transactionDetails.price.usd.toFixed(2)}`
+    : `${transactionDetails.price.etb.toFixed(2)} Birr`;
 
-  return (
-    <div className="h-[50vh] flex items-center justify-center p-4 bg-gray-50">
-      <Card className="max-w-lg w-full shadow-lg">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            Payment Successful!
-          </CardTitle>
-          <p className="mt-2 text-muted-foreground text-sm">
-            Thank you for your purchase, {transactionDetails.realEstateName}.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4 py-4">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Transaction ID</span>
-              <span className="font-medium text-gray-900">
-                {transactionDetails.transactionId}
-              </span>
+    return (
+      <div className="h-[100vh] flex items-center justify-center p-4 my-5">
+        <Card className="max-w-lg w-full shadow-lg">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Amount</span>
-              <span className="font-medium text-gray-900">{price}</span>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Payment Successful!
+            </CardTitle>
+            <p className="mt-2 text-muted-foreground text-sm">
+              Thank you for your purchase, {transactionDetails.realEstateName}.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4 py-4">
+              <div className="flex justify-between text-sm ">
+                <span className="text-gray-600">Transaction ID</span>
+                <span className="font-medium text-gray-900 truncate w-[200px]">
+                  {transactionDetails.transactionId}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Amount</span>
+                <span className="font-medium text-gray-900">{price}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Payment Method</span>
+                <span className="font-medium text-gray-900 capitalize">
+                  {transactionDetails.paymentMethod}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Date</span>
+                <span className="font-medium text-gray-900">
+                  {new Date(transactionDetails.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Number of Properties Listed</span>
+                <span className="font-medium text-gray-900">
+                  {transactionDetails.maxnumberOfProperties} Properties
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Expiry Date</span>
+                <span className="font-medium text-gray-900">
+                  {new Date(transactionDetails.expireDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Real Estate</span>
+                <span className="font-medium text-gray-900">
+                  {transactionDetails?.companyId?.realEstateName}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Payment Method</span>
-              <span className="font-medium text-gray-900 capitalize">
-                {transactionDetails.paymentMethod}
-              </span>
+            <div className="border-t pt-6">
+              <div className="flex gap-4">
+                <Button asChild className="w-full bg-sky-600 hover:bg-sky-600/90">
+                  <Link href="/realestate/packages">View Packages</Link>
+                </Button>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Date</span>
-              <span className="font-medium text-gray-900">
-                {new Date(transactionDetails.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Number of Properties Listed</span>
-              <span className="font-medium text-gray-900">
-                {transactionDetails.maxnumberOfProperties} Properties
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Expiry Date</span>
-              <span className="font-medium text-gray-900">
-                {new Date(transactionDetails.expireDate).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Real Estate</span>
-              <span className="font-medium text-gray-900">
-                {transactionDetails?.companyId?.realEstateName}
-              </span>
-            </div>
-          </div>
-          <div className="border-t pt-6">
-            <div className="flex gap-4">
-              <Button asChild className="w-full bg-sky-600 hover:bg-sky-600/90">
-                <Link href="/realestate/packages">View Packages</Link>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  
 }
