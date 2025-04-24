@@ -16,7 +16,7 @@ export const SERVER_URL =
     realEstateName: '',
     email: '',
     phone: '',
-    description: '',
+    description: undefined,
     imageUrl: undefined,
   
     // Address Information
@@ -32,11 +32,11 @@ export const SERVER_URL =
   
     // Social Media
     socialMedia: {
-      instagram: '',
-      facebook: '',
-      linkedin: '',
-      tiktok: '',
-      whatsapp: ''
+      instagram: undefined,
+      facebook: undefined,
+      linkedin: undefined,
+      tiktok: undefined,
+      whatsapp: undefined,
     },
   
     // Verification and Licensing
