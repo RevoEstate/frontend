@@ -57,33 +57,35 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            whoami
             mkdir -p "${{ env.PROJECT_PATH }}"
+            chown -R $USER:$USER "${{ env.PROJECT_PATH }}"
 
-      - name: Deploy Built Files to VPS
-        run: |
-          # Copy package.json files (needed for runtime)
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            package.json package-lock.json \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/" || {
-              echo "Error: rsync failed for package files"; exit 1;
-            }
-            
-          # Copy the .next directory (built files)
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            .next/ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/.next/" || {
-              echo "Error: rsync failed for .next directory"; exit 1;
-            }
-            
-          # Copy public directory
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            public/ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/public/" || {
-              echo "Error: rsync failed for public directory"; exit 1;
-            }
+      - name: Copy frontend files to VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            # Create a tarball excluding unwanted directories
+            tar --exclude='.husky' --exclude='.git' --exclude='.vscode' -czf /tmp/frontend.tar.gz -C . .
+
+            # Transfer the tarball to VPS
+            scp /tmp/frontend.tar.gz ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/ubuntu/projects/revostate/frontend
+
+            # Extract the tarball on the VPS
+            ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "tar -xzf /home/ubuntu/projects/revostate/frontend/frontend.tar.gz -C /home/ubuntu/projects/revostate/frontend && rm /home/ubuntu/projects/revostate/frontend/frontend.tar.gz"
+
+      - name: List files on VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            ls -la /home/ubuntu/projects/revostate/frontend
 
       - name: Install Production Dependencies and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
@@ -115,7 +117,7 @@ jobs:
             
             # Install only production dependencies
             # npm ci --omit=dev --legacy-peer-deps
-            npm install --legacy-peer-deps
+            # npm install --legacy-peer-deps
             
             # Start or restart the application
             echo "Restarting application with PM2..."
