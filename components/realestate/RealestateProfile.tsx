@@ -36,7 +36,7 @@ export function RealEstateProfile() {
     );
   }
 
-  if(!realestate) {
+  if(!realestate?._id) {
   return (
     <div className="border-1 py-10 px-5 text-gray-900 flex justify-center items-center mt-10">
       <div className="flex flex-col gap-2 items-center justify-center text-center">
@@ -63,7 +63,7 @@ export function RealEstateProfile() {
     <div className="max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Profile Header */}
-        <div className="md:w-1/3 space-y-4">
+        <div className="md:w-1/3 space-y-4 flex flex-col gap-8">
           <Card className="shadow-sm rounded-sm">
             <CardHeader>
               <div className="flex flex-col items-center gap-4">
@@ -137,7 +137,12 @@ export function RealEstateProfile() {
               )}
             </CardContent>
           </Card>
+          <Button asChild className="bg-sky-600 hover:bg-sky-700">
+            <Link href='/realestate/update'>Update Profile</Link>
+          </Button>
         </div>
+
+        
 
         {/* Main Content */}
         <div className="md:w-2/3 space-y-6">        
