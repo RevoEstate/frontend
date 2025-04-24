@@ -61,31 +61,23 @@ jobs:
             mkdir -p "${{ env.PROJECT_PATH }}"
             chown -R $USER:$USER "${{ env.PROJECT_PATH }}"
 
-      - name: Deploy Built Files to VPS
-        run: |
-          # Copy package.json files (needed for runtime)
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            package.json package-lock.json \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/" || {
-              echo "Error: rsync failed for package files"; exit 1;
-            }
-            
-          # Copy the .next directory (built files)
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            .next/ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/.next/" || {
-              echo "Error: rsync failed for .next directory"; exit 1;
-            }
-            
-          # Copy public directory
-          rsync -avz --chmod=ugo=rwX \
-            -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.VPS_PORT }}" \
-            public/ \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:"${{ env.PROJECT_PATH }}/public/" || {
-              echo "Error: rsync failed for public directory"; exit 1;
-            }
+      - name: Rsync Files to VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            mkdir -p "${{ env.PROJECT_PATH }}"
+            exit 0
+          rsync: true
+          source: |
+            package.json
+            package-lock.json
+            .next/
+            public/
+          target: ${{ env.PROJECT_PATH }}/
 
       - name: Install Production Dependencies and Start Application on VPS
         uses: appleboy/ssh-action@v0.1.7
