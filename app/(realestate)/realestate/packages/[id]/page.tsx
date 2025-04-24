@@ -1,21 +1,18 @@
-"use client"
+"use client";
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { usePackageById } from '@/hooks/usePackageById'
-import { Loader2 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePackageById } from "@/hooks/usePackageById";
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
-  const Params = React.use(params)
-  const id = Params.id
+  const Params = React.use(params);
+  const id = Params.id;
 
-  const {
-    data: packageData,
-    isLoading,
-    error,
-  } = usePackageById(id);
+  const { data: packageData, isLoading, error } = usePackageById(id);
 
   if (isLoading) {
     return (
@@ -41,13 +38,45 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         <Alert variant="destructive" className="w-auto">
           <AlertDescription className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
-              {error.message}
+            {error.message}
           </AlertDescription>
         </Alert>
       </header>
     );
   }
+  const Handlepayment = async (paymentMethod: string) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
+      {
+        paymentMethod,
+        price: packageData?.packagePrice,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    // console.log("Payment Response: ", res);
+    window.location.href = res.data?.data;
+  };
+  const HandlepaymentChappa = async (paymentMethod: string) => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
+      {
+        paymentMethod,
+        price: packageData?.packagePrice,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log("Payment Response: ", res);
+    if (!res.data?.data) {
+      console.error("Redirect URL is undefined or null:", res.data);
+      throw new Error("Invalid redirect URL from payment API");
+    }
 
+    window.location.href = res.data?.data;
+  };
 
   return (
     <div className="min-h-screen">
@@ -62,7 +91,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className='space-y-6'>
+          <div className="space-y-6">
             <Card className="border-1 shadow-md">
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -70,7 +99,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     Package Type
                   </span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${packageData?.packageType === 'premium' ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"}`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${packageData?.packageType === "premium" ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"}`}
                   >
                     {packageData?.packageType}
                   </span>
@@ -103,13 +132,17 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-medium text-muted-foreground">USD Price</span>
+                    <span className="text-lg font-medium text-muted-foreground">
+                      USD Price
+                    </span>
                     <span className="text-2xl font-bold text-gray-900">
                       ${packageData?.packagePrice?.usd}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-medium text-muted-foreground">ETB Price</span>
+                    <span className="text-lg font-medium text-muted-foreground">
+                      ETB Price
+                    </span>
                     <span className="text-2xl font-bold text-gray-900">
                       {packageData?.packagePrice?.etb} Birr
                     </span>
@@ -136,95 +169,106 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        List up to {packageData?.numberOfProperties} properties
-                      </span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 text-green-500 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>{packageData?.packageDuration}-day duration</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 text-green-500 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        {packageData?.packageType === 'premium' ? "Priority" : "Standard"} customer support
-                      </span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg
-                        className="w-5 h-5 text-green-500 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        {packageData?.packageType === 'premium' ? "Featured" : "Standard"} property listings
-                      </span>
-                    </li>
-                  </ul>
-                </CardContent>
-                <CardContent>
-                  <Button size='lg'
-                    className='w-full bg-emerald-600 text-lg font-semibold hover:bg-emerald-600/80 cursor-pointer'
-                  >
-                    Pay with Chapa
-                  </Button>
-                </CardContent>
-                <CardContent>
-                  <Button size='lg'
-                    className='w-full bg-sky-500 text-lg font-bold hover:bg-sky-500/80 cursor-pointer'
-                  >
-                    Pay with Stripe
-                  </Button>
-                </CardContent>
-                <CardContent>
-                  <Button size='lg'
-                    className='w-full bg-yellow-600 text-lg font-bold hover:bg-yellow-600/80 cursor-pointer'
-                  >
-                    Pay with Paypal
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      List up to {packageData?.numberOfProperties} properties
+                    </span>
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>{packageData?.packageDuration}-day duration</span>
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      {packageData?.packageType === "premium"
+                        ? "Priority"
+                        : "Standard"}{" "}
+                      customer support
+                    </span>
+                  </li>
+                  <li className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-green-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      {packageData?.packageType === "premium"
+                        ? "Featured"
+                        : "Standard"}{" "}
+                      property listings
+                    </span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardContent>
+                <Button
+                  size="lg"
+                  className="w-full bg-emerald-600 text-lg font-semibold hover:bg-emerald-600/80 cursor-pointer"
+                  onClick={() => HandlepaymentChappa("chapa")}
+                >
+                  Pay with Chapa
+                </Button>
+              </CardContent>
+              <CardContent>
+                <Button
+                  size="lg"
+                  className="w-full bg-sky-500 text-lg font-bold hover:bg-sky-500/80 cursor-pointer"
+                  onClick={() => Handlepayment("stripe")}
+                >
+                  Pay with Stripe
+                </Button>
+              </CardContent>
+              <CardContent>
+                <Button
+                  size="lg"
+                  className="w-full bg-yellow-600 text-lg font-bold hover:bg-yellow-600/80 cursor-pointer"
+                >
+                  Pay with Paypal
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
+      </div>
     </div>
-    );
-}
+  );
+};
 
-export default PackageDetailPage
+export default PackageDetailPage;
