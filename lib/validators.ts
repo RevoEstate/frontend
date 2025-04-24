@@ -45,27 +45,12 @@ const realestateSchema = z.object({
     .refine((file) => file?.type === "application/pdf", {
       message: "Only PDF files are accepted",
     })
-    .optional(),
-
-  // verificationStatus: z.enum(["pending", "approved", "rejected"]),
-  // isVerified: z.boolean(),
-  // verifiedBy: z.string().optional(),
-  // verifiedAt: z.date().optional(),
 });
 
 // a partial schema for updates (all fields optional)
 const realestateUpdateSchema = realestateSchema.partial();
 
-// Verification form schema (fields needed for verification)
-const VerificationFormSchema = realestateSchema
-  .pick({
-    documentUrl: true,
-  })
-  .extend({
-    termsAccepted: z.boolean().refine((val) => val, {
-      message: "You must accept the terms and conditions",
-    }),
-  });
+
 
 // Export everything
-export { realestateSchema, realestateUpdateSchema, VerificationFormSchema };
+export { realestateSchema, realestateUpdateSchema };

@@ -110,7 +110,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     Duration
                   </span>
                   <span className="text-gray-900 font-medium">
-                    {packageData?.packageDuration} days
+                    {packageData?.packageDuration} months
                   </span>
                 </div>
 

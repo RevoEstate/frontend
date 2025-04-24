@@ -47,7 +47,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
             </span>
           </div>
           <div className="text-lg text-muted-foreground">
-            ETB {packageData.packagePrice.etb}
+            {packageData.packagePrice.etb} Birr
           </div>
         </div>
 

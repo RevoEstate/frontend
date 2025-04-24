@@ -36,6 +36,17 @@ export function RealEstateProfile() {
     );
   }
 
+  if(!realestate) {
+  return (
+    <div className="border-1 py-10 px-5 text-gray-900 flex justify-center items-center mt-10">
+      <div className="flex flex-col gap-2 items-center justify-center text-center">
+        <h1 className="md:text-2xl text-xl font-bold text-zinc-600">There's no realestate account associated with you!</h1>
+        <p className="text-sm text-zinc-500">Create your realestate account <Link className="text-sky-600 hover:text-sky-400 hover:underline" href='/realestate/create'>here</Link></p>
+      </div>
+    </div>
+  )
+  }
+
   if(!realestate?.isVerified) {
     return(
       <div className="border-1 py-10 px-5 text-gray-900">
