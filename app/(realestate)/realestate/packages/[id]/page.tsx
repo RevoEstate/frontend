@@ -62,6 +62,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
       {
+        packageId: packageData?._id,
         paymentMethod,
         price: packageData?.packagePrice,
       },
