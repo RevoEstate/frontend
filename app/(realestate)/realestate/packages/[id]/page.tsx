@@ -49,7 +49,6 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
       {
         paymentMethod,
-        packageId: packageData?._id,
         price: packageData?.packagePrice,
       },
       {
@@ -64,7 +63,6 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/payment/purchasepackage`,
       {
         paymentMethod,
-        packageId: packageData?._id,
         price: packageData?.packagePrice,
       },
       {
