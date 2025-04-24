@@ -6,7 +6,12 @@ const realestateSchema = z.object({
     .string()
     .min(3, "Company name must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be 10 digits"),
+  phone: z
+  .string()
+  .refine(
+    (value) => /^(?:\+2519\d{8}|09\d{8})$/.test(value),
+    { message: "Use Ethiopian mobile number format: 0911234567 or +251911234567" }
+  ),
   description: z.string().optional(),
   imageUrl: z.instanceof(File).optional(),
 
@@ -17,12 +22,16 @@ const realestateSchema = z.object({
     specificLocation: z
       .string()
       .min(5, "Specific location must be at least 5 characters"),
-    coordinates: z
-      .object({
-        lat: z.number().min(-90).max(90).optional(),
-        lng: z.number().min(-180).max(180).optional(),
-      })
-      .optional(),
+      coordinates: z.object({
+        lat: z.number()
+          .min(-90)
+          .max(90)
+          .transform((val) => parseFloat(val.toFixed(5))), // Rounds to 5 decimal places
+        lng: z.number()
+          .min(-180)
+          .max(180)
+          .transform((val) => parseFloat(val.toFixed(5))), // Rounds to 5 decimal places
+      }),
   }),
 
   // Social Media
@@ -34,10 +43,11 @@ const realestateSchema = z.object({
       tiktok: z.string().url("Invalid URL").optional(),
       whatsapp: z
         .string()
-        .min(5, "WhatsApp must be at least 5 characters")
+        .min(10, "WhatsApp must be 10 digits")
         .optional(),
     })
-    .optional(),
+    .optional()
+    .default({}),
 
   // Verification and Licensing
   documentUrl: z
