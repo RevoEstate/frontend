@@ -1,4 +1,4 @@
-import PaymentSuccess from '@/components/realestate/PaymentSuccessCard'
+import PaymentSuccess from '@/components/realestate/PaymentSuccess'
 import React, { Suspense } from 'react'
 
 const PaymentSuccessPage = () => {

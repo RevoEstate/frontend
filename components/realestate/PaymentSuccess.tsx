@@ -17,7 +17,7 @@ export default function PaymentSuccess() {
   useEffect(() => {
     const fetchSession = async () => {
       if (!sessionId) {
-        setError("No session ID provided.");
+        setError("No Transaction ID provided.");
         return;
       }
 
@@ -34,9 +34,9 @@ export default function PaymentSuccess() {
           setError(response.data.message || "Failed to retrieve transaction.");
         }
       } catch (error) {
+        console.log("Success Error: ", error)
         setError(
-          error.response?.data?.message ||
-            "An error occurred while fetching transaction details."
+          error.response?.data?.message 
         );
       } finally {
         setLoading(false);
@@ -48,7 +48,7 @@ export default function PaymentSuccess() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center h-[50vh]">
         <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
         <p className="ml-2 text-gray-600">Loading transaction details...</p>
       </div>
@@ -57,7 +57,7 @@ export default function PaymentSuccess() {
 
   if (error || !transactionDetails) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="h-[50vh] mt-10 flex items-center justify-center p-4">
         <Card className="max-w-md w-full shadow-lg">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
@@ -99,7 +99,7 @@ export default function PaymentSuccess() {
       : `${transactionDetails.price.etb.toFixed(2)} ETB`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div className="h-[50vh] flex items-center justify-center p-4 bg-gray-50">
       <Card className="max-w-lg w-full shadow-lg">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -137,7 +137,7 @@ export default function PaymentSuccess() {
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Package</span>
+              <span className="text-gray-600">Number of Properties Listed</span>
               <span className="font-medium text-gray-900">
                 {transactionDetails.maxnumberOfProperties} Properties
               </span>

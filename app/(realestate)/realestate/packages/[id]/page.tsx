@@ -4,7 +4,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePackageById } from "@/hooks/usePackageById";
-import { Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -160,53 +160,17 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               <CardContent>
                 <ul className="space-y-3">
                   <li className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>
                       List up to {packageData?.numberOfProperties} properties
                     </span>
                   </li>
                   <li className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>{packageData?.packageDuration}-day duration</span>
                   </li>
                   <li className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>
                       {packageData?.packageType === "premium"
                         ? "Priority"
@@ -215,19 +179,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     </span>
                   </li>
                   <li className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                     <span>
                       {packageData?.packageType === "premium"
                         ? "Featured"
@@ -255,14 +207,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   Pay with Stripe
                 </Button>
               </CardContent>
-              <CardContent>
-                <Button
-                  size="lg"
-                  className="w-full bg-yellow-600 text-lg font-bold hover:bg-yellow-600/80 cursor-pointer"
-                >
-                  Pay with Paypal
-                </Button>
-              </CardContent>
+             
             </Card>
           </div>
         </div>
