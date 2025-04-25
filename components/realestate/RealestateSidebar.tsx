@@ -119,7 +119,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
                                   <Collapsible defaultOpen={pathname.startsWith(item.href)}>
                                       <CollapsibleTrigger asChild className='cursor-pointer'>
                                           <SidebarMenuButton
-                                              className={`hover:bg-sky-100/60 text-normal ${
+                                              className={`hover:bg-sky-100/60 text-normal mb-1 ${
                                                   pathname === item.href && 'bg-sky-200/50 hover:bg-sky-200/70 font-semibold'
                                               }`}
                                           >
@@ -172,7 +172,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
             <SidebarMenu>
                 <SidebarMenuItem>
                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger asChild className='pl-8'>
                             <Button
                                 variant="ghost"
                                 className="relative h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -195,7 +195,7 @@ const RealestateSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
 
                         <AnimatePresence>
                             <DropdownMenuContent
-                                className="w-58 mx-3"
+                                className="w-58 mx-3 mb-2"
                                 align="end"
                                 forceMount
                                 asChild
