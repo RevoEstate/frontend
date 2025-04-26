@@ -85,17 +85,19 @@ export function RealestateForm({
   });
 
   const onSubmit = async (values: z.infer<typeof realestateSchema>) => {
+    console.log("onSubmit called with values:", values);
+
     try {
       const formData = new FormData();
 
-      // Round coordinates to 7 decimal places
+      // Round coordinates to 5 decimal places
       if (values.address?.coordinates) {
         values.address.coordinates = {
           lat: values.address.coordinates.lat
-            ? Number(values.address.coordinates.lat.toFixed(6))
+            ? Number(values.address.coordinates.lat.toFixed(5))
             : undefined,
           lng: values.address.coordinates.lng
-            ? Number(values.address.coordinates.lng.toFixed(6))
+            ? Number(values.address.coordinates.lng.toFixed(5))
             : undefined,
         };
       }
@@ -103,32 +105,44 @@ export function RealestateForm({
       // Append all fields to FormData
       Object.entries(values).forEach(([key, value]) => {
         if (key === "address" || key === "socialMedia") {
-          // Stringify nested objects
           if (value !== undefined && value !== null) {
             formData.append(key, JSON.stringify(value));
           }
-        } else if (key === "imageUrl" && value instanceof File) {
-          // Handle image file
-          formData.append("image", value);
-        } else if (key === "documentUrl" && value instanceof File) {
-          // Handle document file
+        } else if (key === "imageUrl") {
+          if (value instanceof File) {
+            formData.append("image", value);
+          } else if (typeof value === "string" && value) {
+            formData.append("imageUrl", value);
+          }
+        } else if (key === "documentUrl" && value instanceof File && type === "Create") {
           formData.append("document", value);
         } else if (value !== undefined && value !== null) {
-          // Append simple fields
           formData.append(key, value.toString());
         }
       });
 
-      const method = type === "Create" ? "POST" : "PATCH";
+      // if (type === "Update" && realestateId) {
+      //   formData.append("companyId", realestateId);
+      // }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/register`,
-        {
-          method,
-          body: formData,
-          credentials: "include",
-        }
-      );
+      console.log("FormData entries:");
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      const method = type === "Create" ? "POST" : "PATCH";
+      const url =
+        type === "Create"
+          ? `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/register`
+          : `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/companies/update/${realestateId}`;
+  
+      const response = await fetch(url, {
+        method,
+        body: formData,
+        credentials: "include",
+      });
+
+      console.log("API Response Status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -256,15 +270,17 @@ export function RealestateForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Realestate Logo</FormLabel>
-                {preview && (
-                  <div className="flex justify-center items-center border-1 py-3">
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      className="h-32 w-32 object-cover"
+                {preview || (typeof field.value === "string" && field.value) ? (
+                  <div className="flex justify-center items-center border py-3">
+                    <Image
+                      src={preview || (typeof field.value === "string" ? field.value : "")}
+                      alt="Realestate Logo"
+                      width={128}
+                      height={128} 
+                      className="object-cover"
                     />
                   </div>
-                )}
+                ) : null}
                 <FormControl>
                   <Input
                     type="file"
@@ -272,11 +288,17 @@ export function RealestateForm({
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
+                        // Validate file type
+                        if (!file.type.startsWith("image/")) {
+                          form.setError("imageUrl", {
+                            type: "manual",
+                            message: "Please upload a valid image file",
+                          });
+                          return;
+                        }
                         field.onChange(file);
-                        // Create preview
                         const reader = new FileReader();
-                        reader.onload = () =>
-                          setPreview(reader.result as string);
+                        reader.onload = () => setPreview(reader.result as string);
                         reader.readAsDataURL(file);
                       }
                     }}
@@ -423,31 +445,37 @@ export function RealestateForm({
           </div>
         </div>
 
-        <FormField
-          control={form.control}
-          name="documentUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Legal Document (PDF only)</FormLabel>
-              {field.value && (
-                <div className="mt-2 text-sm text-gray-600">
-                  Selected file: {field.value.name}
-                </div>
-              )}
-              <FormControl className="h-32">
-                <Input
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    field.onChange(file);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
+        
+          <FormField
+            control={form.control}
+            name="documentUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Legal Document (PDF only)</FormLabel>
+                {field.value && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    Selected file: {field.value.name}
+                  </div>
+                )}
+                <FormControl className="h-32">
+                  <Input
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      field.onChange(file);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+   
+  
+
+       
         {/* Coordinates Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">

@@ -13,11 +13,9 @@ const RealestateUpdatePage = () => {
     error 
     } = useRealestateById(userRealestate?._id);
 
-    console.log("Update Page: ", realestate)
-
   return (
-    <div>
-        Update
+    <div className='flex flex-col items-center'>
+        <h1 className='text-xl md:text-4xl text-center font-bold border-b-2 pb-2'>Update Realestate Account</h1>
       <RealestateForm type='Update' realestate={realestate} realestateId={realestate?._id} />
     </div>
   )
