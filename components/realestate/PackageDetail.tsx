@@ -2,15 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IPackage } from "@/types";
-// import { loadStripe } from '@stripe/stripe-js'
 import Image from "next/image";
 
 export function PackageDetail({
   packageData,
   packageId,
 }: {
-  packageData: IPackage;
+  packageData: any;
   packageId: string;
 }) {
   const handleCheckout = async () => {

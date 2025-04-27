@@ -7,6 +7,7 @@ import { usePackageById } from "@/hooks/usePackageById";
 import { CheckCircle, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import PackageDetailSkeleton from "@/components/realestate/PackageDetailSkeleton";
 
 const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const Params = React.use(params);
@@ -15,21 +16,7 @@ const PackageDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { data: packageData, isLoading, error } = usePackageById(id);
 
   if (isLoading) {
-    return (
-      <header className="flex items-center justify-center mt-10">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="bg-gray-100 hover:bg-gray-100 cursor-wait"
-            disabled
-          >
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Loading...
-          </Button>
-        </div>
-      </header>
-    );
+    return <PackageDetailSkeleton />;
   }
 
   if (error) {

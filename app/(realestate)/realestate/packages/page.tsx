@@ -3,11 +3,10 @@
 import PackageCard from '@/components/realestate/PackageCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSession } from '@/lib/auth-client'
-import { IPackage } from '@/types'
 import React, { useEffect, useState } from 'react'
 
 const PackagePage = () => {
-  const [packages, setPackages] = useState<IPackage[]>([])
+  const [packages, setPackages] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()

@@ -64,7 +64,6 @@ export const createPropertyDefaultValues = {
   bedrooms: 0,
   bathrooms: 0,
   builtInYear: undefined as number | undefined,
-  isFeatured: false,
   landArea: 0,
   panoramicImages: [] as File[],
   listingType: "For Sale" as const,

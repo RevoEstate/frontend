@@ -104,7 +104,6 @@ export const createPropertySchema = z.object({
   bedrooms: z.number().int().nonnegative("Bedrooms must be a non-negative integer"),
   bathrooms: z.number().int().nonnegative("Bathrooms must be a non-negative integer"),
   builtInYear: z.number().min(2000, "Built year must be above 2000 G.C").max(new Date().getFullYear(), "Built year must be below 2025 G.C").optional(),
-  isFeatured: z.boolean().default(false),
   landArea: z.number().positive("Land area must be a positive number"),
   panoramicImages: z
     .instanceof(File, { message: "Please upload valid images" })

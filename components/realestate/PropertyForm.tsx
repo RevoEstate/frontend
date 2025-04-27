@@ -51,7 +51,7 @@ const ETHIOPIA_REGIONS = [
   { name: "Tigray", cities: ["Mekelle", "Axum", "Adigrat"] },
 ];
 
-const PropertyForm = () => {
+const PropertyForm = ({ packageId }: { packageId: string }) => {
     const [isDetectingLocation, setIsDetectingLocation] = useState(false);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const [panoramicPreviews, setPanoramicPreviews] = useState<string[]>([]);
@@ -96,14 +96,22 @@ const PropertyForm = () => {
 
 async function onSubmit(values: z.infer<typeof createPropertySchema>) {
     const formData = new FormData()
+
+    formData.append('purchaseId', packageId);
     // Append all regular form values
     Object.entries(values).forEach(([key, value]) => {
         if (key === "address") {
         if (value) formData.append(key, JSON.stringify(value));
-        } else if (value !== undefined && value !== null) {
+        } else if (value !== undefined && value !== null && key !== "amenities") {
         formData.append(key, value.toString());
         }
     });
+
+    if (values.amenities && Array.isArray(values.amenities)) {
+      values.amenities.forEach((amenity) => {
+        formData.append('amenities', amenity);
+      });
+    }
 
     if (values.images && Array.isArray(values.images)) {
         values.images.forEach((file) => {
@@ -174,18 +182,18 @@ async function onSubmit(values: z.infer<typeof createPropertySchema>) {
     };
 
     const addAmenity = () => {
-        if (amenityInput.trim() && !amenities.includes(amenityInput.trim())) {
+      if (amenityInput.trim() && !amenities.includes(amenityInput.trim())) {
         const newAmenities = [...amenities, amenityInput.trim()];
         setAmenities(newAmenities);
-        form.setValue("amenities", newAmenities);
+        form.setValue("amenities", newAmenities); // This updates the form values
         setAmenityInput("");
-        }
+      }
     };
-
+    
     const removeAmenity = (index: number) => {
-        const newAmenities = amenities.filter((_, i) => i !== index);
-        setAmenities(newAmenities);
-        form.setValue("amenities", newAmenities);
+      const newAmenities = amenities.filter((_, i) => i !== index);
+      setAmenities(newAmenities);
+      form.setValue("amenities", newAmenities); // This updates the form values
     };
 
     // Remove preview and file
@@ -888,7 +896,7 @@ const onDropRegular = useCallback(
 
            {/* Additional Options */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <FormField
+         {/* <FormField
             control={form.control}
             name="isFeatured"
             render={({ field }) => (
@@ -908,7 +916,7 @@ const onDropRegular = useCallback(
                 </FormControl>
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             control={form.control}
