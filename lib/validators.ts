@@ -64,3 +64,66 @@ const realestateUpdateSchema = realestateSchema.partial();
 
 // Export everything
 export { realestateSchema, realestateUpdateSchema };
+
+// Property Creating Schema
+export const createPropertySchema = z.object({
+  title: z.string().min(3, "Title is required"),
+  description: z.string().min(3, "Description is required"),
+  price: z.number().positive("Price must be a positive number"),
+  area: z.number().positive("Area must be a positive number"),
+  address: z.object({
+    region: z.string().min(1, "Region is required"),
+    city: z.string().min(1, "City is required"),
+    specificLocation: z.string().optional(),
+    geoPoint: z.object({
+      type: z.literal("Point"),
+      coordinates: z
+        .array(z.number())
+        .length(2, "Coordinates must contain exactly 2 numbers [longitude, latitude]"),
+    }),
+  }),
+  propertyType: z.enum(["Apartment", "House", "Commercial", "Land", "Villa"], {
+    errorMap: () => ({ message: "Invalid property type" }),
+  }),
+  status: z.enum(["available", "sold", "rented"]).default("available"),
+  images: z
+    .instanceof(File, { message: "Please upload at least one image" })
+    .array()
+    .nonempty("At least one image is required")
+    .refine(
+      (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
+      "Each file must be less than 5MB"
+    )
+    .refine(
+      (files) =>
+        files.every((file) =>
+          ["image/jpeg", "image/png", "image/webp"].includes(file.type)
+        ),
+      "Only .jpg, .png, and .webp formats are supported"
+    ),
+  bedrooms: z.number().int().nonnegative("Bedrooms must be a non-negative integer"),
+  bathrooms: z.number().int().nonnegative("Bathrooms must be a non-negative integer"),
+  builtInYear: z.number().min(2000, "Built year must be above 2000 G.C").max(new Date().getFullYear(), "Built year must be below 2025 G.C").optional(),
+  landArea: z.number().positive("Land area must be a positive number"),
+  panoramicImages: z
+    .instanceof(File, { message: "Please upload valid images" })
+    .array()
+    .optional()
+    .refine(
+      (files) => !files || files.every((file) => file.size <= 5 * 1024 * 1024),
+      "Each file must be less than 5MB"
+    )
+    .refine(
+      (files) =>
+        !files ||
+        files.every((file) =>
+          ["image/jpeg", "image/png", "image/webp"].includes(file.type)
+        ),
+      "Only .jpg, .png, and .webp formats are supported"
+    ),
+  listingType: z.enum(["For Rent", "For Sale"], {
+    errorMap: () => ({ message: "Invalid listing type" }),
+  }),
+  furnished: z.enum(["Yes", "No"]).default("No"),
+  amenities: z.array(z.string()).default([]),
+});

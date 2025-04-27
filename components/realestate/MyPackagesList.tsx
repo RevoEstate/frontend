@@ -4,15 +4,29 @@ import { useMyPackages } from "@/hooks/useMyPackages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { MyPackagesSkeleton } from "./MyPackagesSkeleton";
 
 function MyPackagesList() {
   const { data: packages, isLoading, error } = useMyPackages();
   console.log("My Packages: ", packages);
 
   if (isLoading) {
+    return <MyPackagesSkeleton />;
+  }
+
+  if (error) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="text-center border-1 flex flex-col justify-center items-center mt-30 py-8 md:mx-60 shadow-md rounded-md">
+        <h1 className="text-lg md:text-2xl text-gray-800 font-bold pb-2">
+          Error loading packages
+        </h1>
+        <p className="text-gray-600">{error.message}</p>
+        <Link
+          href="/realestate/packages"
+          className="mt-4 underline text-sky-600 hover:text-sky-500"
+        >
+          Browse Packages
+        </Link>
       </div>
     );
   }

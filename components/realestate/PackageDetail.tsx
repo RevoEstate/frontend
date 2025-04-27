@@ -2,15 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IPackage } from "@/types";
-// import { loadStripe } from '@stripe/stripe-js'
 import Image from "next/image";
 
 export function PackageDetail({
   packageData,
   packageId,
 }: {
-  packageData: IPackage;
+  packageData: any;
   packageId: string;
 }) {
   const handleCheckout = async () => {
@@ -93,7 +91,7 @@ export function PackageDetail({
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-medium">ETB Price</span>
                     <span className="text-2xl font-bold text-gray-900">
-                      ETB {packageData.packagePrice.etb}
+                     {packageData.packagePrice.etb} Birr
                     </span>
                   </div>
                 </div>

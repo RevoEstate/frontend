@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { IPackage } from "@/types";
 import {
   Card,
   CardContent,
@@ -14,7 +13,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 
 interface PackageCardProps {
-  packageData: IPackage;
+  packageData: any;
   id: string
 }
 
@@ -32,22 +31,22 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
       )}
 
       <CardHeader className="mt-5">
-        <CardTitle>{packageData.packageName}</CardTitle>
-        <CardDescription>{packageData.packageDescription}</CardDescription>
+        <CardTitle>{packageData?.packageName}</CardTitle>
+        <CardDescription>{packageData?.packageDescription}</CardDescription>
       </CardHeader>
 
       <CardContent>
         <div className="mb-6">
           <div className="text-4xl font-bold mb-1">
-            ${packageData.packagePrice.usd}
+            ${packageData?.packagePrice.usd}
             <span className="text-lg font-normal text-muted-foreground">
               {" "}
-              / {packageData.packageDuration}
-              {packageData.packageDuration === 1 ? " month" : " months"}
+              / {packageData?.packageDuration}
+              {packageData?.packageDuration === 1 ? " month" : " months"}
             </span>
           </div>
           <div className="text-lg text-muted-foreground">
-            {packageData.packagePrice.etb} Birr
+            {packageData?.packagePrice.etb} Birr
           </div>
         </div>
 
@@ -67,7 +66,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, id }) => {
                 d="M5 13l4 4L19 7"
               />
             </svg>
-            <span>{packageData.numberOfProperties} properties included</span>
+            <span>{packageData?.numberOfProperties} properties included</span>
           </div>
           {/* Other features... */}
         </div>

@@ -42,3 +42,31 @@ export const SERVER_URL =
     // Verification and Licensing
     documentUrl: undefined
   };
+
+
+export const createPropertyDefaultValues = {
+  title: "",
+  description: "",
+  price: 0,
+  area: 0,
+  address: {
+    region: "",
+    city: "",
+    specificLocation: "",
+    geoPoint: {
+      type: "Point" as const,
+      coordinates: [0, 0] as [number, number],
+    },
+  },
+  propertyType: "Apartment" as const,
+  status: "available" as const,
+  images: [] as File[],
+  bedrooms: 0,
+  bathrooms: 0,
+  builtInYear: undefined as number | undefined,
+  landArea: 0,
+  panoramicImages: [] as File[],
+  listingType: "For Sale" as const,
+  furnished: "No" as const,
+  amenities: [] as string[],
+};
