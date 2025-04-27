@@ -98,7 +98,7 @@ const CreatePropertyPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 text-sky-700">
         <Loader2 className="h-8 w-8 animate-spin" />
         <p>Loading your packages...</p>
       </div>
@@ -108,12 +108,11 @@ const CreatePropertyPage = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center gap-5 p-4">
-        <h1 className="text-xl md:text-3xl font-bold text-center">Create Property</h1>
         <div className="text-center max-w-md p-6 border rounded-lg bg-red-50">
-          <h2 className="text-xl font-semibold mb-2 text-red-600">Error Loading Packages</h2>
+          <h2 className="text-xl font-semibold mb-2 text-red-600">Error Loading Active Packages</h2>
           <p className="mb-4 text-red-500">{error.message}</p>
-          <Button asChild variant="outline">
-            <Link href="/realestate/dashboard">Back to Dashboard</Link>
+          <Button asChild variant="ghost" className='cursor-pointer'>
+            <Link href="/realestate/packages/my-packages">Back to your Packages</Link>
           </Button>
         </div>
       </div>
@@ -123,16 +122,16 @@ const CreatePropertyPage = () => {
   if (!activePackages?.length && !selectedPackageId) {
     return (
       <div className="flex flex-col items-center gap-5 p-4">
-        <h1 className="text-xl md:text-3xl font-bold text-center">Create Property</h1>
-        <div className="text-center max-w-md p-6 border rounded-lg bg-blue-50">
+        <div className="text-center max-w-md p-6 border-1 shadow-2xl rounded-lg">
           <h2 className="text-xl font-semibold mb-2">No Active Packages</h2>
-          <p className="mb-4">You need an active package to create properties.</p>
-          <div className="flex flex-col sm:flex-row gap-2 justify-center">
-            <Button asChild className="bg-blue-600 hover:bg-blue-700">
-              <Link href="/realestate/packages">Browse Packages</Link>
+          <p className="mb-4 text-sm text-muted-foreground">You need an active package to create properties.</p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+            <Button variant='ghost' asChild className="cursor-pointer">
+              <Link href="/realestate/packages/my-packages">Check your Packages</Link>
             </Button>
-            <Button asChild variant="outline">
-              <Link href="/realestate/dashboard">Back to Dashboard</Link>
+            <p className='text-sm font-bold text-sky-600'>or</p>
+            <Button variant='ghost' asChild className='cursor-pointer'>
+              <Link href="/realestate/packages">Purchase a Package</Link>
             </Button>
           </div>
         </div>
@@ -143,9 +142,9 @@ const CreatePropertyPage = () => {
   if (activePackages?.length && !selectedPackageId) {
     return (
       <div className="flex flex-col items-center gap-5 p-4">
-        <h1 className="text-xl md:text-3xl font-bold text-center">Create Property</h1>
+        <h1 className="text-xl md:text-4xl font-bold text-center border-b-1 pb-2 shadow-2xl p-3 rounded-2xl">Create Property</h1>
         <div className="w-full max-w-4xl">
-          <h2 className="text-xl font-semibold mb-4 text-center">Select a Package to create property</h2>
+          <h2 className="text-lg font-semibold mb-4 text-center">Select a Package to create property</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {activePackages.map((pkg) => (
               <ActivePackageCard
@@ -163,7 +162,7 @@ const CreatePropertyPage = () => {
 
   return (
     <div className="flex flex-col items-center gap-5 p-4">
-      <h1 className="text-xl md:text-3xl font-bold text-center">Create Property</h1>
+       <h1 className="text-xl md:text-4xl font-bold text-center border-b-1 pb-2 shadow-2xl p-3 rounded-2xl">Create Property</h1>
       <div className="w-full max-w-4xl">
         <Button 
             variant="ghost" 
