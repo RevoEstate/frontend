@@ -28,3 +28,34 @@ export type Realestate = z.infer<typeof realestateSchema>
 //   }
 
   export type PropertyFormValues = typeof createPropertyDefaultValues;
+
+  export interface Property {
+    _id: string;
+    propertyId: string;
+    title: string;
+    description: string;
+    price: number;
+    address: {
+      region: string;
+      city: string;
+      specificLocation: string;
+    };
+    bedrooms: number;
+    bathrooms: number;
+    area: number;
+    landArea: number;
+    propertyType: string;
+    listingType: string;
+    furnished: string;
+    builtInYear: number;
+    amenities: string[];
+    images: string[];
+    panoramicImages: string[];
+    isActive: boolean;
+    isFeatured: boolean;
+    status: string;
+    viewCount: number;
+    createdAt: string;
+    updatedAt: string;
+    expireDate: string;
+  }

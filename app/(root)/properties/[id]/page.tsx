@@ -5,10 +5,10 @@ import properties from "@/data/property";
 import { PropertyImageGallery } from "@/components/shared/property-image-gallery";
 
 const PropertyDetailsPage = async (props: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ propertyId: string }>;
 }) => {
-  const { id } = await props.params;
-  const property = properties.find((p) => p.id === Number(id));
+  const { propertyId } = await props.params;
+  const property = properties.find((p) => p.id === Number(propertyId));
 
   if (!property) {
     return notFound();

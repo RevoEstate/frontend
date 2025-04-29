@@ -5,15 +5,19 @@ import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/shared/PropertyCard";
 import { PropertyCardSkeleton } from "@/components/shared/PropertyCardSkeleton";
 import { useState, useEffect, useRef } from "react";
-import properties from "@/data/property";
-import Link from "next/link";
 import { Swiper, SwiperSlide, SwiperRef } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { motionTextProps } from "@/lib/motionLib";
+import { useProperty } from "@/hooks/useProperty";
+import { Property } from "@/types";
 
 export default function FeaturedProperties() {
+    const { data, isLoading, error } = useProperty();
+    console.log("Home: ", data)
+    const properties = data?.properties
+
   const [loading, setLoading] = useState(true);
   const swiperRef = useRef<SwiperRef>(null);
 
@@ -30,7 +34,7 @@ export default function FeaturedProperties() {
     return () => clearTimeout(timer);
   }, []);
 
-  const featuredProperties = properties.filter((property) => property.featured);
+  const featuredProperties = properties?.filter((property) => property.isFeatured);
 
   return (
     <section className="py-10 bg-gray-100/40 dark:bg-gray-900">
@@ -133,9 +137,9 @@ export default function FeaturedProperties() {
               }}
               className="px-2 py-4"
             >
-              {featuredProperties.map((property) => (
-                <SwiperSlide key={property.id} className="p-3">
-                  <PropertyCard {...property} />
+              {featuredProperties?.map((property: Property) => (
+                <SwiperSlide key={property._id} className="p-3">
+                  <PropertyCard key={property._id} property={property} />
                 </SwiperSlide>
               ))}
             </Swiper>

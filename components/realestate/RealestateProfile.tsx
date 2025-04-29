@@ -168,9 +168,9 @@ export function RealEstateProfile() {
                     </p>
                   </div>
                    {/* Documents */}
-                    {realestate?.verificationDocuments?.length > 0 && ( 
+                    {realestate?.documentUrl?.length > 0 && ( 
                         <div>
-                            {realestate?.verificationDocuments && (
+                            {realestate?.documentUrl && (
                             <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                                 <div className="flex items-center gap-2">
                                 {/* <FileText className="h-4 w-4 text-muted-foreground" /> */}
@@ -179,7 +179,7 @@ export function RealEstateProfile() {
                                 </span>
                                 </div>
                                 <Button variant="link" size="sm" className="mt-2 p-0 h-auto">
-                                View Document
+                                  View Document
                                 </Button>
                             </div>
                             )}
