@@ -171,6 +171,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   // Inside PropertyForm component
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictedPrice, setpredictedprice] = useState();
+
   const handlePricePrediction = async () => {
     // Get form values
     const formValues = form.getValues();
@@ -241,7 +242,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       Address: requiredFields.address,
       Property_Type: requiredFields.propertyType,
     };
-    console.log("Payload for prediction:", payload);
+    // console.log("Payload for prediction:", payload);
     try {
       setIsPredicting(true);
       const response = await fetch(
@@ -260,7 +261,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       }
 
       const data = await response.json();
-      console.log("Prediction response:", data);
+      // console.log("Prediction response:", data);
       const predictedPrice = data.PredictedPrice;
       toast.success(`Predicted Price: ${predictedPrice?.toLocaleString()} ETB`);
       form.setValue("price", predictedPrice);
