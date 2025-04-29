@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   BadgeCheck,
+  ExternalLink,
+  FileText,
   Globe,
   Hourglass,
   Mail,
@@ -218,30 +220,29 @@ export function RealEstateProfile() {
                 </div>
                 {/* Documents */}
                 {realestate?.documentUrl && (
-                  <div>
-                    {realestate?.documentUrl && (
-                      <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                        <div className="flex items-center gap-2">
-                          {/* <FileText className="h-4 w-4 text-muted-foreground" /> */}
-                          <Link
-                            href={realestate?.documentUrl}
-                            target="_blank"
-                            className="flex items-center gap-2"
-                          >
-                            <span className="text-sm font-medium truncate">
-                              Document
-                            </span>
-                          </Link>
-                        </div>
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="mt-2 p-0 h-auto"
-                        >
-                          View Document
-                        </Button>
+                  <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Property Documents</span>
                       </div>
-                    )}
+                      <Button
+                        asChild
+                        variant="link"
+                        size="sm"
+                        className="p-0 h-auto justify-start text-primary"
+                      >
+                        <Link 
+                          href={realestate.documentUrl} 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1"
+                        >
+                          <span>View Document</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

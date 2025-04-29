@@ -263,8 +263,14 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       const data = await response.json();
       // console.log("Prediction response:", data);
       const predictedPrice = data.PredictedPrice;
-      toast.success(`Predicted Price: ${predictedPrice?.toLocaleString()} ETB`);
-      form.setValue("price", predictedPrice);
+      toast.success(`Price pridicted successfully!`, {
+        description: `According to the property data you provided, Your property is estimated to be ${predictedPrice?.toLocaleString()} ETB`,
+        action: {
+          label: "Set the pridicted price as your default price",
+          onClick: () => form.setValue("price", predictedPrice),
+        },
+      });
+      
     } catch (error) {
       toast.error(`Error predicting price: ${(error as Error).message}`);
     } finally {
@@ -1165,26 +1171,29 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
               </FormItem>
             )}
           />
-          <Button
-            type="button"
-            onClick={handlePricePrediction}
-            variant="default"
-            size="lg"
-            disabled={isPredicting}
-            className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full md:text-lg md:font-bold md:py-6"
-          >
-            {isPredicting ? "Predicting..." : "Predict Price"}
-          </Button>
-          <Button
-            type="submit"
-            size="lg"
-            disabled={form.formState.isSubmitting}
-            className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer w-full md:text-lg md:font-bold md:py-6"
-          >
-            {form.formState.isSubmitting
-              ? "Creating Property ..."
-              : `Create Property`}
-          </Button>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+            <Button
+              type="button"
+              onClick={handlePricePrediction}
+              variant="default"
+              size="lg"
+              disabled={isPredicting}
+              className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer md:text-lg md:font-semibold md:py-6 w-full md:w-100"
+            >
+              {isPredicting ? "Predicting..." : "Predict Price"}
+            </Button>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={form.formState.isSubmitting}
+              className="bg-sky-600 hover:bg-sky-600/80 cursor-pointer md:text-lg md:font-semibold md:py-6 w-full md:w-100"
+            >
+              {form.formState.isSubmitting
+                ? "Creating Property ..."
+                : `Create Property`}
+            </Button>
+          </div>
+         
         </form>
       </Form>
     </div>
