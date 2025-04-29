@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
     const fetchSession = async () => {
       if (!sessionId) {
         setError("No Transaction ID provided.");
-        setLoading(false)
+        setLoading(false);
         return;
       }
 
@@ -35,10 +35,8 @@ export default function PaymentSuccess() {
           setError(response.data.message || "Failed to retrieve transaction.");
         }
       } catch (error) {
-        console.log("Success Error: ", error)
-        setError(
-          error.response?.data?.message 
-        );
+        console.log("Success Error: ", error);
+        setError(error.response?.data?.message);
       } finally {
         setLoading(false);
       }
@@ -47,8 +45,7 @@ export default function PaymentSuccess() {
     fetchSession();
   }, [sessionId]);
 
-
-  if (error ) {
+  if (error) {
     return (
       <div className="h-[50vh] mt-10 flex items-center justify-center p-4">
         <Card className="max-w-md w-full shadow-lg">
@@ -85,12 +82,12 @@ export default function PaymentSuccess() {
     );
   }
 
-  if(transactionDetails) {
+  if (transactionDetails) {
     // Format price based on payment method
-  const price =
-  transactionDetails.paymentMethod === "stripe"
-    ? `$${transactionDetails.price.usd.toFixed(2)}`
-    : `${transactionDetails.price.etb.toFixed(2)} Birr`;
+    const price =
+      transactionDetails.paymentMethod === "stripe"
+        ? `$${transactionDetails.price.usd.toFixed(2)}`
+        : `${transactionDetails.price.etb.toFixed(2)} Birr`;
 
     return (
       <div className="h-[100vh] flex items-center justify-center p-4 my-5">
@@ -131,7 +128,9 @@ export default function PaymentSuccess() {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Number of Properties Listed</span>
+                <span className="text-gray-600">
+                  Number of Properties Listed
+                </span>
                 <span className="font-medium text-gray-900">
                   {transactionDetails.maxnumberOfProperties} Properties
                 </span>
@@ -151,7 +150,10 @@ export default function PaymentSuccess() {
             </div>
             <div className="border-t pt-6">
               <div className="flex gap-4">
-                <Button asChild className="w-full bg-sky-600 hover:bg-sky-600/90">
+                <Button
+                  asChild
+                  className="w-full bg-sky-600 hover:bg-sky-600/90"
+                >
                   <Link href="/realestate/packages">View Packages</Link>
                 </Button>
               </div>
@@ -161,6 +163,4 @@ export default function PaymentSuccess() {
       </div>
     );
   }
-
-  
 }
