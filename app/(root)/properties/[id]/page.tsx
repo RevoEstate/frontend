@@ -1,37 +1,65 @@
+"use client"
+
 import { notFound } from "next/navigation";
-import { Bed, Bath, Ruler, Home, Car, Layers, Calendar } from "lucide-react";
+import { Bed, Bath, Ruler, Home, Layers, Calendar, Recycle, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import properties from "@/data/property";
 import { PropertyImageGallery } from "@/components/shared/property-image-gallery";
+import { useProperty } from "@/hooks/useProperty";
+import React from "react";
+import { usePropertyById } from "@/hooks/usePropertyById";
 
-const PropertyDetailsPage = async (props: {
-  params: Promise<{ propertyId: string }>;
-}) => {
-  const { propertyId } = await props.params;
-  const property = properties.find((p) => p.id === Number(propertyId));
+const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const Params = React.use(params);
+  const id = Params.id;
+  const { 
+    property,
+    isLoading,
+    isError,
+    error
+  } = usePropertyById(id);
 
-  if (!property) {
-    return notFound();
+  console.log("Property Detail: ", property)
+
+  // Handle loading state
+  if (isLoading) {
+    return <div className="container mt-18 flex justify-center py-12">
+      <p>Loading property details...</p>
+    </div>;
   }
 
+  // Handle error state
+  if (isError) {
+    if (error?.message.includes('404')) {
+      notFound(); // Return 404 page for not found properties
+    }
+    return <div className="container mt-18 flex justify-center py-12">
+      <p>Error loading property: {error?.message}</p>
+    </div>
+  }
+
+ 
+
   const formattedPrice =
-    property.type === "For Sale"
-      ? `$${property.price.toLocaleString()}`
-      : `$${property.price.toLocaleString()}/mo`;
+    property?.listingType === "For Sale"
+      ? `$${property?.price.toLocaleString()}`
+      : `$${property?.price.toLocaleString()}/mo`;
 
   return (
     <div className="bg-white dark:bg-gray-900 mt-18 container">
       <PropertyImageGallery
-        images={property.images}
-        title={property.title}
-        location={property.location}
+        images={property?.images}
+        title={property?.title}
+        region={property?.address.region} 
+        city={property?.address.city} 
+        specificLocation={property?.address.specificLocation} 
         formattedPrice={formattedPrice}
-        propertyType={property.type}
-        isFeatured={property.featured}
+        propertyType={property?.listingType}
+        isFeatured={property?.isFeatured}
       />
 
       {/* Rest of your content remains exactly the same */}
-      <div className="py-6">
+      <div className="py-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
@@ -39,7 +67,7 @@ const PropertyDetailsPage = async (props: {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
               <h2 className="text-2xl font-bold mb-4">Property Details</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                {property.description}
+                {property?.description}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div className="flex items-center">
@@ -48,7 +76,7 @@ const PropertyDetailsPage = async (props: {
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
                       Bedrooms
                     </p>
-                    <p className="font-medium">{property.beds}</p>
+                    <p className="font-medium">{property?.bedrooms}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -57,7 +85,7 @@ const PropertyDetailsPage = async (props: {
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
                       Bathrooms
                     </p>
-                    <p className="font-medium">{property.baths}</p>
+                    <p className="font-medium">{property?.bathrooms}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -67,40 +95,40 @@ const PropertyDetailsPage = async (props: {
                       Area
                     </p>
                     <p className="font-medium">
-                      {property.areaSqft.toLocaleString()} sqft
+                      {property?.area.toLocaleString()} sqm
                     </p>
                   </div>
                 </div>
-                {property.yearBuilt && (
+                {property?.builtInYear && (
                   <div className="flex items-center">
                     <Calendar className="w-6 h-6 text-sky-500 mr-2" />
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">
                         Year Built
                       </p>
-                      <p className="font-medium">{property.yearBuilt}</p>
+                      <p className="font-medium">{property?.builtInYear} G.C</p>
                     </div>
                   </div>
                 )}
-                {property.garage && (
+                {property?.furnished && (
                   <div className="flex items-center">
-                    <Car className="w-6 h-6 text-sky-500 mr-2" />
+                    <Recycle className="w-6 h-6 text-sky-500 mr-2" />
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Garage
-                      </p>
-                      <p className="font-medium">{property.garage} spaces</p>
+                        Is it furnished?
+                      </p>            
+                      <p className="font-medium">Furnished</p>
                     </div>
                   </div>
                 )}
-                {property.lotSize && (
+                {property?.landArea && (
                   <div className="flex items-center">
-                    <Layers className="w-6 h-6 text-sky-500 mr-2" />
+                    <Maximize className="w-6 h-6 text-sky-500 mr-2" />
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Lot Size
+                        Plot Area/Total Area
                       </p>
-                      <p className="font-medium">{property.lotSize}</p>
+                      <p className="font-medium">{property?.landArea}</p>
                     </div>
                   </div>
                 )}
@@ -108,11 +136,11 @@ const PropertyDetailsPage = async (props: {
             </div>
 
             {/* Amenities */}
-            {property.amenities && property.amenities.length > 0 && (
+            {property?.amenities && property?.amenities.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
                 <h2 className="text-2xl font-bold mb-4">Amenities</h2>
                 <div className="flex flex-wrap gap-3">
-                  {property.amenities.map((amenity, index) => (
+                  {property?.amenities.map((amenity, index) => (
                     <span
                       key={index}
                       className="bg-sky-100 dark:bg-gray-700 px-4 py-2 rounded-full text-sm font-medium"
@@ -125,18 +153,20 @@ const PropertyDetailsPage = async (props: {
             )}
 
             {/* VR Tour */}
-            {property.vrTour && (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
-                <h2 className="text-2xl font-bold mb-4">Virtual Tour</h2>
-                <div className="aspect-video bg-sky-200 rounded-lg overflow-hidden">
-                  <iframe
-                    src={property.vrTour}
-                    className="w-full h-full"
-                    allowFullScreen
-                  />
+            {property.panoramicImages && (
+              <div className="p-6">
+                <div className='mb-8'>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-1">Explore Our Property in 360° Panaromic View</h2>
+                  <p className='text-sm md:text-base text-muted-foreground'>Immerse yourself in stunning panoramic views of our rooms.</p>
                 </div>
+                  {/* <Panorama 
+                    panoramicImages={property.panoramicImages} 
+                    // hotspots={hotspots} 
+                  />   */}
+                  VR SOON
               </div>
             )}
+            
           </div>
           {/* Sidebar */}
           <div className="lg:col-span-1">
@@ -188,22 +218,6 @@ const PropertyDetailsPage = async (props: {
                   Request Viewing
                 </Button>
               </form>
-
-              {/* <div className="mt-8 pt-6 border-t">
-                <h3 className="font-bold mb-3">Contact Agent</h3>
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                    <Home className="w-6 h-6 text-gray-500" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{property.agent || "Revo Estate Agent"}</p>
-                    <p className="text-sm text-gray-500">Licensed Realtor</p>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full">
-                  Contact Agent
-                </Button>
-              </div> */}
             </div>
           </div>
         </div>
