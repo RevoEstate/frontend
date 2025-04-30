@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/shared/PropertyCard";
 import { PropertyCardSkeleton } from "@/components/shared/PropertyCardSkeleton";
 import { useState, useEffect, useRef } from "react";
@@ -10,13 +9,16 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { motionTextProps } from "@/lib/motionLib";
-import { useProperty } from "@/hooks/useProperty";
 import { Property } from "@/types";
+import { useFeaturedProperties } from "@/hooks/useFeaturedProperties";
 
 export default function FeaturedProperties() {
-    const { data, isLoading, error } = useProperty();
-    console.log("Home: ", data)
-    const properties = data?.properties
+  const { 
+    data: featuredData, 
+    isLoading, 
+    isError, 
+    error 
+  } = useFeaturedProperties();
 
   const [loading, setLoading] = useState(true);
   const swiperRef = useRef<SwiperRef>(null);
@@ -34,7 +36,11 @@ export default function FeaturedProperties() {
     return () => clearTimeout(timer);
   }, []);
 
-  const featuredProperties = properties?.filter((property) => property.isFeatured);
+  
+  if (isLoading) return <div>Loading featured properties...</div>;
+  if (isError) return <div>Error: {error.message}</div>;
+  if (!featuredData?.properties.length) return <div>No featured properties found</div>;
+
 
   return (
     <section className="py-10 bg-gray-100/40 dark:bg-gray-900">
@@ -45,7 +51,7 @@ export default function FeaturedProperties() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className=""
+          className="mb-3"
         >
           <div className="flex gap-2 items-center">
             <motion.hr
@@ -62,12 +68,11 @@ export default function FeaturedProperties() {
           <motion.p
             {...motionTextProps}
             transition={{ ...motionTextProps.transition, delay: 0.3 }}
-            className="text-lg text-muted-foreground max-w-2xl md:pl-22"
+            className="text-normal text-muted-foreground max-w-2xl md:pl-22"
           >
             Discover handpicked homes in prime locations
           </motion.p>
         </motion.div>
-
         {/* Property Carousel */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -85,36 +90,41 @@ export default function FeaturedProperties() {
             className="swiper"
           >
             {/* Navigation Buttons */}
-            <div className="hidden md:flex items-center justify-center lg:justify-end gap-5 mb-">
-              <motion.button
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{
-                  type: "tween",
-                  ease: [0.42, 0, 0.58, 1],
-                  delay: 0.5,
-                  duration: 0.5,
-                }}
-                className="flex items-center justify-center w-12 h-12 bg-sky-600/10 hover:bg-sky-600/15 transition cursor-pointer text-sky-900 font-bold"
-                onClick={handlePrev}
-              >
-                ←
-              </motion.button>
-              <motion.button
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{
-                  type: "tween",
-                  ease: [0.42, 0, 0.58, 1],
-                  delay: 0.5,
-                  duration: 0.5,
-                }}
-                className="flex items-center justify-center w-12 h-12 bg-sky-600/10 hover:bg-sky-600/15 transition cursor-pointer text-sky-900 font-bold"
-                onClick={handleNext}
-              >
-                →
-              </motion.button>
+            <div className="flex items-center justify-between">
+              <h2 className="bg-sky-100 p-2 rounded-sm text-sm font-semibold ml-2 text-sky-800">{featuredData?.total} Featued Properties</h2>
+              <div className="hidden md:flex items-center justify-center lg:justify-end gap-5 mb-">
+                <motion.button
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{
+                    type: "tween",
+                    ease: [0.42, 0, 0.58, 1],
+                    delay: 0.5,
+                    duration: 0.5,
+                  }}
+                  className="flex items-center justify-center w-12 h-12 bg-sky-600/10 hover:bg-sky-600/15 transition cursor-pointer text-sky-900 font-bold"
+                  onClick={handlePrev}
+                >
+                  ←
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{
+                    type: "tween",
+                    ease: [0.42, 0, 0.58, 1],
+                    delay: 0.5,
+                    duration: 0.5,
+                  }}
+                  className="flex items-center justify-center w-12 h-12 bg-sky-600/10 hover:bg-sky-600/15 transition cursor-pointer text-sky-900 font-bold"
+                  onClick={handleNext}
+                >
+                  →
+                </motion.button>
+                
+              </div>
             </div>
+          
             <Swiper
               ref={swiperRef}
               slidesPerView={1}
@@ -137,7 +147,7 @@ export default function FeaturedProperties() {
               }}
               className="px-2 py-4"
             >
-              {featuredProperties?.map((property: Property) => (
+              {featuredData?.properties.map((property: Property) => (
                 <SwiperSlide key={property._id} className="p-3">
                   <PropertyCard key={property._id} property={property} />
                 </SwiperSlide>
@@ -175,21 +185,6 @@ export default function FeaturedProperties() {
             </div>
           </motion.div>
         )}
-
-        {/* CTA */}
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="text-center mt-12"
-        >
-          <Link href='/properties'>
-            <Button size="lg" className="px-8 bg-sky-500 hover:bg-sky-600">
-              Browse All Properties
-            </Button>
-          </Link>
-        </motion.div> */}
       </div>
     </section>
   );
