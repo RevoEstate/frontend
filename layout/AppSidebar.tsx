@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
   {
     icon: <FaFlag size={22} />,
     name: "Content Reports",
-    path: "/content-reports",
+    path: "/reports",
   },
   {
     icon: <IoChatboxEllipses size={22} />,
