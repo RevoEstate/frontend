@@ -62,7 +62,7 @@ const navItems: NavItem[] = [
   {
     icon: <IoChatboxEllipses size={22} />,
     name: "Issue Resolution",
-    path: "/issue-resolution",
+    path: "/issues",
   },
   {
     icon: <IoBarChartSharp size={22} />,

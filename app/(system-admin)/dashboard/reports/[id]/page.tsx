@@ -111,7 +111,7 @@ export default function ReportDetailsPage({ params,
   params: Promise<{ id: string }>;
 }) {
   const router = useRouter()
-   const { id } = use(params);
+  const { id } = use(params);
   const [report, setReport] = useState<(typeof reports)[0] | null>(null)
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false)
   const [isDismissDialogOpen, setIsDismissDialogOpen] = useState(false)
