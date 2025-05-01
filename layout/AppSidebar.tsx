@@ -75,7 +75,7 @@ const othersItems: NavItem[] = [
   {
     icon: <FaUsers size={22} />,
     name: "Account Management",
-    path: "/account-management",
+    path: "/sub-accounts",
   },
   {
     icon: <FaShieldAlt size={22} />,
