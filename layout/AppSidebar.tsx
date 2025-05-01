@@ -80,7 +80,7 @@ const othersItems: NavItem[] = [
   {
     icon: <FaShieldAlt size={22} />,
     name: "Platform Policy",
-    path: "/platform-policy",
+    path: "/policies",
   },
   {
     icon: <FaSignOutAlt size={22} />,
