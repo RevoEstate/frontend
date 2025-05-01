@@ -85,7 +85,7 @@ const othersItems: NavItem[] = [
   {
     icon: <FaSignOutAlt size={22} />,
     name: "Sign out",
-    path: "/sign-out",
+    path: "/logout",
   },
 ];
 
