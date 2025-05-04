@@ -16,10 +16,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import dynamic from "next/dynamic"
+import Panorama from "@/components/shared/Panorama";
 
-const Map = dynamic(() => import('@/components/shared/Map'), {
-  ssr: false
-})
+
 
 const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const Params = React.use(params);
@@ -62,7 +61,10 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
     </div>
   }
 
- 
+  const Map = dynamic(() => import('@/components/shared/Map'), {
+    ssr: false,
+    loading: () => <div>Loading map...</div>,
+  })
 
   const formattedPrice =
     property?.listingType === "For Sale"
@@ -178,21 +180,31 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
 
             {/* VR Tour */}
             {property.panoramicImages && (
-              <div className="p-6">
+              <div className="mb-5 w-full">
                 <div className='mb-8'>
                   <h2 className="text-2xl md:text-3xl font-bold mb-1">Explore Our Property in 360° Panaromic View</h2>
                   <p className='text-sm md:text-base text-muted-foreground'>Immerse yourself in stunning panoramic views of our rooms.</p>
                 </div>
-                  {/* <Panorama 
+                  <Panorama 
                     panoramicImages={property.panoramicImages} 
-                    // hotspots={hotspots} 
-                  />   */}
-                  VR SOON
+                  />  
               </div>
             )}
 
-            <div className="relative h-[550px] w-full">
-              <Map center={property.address.geoPoint.coordinates} property={property} />
+            <div className="w-full py-5">
+              <div className='mb-8'>
+                <h2 className="text-2xl md:text-3xl font-bold mb-1">Property's Location</h2>
+                <p className='text-sm md:text-base text-muted-foreground'>Discover the exact location and surroundings of the property</p>
+              </div>
+              {property?.address.geoPoint?.coordinates ? (
+                <div className="mb-16 h-[500px]">
+                  <Map center={property.address.geoPoint.coordinates} property={property} />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-[50vh] bg-gray-100 rounded-lg">
+                  <p className="text-gray-500">Map coordinates not available</p>
+                </div>
+              )}
             </div>
 
           </div>

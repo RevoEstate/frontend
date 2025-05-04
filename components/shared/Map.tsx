@@ -8,6 +8,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import { Property } from '@/types'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 // @ts-ignore
 delete L.Icon.Default.prototype._getIconUrl
@@ -26,6 +27,14 @@ const Map:React.FC<MapProps> = ({
     center,
     property
 }) => {
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+  if (!isMounted) {
+    return <div>Loading map...</div>;
+  }
   const defaultCenter: L.LatLngExpression = [9.0192, 38.7525];
   const mapCenter: L.LatLngExpression = center ? [center[1], center[0]] : defaultCenter;
 
@@ -34,7 +43,7 @@ const Map:React.FC<MapProps> = ({
       center={mapCenter}
       zoom={center ? 13 : 2}
       scrollWheelZoom={false}
-      className="w-full rounded-lg" 
+      className="w-full" 
     >
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

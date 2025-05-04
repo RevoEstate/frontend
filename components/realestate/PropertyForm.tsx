@@ -347,7 +347,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
       );
       const currentFiles = form.getValues("images") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -365,7 +365,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddPanoramicFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
       );
       const currentFiles = form.getValues("panoramicImages") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -397,6 +397,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
+      "image/webp": [".webp"]
     },
     maxFiles: 20,
   });
@@ -419,6 +420,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
+      "image/webp": [".webp"]
     },
     maxFiles: 10,
   });
