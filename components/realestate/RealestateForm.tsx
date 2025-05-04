@@ -33,35 +33,50 @@ import { LatLngTuple } from "leaflet";
 import Image from "next/image";
 
 // Mock data for regions and cities
-const REGIONS = [
-  { value: "california", label: "California" },
-  { value: "new_york", label: "New York" },
-  { value: "texas", label: "Texas" },
-  { value: "florida", label: "Florida" },
+const ETHIOPIA_REGIONS = [
+  {
+    name: "Addis Ababa",
+    cities: [
+      "Addis Ketema",
+      "Akaky Kaliti",
+      "Arada",
+      "Bole",
+      "Gullele",
+      "Kirkos",
+      "Kolfe Keranio",
+      "Lideta",
+      "Nifas Silk-Lafto",
+      "Yeka",
+      "Lemi Kura",
+    ],
+  },
+  { name: "Afar", cities: ["Semera", "Asaita", "Awash"] },
+  { name: "Amhara", cities: ["Bahir Dar", "Gondar", "Dessie"] },
+  { name: "Benishangul-Gumuz", cities: ["Asosa", "Bambasi"] },
+  { name: "Dire Dawa", cities: ["Dire Dawa"] },
+  { name: "Gambela", cities: ["Gambela"] },
+  { name: "Harari", cities: ["Harar"] },
+  { name: "Oromia", cities: ["Adama", "Jimma", "Bishoftu"] },
+  { name: "Sidama", cities: ["Hawassa", "Yirgalem"] },
+  { name: "Somali", cities: ["Jijiga", "Degehabur"] },
+  { name: "SNNPR", cities: ["Arba Minch", "Sodo", "Wolaita"] },
+  { name: "Tigray", cities: ["Mekelle", "Axum", "Adigrat"] },
 ];
 
-const CITIES_BY_REGION = {
-  california: [
-    { value: "san_francisco", label: "San Francisco" },
-    { value: "los_angeles", label: "Los Angeles" },
-    { value: "san_diego", label: "San Diego" },
-  ],
-  new_york: [
-    { value: "new_york_city", label: "New York City" },
-    { value: "buffalo", label: "Buffalo" },
-    { value: "rochester", label: "Rochester" },
-  ],
-  texas: [
-    { value: "houston", label: "Houston" },
-    { value: "austin", label: "Austin" },
-    { value: "dallas", label: "Dallas" },
-  ],
-  florida: [
-    { value: "miami", label: "Miami" },
-    { value: "orlando", label: "Orlando" },
-    { value: "tampa", label: "Tampa" },
-  ],
-};
+// Transform the data to match the existing format
+const REGIONS = ETHIOPIA_REGIONS.map(region => ({
+  value: region.name.toLowerCase().replace(/\s+/g, '_'),
+  label: region.name
+}));
+
+const CITIES_BY_REGION = ETHIOPIA_REGIONS.reduce((acc, region) => {
+  const regionKey = region.name.toLowerCase().replace(/\s+/g, '_');
+  acc[regionKey] = region.cities.map(city => ({
+    value: city.toLowerCase().replace(/\s+/g, '_'),
+    label: city
+  }));
+  return acc;
+}, {} as Record<string, { value: string; label: string }[]>);
 
 export function RealestateForm({
   type,
@@ -74,6 +89,8 @@ export function RealestateForm({
 }) {
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  
 
   const form = useForm<z.infer<typeof realestateSchema>>({
     resolver:
@@ -89,18 +106,6 @@ export function RealestateForm({
 
     try {
       const formData = new FormData();
-
-      // Round coordinates to 5 decimal places
-      if (values.address?.coordinates) {
-        values.address.coordinates = {
-          lat: values.address.coordinates.lat
-            ? Number(values.address.coordinates.lat.toFixed(5))
-            : undefined,
-          lng: values.address.coordinates.lng
-            ? Number(values.address.coordinates.lng.toFixed(5))
-            : undefined,
-        };
-      }
 
       // Append all fields to FormData
       Object.entries(values).forEach(([key, value]) => {
@@ -120,10 +125,6 @@ export function RealestateForm({
           formData.append(key, value.toString());
         }
       });
-
-      // if (type === "Update" && realestateId) {
-      //   formData.append("companyId", realestateId);
-      // }
 
       console.log("FormData entries:");
       for (const [key, value] of formData.entries()) {
@@ -192,23 +193,28 @@ export function RealestateForm({
 
   const selectedRegion = form.watch("address.region");
 
-  const getCurrentLocation = () => {
-    if (typeof window !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords: LatLngTuple = [
-            position.coords.latitude,
-            position.coords.longitude,
-          ];
-          form.setValue("address.coordinates.lat", coords[0]);
-          form.setValue("address.coordinates.lng", coords[1]);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    }
-  };
+  const detectLocation = () => {
+     setIsDetectingLocation(true);
+     if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(
+         (position) => {
+           form.setValue("address.geoPoint.coordinates", [
+             position.coords.longitude,
+             position.coords.latitude,
+           ]);
+           setIsDetectingLocation(false);
+           toast.success("Location detected successfully");
+         },
+         (error) => {
+           toast.error("Error detecting location: " + error.message);
+           setIsDetectingLocation(false);
+         }
+       );
+     } else {
+       toast.error("Geolocation is not supported by your browser");
+       setIsDetectingLocation(false);
+     }
+   };
 
   return (
     <Form {...form}>
@@ -477,62 +483,62 @@ export function RealestateForm({
 
        
         {/* Coordinates Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium">Location Coordinates</h4>
-            <Button
-              type="button"
-              onClick={getCurrentLocation}
-              variant="outline"
-              size="sm"
-            >
-              <MapPinIcon className="mr-2 h-4 w-4" />
-              Auto-detect
-            </Button>
-          </div>
-
-          {/* Manual Input Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="address.coordinates.lat"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Latitude</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={-90}
-                      max={90}
-                      step="0.000001"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address.coordinates.lng"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Longitude</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={-180}
-                      max={180}
-                      step="0.000001"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <FormLabel>Coordinates</FormLabel>
+            <div className="flex gap-2">
+              <FormField
+                control={form.control}
+                name="address.geoPoint.coordinates.0"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <Input
+                        placeholder="Longitude"
+                        {...field}
+                        onChange={(e) =>
+                          form.setValue(
+                            "address.geoPoint.coordinates.0",
+                            Number(e.target.value)
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address.geoPoint.coordinates.1"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <Input
+                        placeholder="Latitude"
+                        {...field}
+                        onChange={(e) =>
+                          form.setValue(
+                            "address.geoPoint.coordinates.1",
+                            Number(e.target.value)
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={detectLocation}
+                disabled={isDetectingLocation}
+                className="cursor-pointer"
+              >
+                {isDetectingLocation ? "Detecting..." : "Auto Detect"}
+              </Button>
+            </div>
           </div>
         </div>
 

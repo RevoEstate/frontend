@@ -1,13 +1,25 @@
 "use client"
 
 import { notFound } from "next/navigation";
-import { Bed, Bath, Ruler, Home, Layers, Calendar, Recycle, Maximize } from "lucide-react";
+import { Bed, Bath, Ruler, Home, Layers, Calendar, Recycle, Maximize, MessageSquareMore, MapPin, Phone, Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import properties from "@/data/property";
 import { PropertyImageGallery } from "@/components/shared/property-image-gallery";
 import { useProperty } from "@/hooks/useProperty";
 import React from "react";
 import { usePropertyById } from "@/hooks/usePropertyById";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import dynamic from "next/dynamic"
+
+const Map = dynamic(() => import('@/components/shared/Map'), {
+  ssr: false
+})
 
 const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const Params = React.use(params);
@@ -19,13 +31,25 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
     error
   } = usePropertyById(id);
 
-  console.log("Property Detail: ", property)
+  console.log("Property Details: ", property)
 
   // Handle loading state
   if (isLoading) {
-    return <div className="container mt-18 flex justify-center py-12">
-      <p>Loading property details...</p>
-    </div>;
+    return (
+      <header className="flex items-center justify-center h-[80vh]">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-transparent cursor-wait text-black"
+            disabled
+          >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Loading...
+          </Button>
+        </div>
+      </header>
+    );
   }
 
   // Handle error state
@@ -166,56 +190,130 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
                   VR SOON
               </div>
             )}
-            
+
+            <div className="relative h-[550px] w-full">
+              <Map center={property.address.geoPoint.coordinates} property={property} />
+            </div>
+
           </div>
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 sticky top-6">
-              <h2 className="text-xl font-bold mb-4">
-                Schedule For Physical Tour
-              </h2>
+          <div className="flex flex-col gap-5 mb-3">
+            {/* Owner/Company Information Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <div className="flex flex-col items-center text-center mb-6">
+                <h1 className="text-2xl font-bold mb-1">Property Owner</h1>
+                <Separator className="mb-4" />
+                {property.userId.company?.imageUrl && (
+                  <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-primary">
+                    <img 
+                      src={property.userId.company.imageUrl}
+                      alt={property.userId.company.realEstateName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <h3 className="text-xl font-bold">{property.userId.company?.realEstateName || "Property Owner"}</h3>
+                {property.userId.company?.isVerified && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <Badge variant="outline" className="border-green-200 bg-green-50 text-green-800">
+                      <CheckCircle2 className="w-3 h-3 mr-1" />
+                      Verified
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                {property.userId.company?.description && (
+                  <p className="text-sm text-muted-foreground text-justify">
+                    {property.userId.company.description}
+                  </p>
+                )}
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-6 h-6 text-sky-500 mr-2" />
+                    <span className="text-sm">{property.userId.company?.email || property.userId.email}</span>
+                  </div>
+
+                  {property.userId.company?.phone && (
+                    <div className="flex items-center gap-2">
+                    <Phone className="w-6 h-6 text-sky-500 mr-2" />
+                    <span className="text-sm">{property.userId.company?.phone }</span>
+                    </div>
+                  )}
+
+                  {property.userId.company?.address && (
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-6 h-6 text-sky-500 mr-2" />
+                      <span className="text-sm">
+                        {property.userId.company.address.specificLocation}<br />
+                        {property.userId.company.address.city}, {property.userId.company.address.region}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Social Media Links */}
+                {property.userId.company?.socialMedia && (
+                  <div className="pt-4">
+                    <h4 className="text-sm font-medium mb-2">Connect with us</h4>
+                    <div className="flex gap-3">
+                      {property.userId.company.socialMedia.facebook && (
+                        <Button variant="outline" size="icon" asChild>
+                          <a href={property.userId.company.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                            <FaFacebook className="w-6 h-6 text-sky-500" />
+                          </a>
+                        </Button>
+                      )}
+                      {property.userId.company.socialMedia.instagram && (
+                        <Button variant="outline" size="icon" asChild>
+                          <a href={property.userId.company.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                            <FaInstagram className="w-6 h-6 text-rose-500" />
+                          </a>
+                        </Button>
+                      )}
+                      {property.userId.company.socialMedia.linkedin && (
+                        <Button variant="outline" size="icon" asChild>
+                          <a href={property.userId.company.socialMedia.linkedin} target="_blank" rel="noopener noreferrer">
+                            <FaLinkedin className="w-6 h-6 text-sky-500" />
+                          </a>
+                        </Button>
+                      )}
+                      {property.userId.company.socialMedia.whatsapp && (
+                        <Button variant="outline" size="icon" asChild>
+                          <Link href={`https://wa.me/${property.userId.company.socialMedia.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                            <MessageSquareMore className="w-6 h-6 text-green-500" />
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+           {/* Schedule Tour Form */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4">Schedule For Physical Tour</h2>
               <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                    required
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" type="text" required />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                    required
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" required />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input id="phone" type="tel" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Message
-                  </label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea id="message" rows={3} />
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-sky-500 hover:bg-sky-600"
-                >
-                  Request Viewing
+                <Button variant="ghost" type="submit" className="w-full bg-sky-600 hover:bg-sky-600/80 cursor-pointer text-white hover:text-white">
+                  Request Physical Tour
                 </Button>
               </form>
             </div>

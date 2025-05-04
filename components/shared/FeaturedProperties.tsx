@@ -11,6 +11,8 @@ import "swiper/css/pagination";
 import { motionTextProps } from "@/lib/motionLib";
 import { Property } from "@/types";
 import { useFeaturedProperties } from "@/hooks/useFeaturedProperties";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function FeaturedProperties() {
   const { 
@@ -37,7 +39,24 @@ export default function FeaturedProperties() {
   }, []);
 
   
-  if (isLoading) return <div>Loading featured properties...</div>;
+  if (isLoading) {
+    return (
+      <header className="flex items-center justify-center mt-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="bg-transparent cursor-wait text-sky-800"
+            disabled
+          >
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Loading Featured Properties...
+          </Button>
+        </div>
+      </header>
+    );
+  }
+
   if (isError) return <div>Error: {error.message}</div>;
   if (!featuredData?.properties.length) return <div>No featured properties found</div>;
 
