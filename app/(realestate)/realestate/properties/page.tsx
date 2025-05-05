@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { RealestatePropertyCard } from '@/components/realestate/RealestatePropertyCard';
 import Pagination from '@/components/shared/Pagination';
 import { usePropertyByRealestate } from '@/hooks/usePropertyByRealestate';
+import Link from 'next/link';
 
 const RealestatePropertyPage = () => {
   const [page, setPage] = useState(1);
@@ -50,15 +51,9 @@ const RealestatePropertyPage = () => {
 
   if (properties.length === 0) {
     return (
-      <div className="text-center p-8">
-        <p className="text-gray-500">No properties found</p>
-        <Button 
-          variant="outline" 
-          className="mt-4"
-          onClick={() => setPage(1)}
-        >
-          Refresh
-        </Button>
+      <div className="text-center p-10 flex flex-col items-center justify-center border-1 mt-16 md:w-[50vw] mx-auto gap-2 shadow-lg">
+        <h1 className="text-gray-600 text-xl font-semibold">No properties found</h1>
+        <Link className='text-muted-foreground text-sm hover:text-sky-700 hover:underline' href="/realestate/properties/create">Add some properties</Link>
       </div>
     );
   }

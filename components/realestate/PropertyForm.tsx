@@ -923,30 +923,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
                     ))}
                   </div>
                 )}
-
-                {/* Add More Regular Images Button */}
-                {/* {imagePreviews.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/jpeg,image/png,image/gif";
-                      input.multiple = true;
-                      input.onchange = (e) => {
-                        const files = Array.from(
-                          (e.target as HTMLInputElement).files || []
-                        );
-                        handleAddFiles(files);
-                      };
-                      input.click();
-                    }}
-                  >
-                    Add More Regular Images
-                  </Button>
-                )} */}
                 <FormMessage />
               </FormItem>
             )}
@@ -1037,30 +1013,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
                   </div>
                 )}
 
-                {/* Add More Panoramic Images Button */}
-                {/* {panoramicPreviews.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/jpeg,image/png,image/gif";
-                      input.multiple = true;
-                      input.onchange = (e) => {
-                        const files = Array.from(
-                          (e.target as HTMLInputElement).files || []
-                        );
-                        handleAddPanoramicFiles(files);
-                      };
-                      input.click();
-                    }}
-                  >
-                    Add More Panoramic Images
-                  </Button>
-                )} */}
-
                 <FormMessage />
               </FormItem>
             )}
@@ -1068,28 +1020,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
 
           {/* Additional Options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Featured Property</FormLabel>
-                  <FormDescription>
-                    Feature this property on the homepage
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    className="cursor-pointer"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          /> */}
-
             <FormField
               control={form.control}
               name="furnished"

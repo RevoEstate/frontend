@@ -33,8 +33,8 @@ function MyPackagesList() {
 
   if (!packages || packages.length === 0) {
     return (
-      <div className="text-center border-1 flex flex-col justify-center items-center mt-30 py-8 md:mx-60 shadow-md rounded-md">
-        <h1 className="text-lg md:text-3xl text-gray-800 font-bold pb-2">
+      <div className="text-center border-1 flex flex-col justify-center items-center mt-15 p-8 md:w-[50vw] mx-auto gap-2 shadow-lg">
+        <h1 className="text-lg text-gray-600 font-semibold">
           No packages purchased yet
         </h1>
         <p className="text-gray-600">

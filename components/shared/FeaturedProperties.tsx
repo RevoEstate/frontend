@@ -57,8 +57,8 @@ export default function FeaturedProperties() {
     );
   }
 
-  if (isError) return <div>Error: {error.message}</div>;
-  if (!featuredData?.properties.length) return <div>No featured properties found</div>;
+  if (isError) return null; // No need to display the error on the homepage
+  // if (!featuredData?.properties.length) return <div>No featured properties found</div>;
 
 
   return (

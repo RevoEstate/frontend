@@ -112,8 +112,8 @@ const CreatePropertyPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 text-sky-700">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex gap-3 text-muted-foreground items-center justify-center min-h-[300px] text-sm">
+        <Loader2 className="h-5 w-5 animate-spin" />
         <p>Loading your packages...</p>
       </div>
     );
@@ -139,9 +139,9 @@ const CreatePropertyPage = () => {
 
   if (!activePackages?.length && !selectedPackageId) {
     return (
-      <div className="flex flex-col items-center gap-5 p-4">
-        <div className="text-center max-w-md p-6 border-1 shadow-2xl rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">No Active Packages</h2>
+      <div className="flex flex-col items-center gap-5 p-8 md:w-[50vw] mx-auto border-1 shadow-lg mt-15">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">No active packages found</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             You need an active package to create properties.
           </p>
