@@ -10,8 +10,8 @@ import Link from "next/link";
 export function PropertyCard({ property }: { property: Property }) {
 
   const formattedPrice = property.listingType === "For Sale" 
-  ? `$${property.price.toLocaleString()}` 
-  : `$${property.price.toLocaleString()}/mo`;
+  ? `${property.price.toLocaleString()} ETB` 
+  : `${property.price.toLocaleString()} ETB /month`;
 
   return (
     <motion.div

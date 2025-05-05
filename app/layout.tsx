@@ -8,6 +8,7 @@ import {
 } from "@/lib/constants/index.ts";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/lib/providers";
+import Chatbot from "@/components/shared/Chatbot";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
         <body className={`${inter.className} antialiased`}>
           {children}
           <Toaster richColors position="top-center" />
+          <Chatbot />
         </body>
       </html>
     </Providers>

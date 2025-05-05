@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
 import { Switch } from "../ui/switch";
 import { Badge } from "../ui/badge";
+import { useRouter } from "next/navigation";
 
 // Ethiopian regions and cities data
 const ETHIOPIA_REGIONS = [
@@ -70,6 +71,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const [panoramicPreviews, setPanoramicPreviews] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState<string[]>([]);
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof createPropertySchema>>({
     resolver: zodResolver(createPropertySchema),
@@ -159,6 +161,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       const data = await response.json();
       toast.success("Property created successfully!");
       form.reset();
+      router.push('/realestate/properties')
       setImagePreviews([]);
       setPanoramicPreviews([]);
       setAmenities([]);
@@ -347,7 +350,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
       );
       const currentFiles = form.getValues("images") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -365,7 +368,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddPanoramicFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
       );
       const currentFiles = form.getValues("panoramicImages") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -397,6 +400,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
+      "image/webp": [".webp"]
     },
     maxFiles: 20,
   });
@@ -419,6 +423,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
+      "image/webp": [".webp"]
     },
     maxFiles: 10,
   });
@@ -921,30 +926,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
                     ))}
                   </div>
                 )}
-
-                {/* Add More Regular Images Button */}
-                {/* {imagePreviews.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/jpeg,image/png,image/gif";
-                      input.multiple = true;
-                      input.onchange = (e) => {
-                        const files = Array.from(
-                          (e.target as HTMLInputElement).files || []
-                        );
-                        handleAddFiles(files);
-                      };
-                      input.click();
-                    }}
-                  >
-                    Add More Regular Images
-                  </Button>
-                )} */}
                 <FormMessage />
               </FormItem>
             )}
@@ -1035,30 +1016,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
                   </div>
                 )}
 
-                {/* Add More Panoramic Images Button */}
-                {/* {panoramicPreviews.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/jpeg,image/png,image/gif";
-                      input.multiple = true;
-                      input.onchange = (e) => {
-                        const files = Array.from(
-                          (e.target as HTMLInputElement).files || []
-                        );
-                        handleAddPanoramicFiles(files);
-                      };
-                      input.click();
-                    }}
-                  >
-                    Add More Panoramic Images
-                  </Button>
-                )} */}
-
                 <FormMessage />
               </FormItem>
             )}
@@ -1066,28 +1023,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
 
           {/* Additional Options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Featured Property</FormLabel>
-                  <FormDescription>
-                    Feature this property on the homepage
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    className="cursor-pointer"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          /> */}
-
             <FormField
               control={form.control}
               name="furnished"

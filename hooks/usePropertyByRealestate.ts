@@ -14,19 +14,31 @@ export const usePropertyByRealestate = (page: number = 1) => {
             throw new Error('User ID is required');
         }
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/companyproperties`,
-        { 
-          params: { page },
-          withCredentials: true,
-        },
-      );
+        try {
+          const response = await axios.get(
+              `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/companyproperties`,
+              { 
+                  params: { page },
+                  withCredentials: true,
+              },
+          );
 
-      if (response.status !== 200 || !response.data.success) {
-        throw new Error(response.data.message || 'Failed to fetch properties');
+          // Handle empty case gracefully
+          if (response.status === 404) {
+              return [];
+          }
+
+          if (response.status !== 200 || !response.data.success) {
+              throw new Error(response.data.message || 'Failed to fetch properties');
+          }
+
+          return response.data.data || []; // ensure array is returned
+      } catch (error) {
+          if (axios.isAxiosError(error) && error.response?.status === 404) {
+              return []; // return empty array for 404
+          }
+          throw error; // rethrow other errors
       }
-
-      return response.data.data;
     },
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,

@@ -21,13 +21,13 @@ export const SERVER_URL =
   
     // Address Information
     address: {
-      region: '',
-      city: '',
-      specificLocation: '',
-      coordinates: {
-        lat: 0,
-        lng: 0
-      }
+      region: "",
+      city: "",
+      specificLocation: "",
+      geoPoint: {
+        type: "Point" as const,
+        coordinates: [0, 0] as [number, number],
+      },
     },
   
     // Social Media

@@ -17,21 +17,15 @@ const realestateSchema = z.object({
 
   // Address Information
   address: z.object({
-    region: z.string().min(2, "Region must be at least 2 characters"),
-    city: z.string().min(2, "City must be at least 2 characters"),
-    specificLocation: z
-      .string()
-      .min(5, "Specific location must be at least 5 characters"),
-      coordinates: z.object({
-        lat: z.number()
-          .min(-90)
-          .max(90)
-          .transform((val) => parseFloat(val.toFixed(5))), // Rounds to 5 decimal places
-        lng: z.number()
-          .min(-180)
-          .max(180)
-          .transform((val) => parseFloat(val.toFixed(5))), // Rounds to 5 decimal places
-      }),
+    region: z.string().min(1, "Region is required"),
+    city: z.string().min(1, "City is required"),
+    specificLocation: z.string().optional(),
+    geoPoint: z.object({
+      type: z.literal("Point"),
+      coordinates: z
+        .array(z.number())
+        .length(2, "Coordinates must contain exactly 2 numbers [longitude, latitude]"),
+    }),
   }),
 
   // Social Media

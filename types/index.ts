@@ -36,6 +36,10 @@ export type Realestate = z.infer<typeof realestateSchema>
     description: string;
     price: number;
     address: {
+      geoPoint?: {
+        coordinates?: [number, number];
+        type: string;
+      };
       region: string;
       city: string;
       specificLocation: string;
@@ -58,4 +62,52 @@ export type Realestate = z.infer<typeof realestateSchema>
     createdAt: string;
     updatedAt: string;
     expireDate: string;
+    purchaseId?: string;
+    userId: {
+      _id: string;
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      emailVerified: boolean;
+      role: string;
+      isVerified: boolean;
+      createdAt: string;
+      updatedAt: string;
+    };
+    companyId?: {
+      _id: string;
+      realEstateName: string;
+      description: string;
+      email: string;
+      phone: string;
+      isVerified: boolean;
+      verificationStatus: string;
+      verifiedAt?: string;
+      verifiedBy?: string;
+      imageUrl?: string;
+      documentUrl?: string;
+      createdAt: string;
+      updatedAt: string;
+      address: {
+        geoPoint?: {
+          lat?: number;
+          lng?: number;
+        };
+        region: string;
+        city: string;
+        specificLocation: string;
+        coordinates?: {
+          latitude?: number;
+          longitude?: number;
+        };
+      };
+      socialMedia?: {
+        facebook?: string;
+        instagram?: string;
+        linkedin?: string;
+        tiktok?: string;
+        whatsapp?: string;
+      };
+    };
   }
