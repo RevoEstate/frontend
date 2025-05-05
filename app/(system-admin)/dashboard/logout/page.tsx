@@ -27,16 +27,16 @@ export default function LogoutPage() {
 
     try {
       // In a real app, you would call your logout API endpoint
-      console.log("Logging out...")
+      console.log("Logging out...");
 
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Clear any auth tokens, cookies, etc.
       // For example: localStorage.removeItem('authToken')
 
-      // Redirect to login page
-      router.push("/login")
+      // Redirect to home page
+      router.push("/");
     } catch (error) {
       console.error("Error logging out:", error)
       setIsLoggingOut(false)
