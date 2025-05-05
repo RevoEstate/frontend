@@ -215,17 +215,17 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
               <div className="flex flex-col items-center text-center mb-6">
                 <h1 className="text-2xl font-bold mb-1">Property Owner</h1>
                 <Separator className="mb-4" />
-                {property.userId.company?.imageUrl && (
+                {property.companyId?.imageUrl && (
                   <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-primary">
                     <img 
-                      src={property.userId.company.imageUrl}
-                      alt={property.userId.company.realEstateName}
+                      src={property.companyId.imageUrl}
+                      alt={property.companyId.realEstateName}
                       className="w-full h-full object-cover"
                     />
                   </div>
                 )}
-                <h3 className="text-xl font-bold">{property.userId.company?.realEstateName || "Property Owner"}</h3>
-                {property.userId.company?.isVerified && (
+                <h3 className="text-xl font-bold">{property.companyId?.realEstateName || "Property Owner"}</h3>
+                {property.companyId?.isVerified && (
                   <div className="flex items-center gap-1 mt-1">
                     <Badge variant="outline" className="border-green-200 bg-green-50 text-green-800">
                       <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -236,65 +236,65 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
               </div>
 
               <div className="space-y-4">
-                {property.userId.company?.description && (
+                {property.companyId?.description && (
                   <p className="text-sm text-muted-foreground text-justify">
-                    {property.userId.company.description}
+                    {property.companyId.description}
                   </p>
                 )}
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Mail className="w-6 h-6 text-sky-500 mr-2" />
-                    <span className="text-sm">{property.userId.company?.email || property.userId.email}</span>
+                    <span className="text-sm">{property.companyId?.email || property.userId.email}</span>
                   </div>
 
-                  {property.userId.company?.phone && (
+                  {property.companyId?.phone && (
                     <div className="flex items-center gap-2">
                     <Phone className="w-6 h-6 text-sky-500 mr-2" />
-                    <span className="text-sm">{property.userId.company?.phone }</span>
+                    <span className="text-sm">{property.companyId?.phone }</span>
                     </div>
                   )}
 
-                  {property.userId.company?.address && (
+                  {property.companyId?.address && (
                     <div className="flex items-start gap-2">
                       <MapPin className="w-6 h-6 text-sky-500 mr-2" />
                       <span className="text-sm">
-                        {property.userId.company.address.specificLocation}<br />
-                        {property.userId.company.address.city}, {property.userId.company.address.region}
+                        {property.companyId.address.specificLocation}<br />
+                        {property.companyId.address.city}, {property.companyId.address.region}
                       </span>
                     </div>
                   )}
                 </div>
 
                 {/* Social Media Links */}
-                {property.userId.company?.socialMedia && (
+                {property.companyId?.socialMedia && (
                   <div className="pt-4">
                     <h4 className="text-sm font-medium mb-2">Connect with us</h4>
                     <div className="flex gap-3">
-                      {property.userId.company.socialMedia.facebook && (
+                      {property.companyId.socialMedia.facebook && (
                         <Button variant="outline" size="icon" asChild>
-                          <a href={property.userId.company.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                          <a href={property.companyId.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
                             <FaFacebook className="w-6 h-6 text-sky-500" />
                           </a>
                         </Button>
                       )}
-                      {property.userId.company.socialMedia.instagram && (
+                      {property.companyId.socialMedia.instagram && (
                         <Button variant="outline" size="icon" asChild>
-                          <a href={property.userId.company.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                          <a href={property.companyId.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
                             <FaInstagram className="w-6 h-6 text-rose-500" />
                           </a>
                         </Button>
                       )}
-                      {property.userId.company.socialMedia.linkedin && (
+                      {property.companyId.socialMedia.linkedin && (
                         <Button variant="outline" size="icon" asChild>
-                          <a href={property.userId.company.socialMedia.linkedin} target="_blank" rel="noopener noreferrer">
+                          <Link href={property.companyId.socialMedia.linkedin} target="_blank" rel="noopener noreferrer">
                             <FaLinkedin className="w-6 h-6 text-sky-500" />
-                          </a>
+                          </Link>
                         </Button>
                       )}
-                      {property.userId.company.socialMedia.whatsapp && (
+                      {property.companyId.socialMedia.whatsapp && (
                         <Button variant="outline" size="icon" asChild>
-                          <Link href={`https://wa.me/${property.userId.company.socialMedia.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                          <Link href={`https://wa.me/${property.companyId.socialMedia.whatsapp}`} target="_blank" rel="noopener noreferrer">
                             <MessageSquareMore className="w-6 h-6 text-green-500" />
                           </Link>
                         </Button>

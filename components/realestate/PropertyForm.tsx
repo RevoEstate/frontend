@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
 import { Switch } from "../ui/switch";
 import { Badge } from "../ui/badge";
+import { useRouter } from "next/navigation";
 
 // Ethiopian regions and cities data
 const ETHIOPIA_REGIONS = [
@@ -70,6 +71,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const [panoramicPreviews, setPanoramicPreviews] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState<string[]>([]);
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof createPropertySchema>>({
     resolver: zodResolver(createPropertySchema),
@@ -159,6 +161,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       const data = await response.json();
       toast.success("Property created successfully!");
       form.reset();
+      router.push('/realestate/properties')
       setImagePreviews([]);
       setPanoramicPreviews([]);
       setAmenities([]);

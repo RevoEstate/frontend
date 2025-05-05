@@ -8,7 +8,7 @@ import {
 } from "@/lib/constants/index.ts";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/lib/providers";
-import { Chatbot } from "@/components/shared/Chatbot";
+import Chatbot from "@/components/shared/Chatbot";
 
 const inter = Inter({
   subsets: ["latin"],

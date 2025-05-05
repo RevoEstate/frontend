@@ -74,40 +74,40 @@ export type Realestate = z.infer<typeof realestateSchema>
       isVerified: boolean;
       createdAt: string;
       updatedAt: string;
-      company?: {
-        _id: string;
-        realEstateName: string;
-        description: string;
-        email: string;
-        phone: string;
-        isVerified: boolean;
-        verificationStatus: string;
-        verifiedAt?: string;
-        verifiedBy?: string;
-        imageUrl?: string;
-        documentUrl?: string;
-        createdAt: string;
-        updatedAt: string;
-        address: {
-          geoPoint?: {
-            lat?: number;
-            lng?: number;
-          };
-          region: string;
-          city: string;
-          specificLocation: string;
-          coordinates?: {
-            latitude?: number;
-            longitude?: number;
-          };
+    };
+    companyId?: {
+      _id: string;
+      realEstateName: string;
+      description: string;
+      email: string;
+      phone: string;
+      isVerified: boolean;
+      verificationStatus: string;
+      verifiedAt?: string;
+      verifiedBy?: string;
+      imageUrl?: string;
+      documentUrl?: string;
+      createdAt: string;
+      updatedAt: string;
+      address: {
+        geoPoint?: {
+          lat?: number;
+          lng?: number;
         };
-        socialMedia?: {
-          facebook?: string;
-          instagram?: string;
-          linkedin?: string;
-          tiktok?: string;
-          whatsapp?: string;
+        region: string;
+        city: string;
+        specificLocation: string;
+        coordinates?: {
+          latitude?: number;
+          longitude?: number;
         };
+      };
+      socialMedia?: {
+        facebook?: string;
+        instagram?: string;
+        linkedin?: string;
+        tiktok?: string;
+        whatsapp?: string;
       };
     };
   }
