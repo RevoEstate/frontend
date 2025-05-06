@@ -30,6 +30,8 @@ interface ApplicationDetailsModalProps {
       email: string;
       avatar: string;
     };
+    address: string;
+    website: string;
   };
   isOpen: boolean;
   onClose: () => void;
@@ -49,11 +51,9 @@ export function ApplicationDetailsModal({
     contactName: application.contentOwner.name,
     contactEmail: application.contentOwner.email,
     contactPhone: application.taxId,
-    address: "Address information not available",
-    industry: "Real Estate",
-    employeeCount: "Not specified",
-    yearFounded: "Not specified",
-    website: "Not specified",
+    address: application.address,
+    documentsUploaded: application.documentsUploaded,
+    website: application.website,
   };
 
   // Mock comments - in a real app, you would fetch these
@@ -86,7 +86,7 @@ export function ApplicationDetailsModal({
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -147,18 +147,6 @@ export function ApplicationDetailsModal({
                     <p>
                       <span className="font-medium">Tax ID/Phone:</span>{" "}
                       {application.taxId}
-                    </p>
-                    <p>
-                      <span className="font-medium">Industry:</span>{" "}
-                      {companyDetails.industry}
-                    </p>
-                    <p>
-                      <span className="font-medium">Employees:</span>{" "}
-                      {companyDetails.employeeCount}
-                    </p>
-                    <p>
-                      <span className="font-medium">Founded:</span>{" "}
-                      {companyDetails.yearFounded}
                     </p>
                   </div>
                 </div>
