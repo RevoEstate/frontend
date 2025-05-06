@@ -2,16 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import {
-  Check,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Eye,
-  File,
-  X,
-} from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Eye, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,10 +42,8 @@ export function ApplicationsTable() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
 
-  // Get filter, sort, and pagination from store
-  const { filter, sort, pagination, setPage, setLimit } = useCompanyStore();
-
-  // Fetch companies data
+  const { filter, sort, pagination, setFilter, setSort, setPage, setLimit } =
+    useCompanyStore();
   const { companies, total, isLoading, error } = useCompanies(
     filter,
     sort,
@@ -67,14 +56,20 @@ export function ApplicationsTable() {
   };
 
   const handleApprove = (id: string) => {
-    // In a real application, you would call an API to update the status
     console.log(`Approving application ${id}`);
-    // Update local state or refetch data
   };
 
   const handleReject = (application: any) => {
     setSelectedApplication(application);
     setIsRejectDialogOpen(true);
+  };
+
+  const handleSort = (
+    field: "realEstateName" | "createdAt" | "verificationStatus"
+  ) => {
+    const newDirection =
+      sort.field === field && sort.direction === "asc" ? "desc" : "asc";
+    setSort({ field, direction: newDirection });
   };
 
   const getStatusBadge = (status: string) => {
@@ -99,14 +94,12 @@ export function ApplicationsTable() {
     }
   };
 
-  // Generate pagination items
   const generatePaginationItems = () => {
     const totalPages = Math.ceil(total / pagination.limit);
     const currentPage = pagination.page;
 
     const items = [];
 
-    // Previous button
     items.push(
       <PaginationItem key="prev">
         <PaginationPrevious
@@ -120,7 +113,6 @@ export function ApplicationsTable() {
       </PaginationItem>
     );
 
-    // First page
     if (totalPages > 0) {
       items.push(
         <PaginationItem key={1}>
@@ -134,7 +126,6 @@ export function ApplicationsTable() {
       );
     }
 
-    // Ellipsis if needed
     if (currentPage > 3) {
       items.push(
         <PaginationItem key="ellipsis1">
@@ -143,7 +134,6 @@ export function ApplicationsTable() {
       );
     }
 
-    // Pages around current
     for (
       let i = Math.max(2, currentPage - 1);
       i <= Math.min(totalPages - 1, currentPage + 1);
@@ -162,7 +152,6 @@ export function ApplicationsTable() {
       );
     }
 
-    // Ellipsis if needed
     if (currentPage < totalPages - 2) {
       items.push(
         <PaginationItem key="ellipsis2">
@@ -171,7 +160,6 @@ export function ApplicationsTable() {
       );
     }
 
-    // Last page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key={totalPages}>
@@ -185,7 +173,6 @@ export function ApplicationsTable() {
       );
     }
 
-    // Next button
     items.push(
       <PaginationItem key="next">
         <PaginationNext
@@ -202,7 +189,6 @@ export function ApplicationsTable() {
     return items;
   };
 
-  // Handle loading state
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -216,7 +202,6 @@ export function ApplicationsTable() {
     );
   }
 
-  // Handle error state
   if (error) {
     return (
       <div className="rounded-md border p-6">
@@ -234,21 +219,31 @@ export function ApplicationsTable() {
   }
 
   return (
-    <div className="">
+    <div>
       <Table className="[&_tr]:py-4">
         <TableHeader>
           <TableRow>
             <TableCell isHeader className="w-[40px]">
               #
             </TableCell>
-            <TableCell isHeader>Company Name</TableCell>
             <TableCell isHeader>
               <div
                 className="flex items-center cursor-pointer"
-                onClick={() => {
-                  // Implement sorting by date if needed
-                  console.log("Sort by date");
-                }}
+                onClick={() => handleSort("realEstateName")}
+              >
+                Company Name
+                {sort.field === "realEstateName" &&
+                  (sort.direction === "asc" ? (
+                    <ChevronUp className="ml-1 h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  ))}
+              </div>
+            </TableCell>
+            <TableCell isHeader>
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() => handleSort("createdAt")}
               >
                 Application Date
                 {sort.field === "createdAt" &&
@@ -259,7 +254,20 @@ export function ApplicationsTable() {
                   ))}
               </div>
             </TableCell>
-            <TableCell isHeader>Status</TableCell>
+            <TableCell isHeader>
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() => handleSort("verificationStatus")}
+              >
+                Status
+                {sort.field === "verificationStatus" &&
+                  (sort.direction === "asc" ? (
+                    <ChevronUp className="ml-1 h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  ))}
+              </div>
+            </TableCell>
             <TableCell isHeader className="text-right">
               Actions
             </TableCell>
@@ -268,13 +276,13 @@ export function ApplicationsTable() {
         <TableBody>
           {companies.length === 0 ? (
             <TableRow>
-              <TableCell className="h-24 text-center">
-                <td colSpan={5}>No applications found</td>
-              </TableCell>
+              <td colSpan={5} className="h-24 text-center">
+                No applications found
+              </td>
             </TableRow>
           ) : (
             companies.map((application, index) => (
-              <TableRow key={application._id} className="">
+              <TableRow key={application._id}>
                 <TableCell className="font-medium text-muted-foreground">
                   {(pagination.page - 1) * pagination.limit + index + 1}
                 </TableCell>
@@ -329,7 +337,6 @@ export function ApplicationsTable() {
         </TableBody>
       </Table>
 
-      {/* Pagination Controls */}
       {!isLoading && companies.length > 0 && (
         <div className="mt-4 flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
@@ -366,7 +373,7 @@ export function ApplicationsTable() {
               id: selectedApplication._id,
               companyName: selectedApplication.realEstateName,
               applicationDate: new Date(selectedApplication.createdAt),
-              taxId: selectedApplication.phone, // Using phone as taxId
+              taxId: selectedApplication.phone,
               documentsUploaded: selectedApplication.documentUrl
                 ? [
                     selectedApplication.documentUrl.split("/").pop() ||
@@ -404,7 +411,6 @@ export function ApplicationsTable() {
                 `Rejecting application ${selectedApplication._id} with reason: ${reason}`
               );
               setIsRejectDialogOpen(false);
-              // In a real application, you would call an API to update the status
             }}
           />
         </>

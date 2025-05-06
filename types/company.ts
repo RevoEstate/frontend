@@ -38,7 +38,7 @@ export type CompanyFilter = {
 };
 
 export type CompanySort = {
-  field: 'realEstateName' | 'createdAt';
+  field: 'realEstateName' | 'createdAt' | 'verificationStatus';
   direction: 'asc' | 'desc';
 };
 
