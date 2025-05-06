@@ -131,12 +131,12 @@ export function ApplicationsTable() {
             </TableRow>
           ) : (
             companies.map((application, index) => (
-              <TableRow key={application._id} className="py-3">
+              <TableRow key={application._id} className="">
                 <TableCell className="font-medium text-muted-foreground">
                   {(pagination.page - 1) * pagination.limit + index + 1}
                 </TableCell>
                 <TableCell className="font-medium">
-                  {application.realEstateName}
+                  {application.realEstateName.slice(0, 20)}..
                 </TableCell>
                 <TableCell>
                   {format(new Date(application.createdAt), "MMM d, yyyy")}
@@ -156,9 +156,10 @@ export function ApplicationsTable() {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="m-1"
                       onClick={() => handleViewDetails(application)}
                     >
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="h-4 w-4 m-1" />
                       View
                     </Button>
                     {application.verificationStatus !== "approved" &&
@@ -167,7 +168,7 @@ export function ApplicationsTable() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            className="m-1 text-green-600 hover:text-green-700 hover:bg-green-50"
                             onClick={() => handleApprove(application._id)}
                           >
                             <Check className="h-4 w-4 mr-1" />
@@ -176,7 +177,7 @@ export function ApplicationsTable() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="m-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleReject(application)}
                           >
                             <X className="h-4 w-4 mr-1" />
