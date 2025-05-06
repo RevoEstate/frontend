@@ -12,7 +12,7 @@ export function SearchBar() {
   const [filterType, setFilterType] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
 
-  const { setFilter } = useCompanyStore();
+  const { setFilter, setSort } = useCompanyStore();
 
   // Debounce search term to avoid too many API calls
   useEffect(() => {
@@ -36,7 +36,16 @@ export function SearchBar() {
   // Handle filter type changes
   const handleFilterTypeChange = (value: string) => {
     setFilterType(value);
-    // You can implement additional filtering logic here if needed
+    switch (value) {
+      case "company":
+        setSort({ field: "realEstateName", direction: "asc" });
+        break;
+      case "date":
+        setSort({ field: "createdAt", direction: "asc" });
+        break;
+      default:
+        setSort({ field: "createdAt", direction: "asc" });
+    }
   };
 
   return (
@@ -60,7 +69,6 @@ export function SearchBar() {
             <SelectItem value="all">All Fields</SelectItem>
             <SelectItem value="company">Company Name</SelectItem>
             <SelectItem value="date">Application Date</SelectItem>
-            <SelectItem value="region">Region</SelectItem>
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={handleStatusChange}>
@@ -69,8 +77,8 @@ export function SearchBar() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="initial">Pending</SelectItem>
-            <SelectItem value="under_review">Under Review</SelectItem>
+            <SelectItem value="initial">New</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="approved">Approved</SelectItem>
             <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>

@@ -32,6 +32,7 @@ export type Company = {
 };
 
 export type CompanyFilter = {
+  date?: string;
   search?: string;
   verificationStatus?: string;
   region?: string;
