@@ -1,17 +1,48 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { format } from "date-fns"
-import { Check, ChevronLeft, ChevronRight, Eye, File, X } from "lucide-react"
+import { useState } from "react";
+import { format } from "date-fns";
+import {
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Eye,
+  File,
+  X,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { ApplicationDetailsModal } from "./application-details-modal"
-import { RejectApplicationDialog } from "./reject-application-dialog"
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ApplicationDetailsModal } from "./application-details-modal";
+import { RejectApplicationDialog } from "./reject-application-dialog";
 import { useCompanies } from "@/hooks/useCompanies";
 import useCompanyStore from "@/stores/companyStore";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function ApplicationsTable() {
   const [selectedApplication, setSelectedApplication] = useState<any | null>(
@@ -21,7 +52,7 @@ export function ApplicationsTable() {
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
 
   // Get filter, sort, and pagination from store
-  const { filter, sort, pagination, setPage } = useCompanyStore();
+  const { filter, sort, pagination, setPage, setLimit } = useCompanyStore();
 
   // Fetch companies data
   const { companies, total, isLoading, error } = useCompanies(
@@ -68,10 +99,108 @@ export function ApplicationsTable() {
     }
   };
 
-  // Pagination controls
-  const totalPages = Math.ceil(total / pagination.limit);
-  const goToNextPage = () => setPage(Math.min(pagination.page + 1, totalPages));
-  const goToPrevPage = () => setPage(Math.max(pagination.page - 1, 1));
+  // Generate pagination items
+  const generatePaginationItems = () => {
+    const totalPages = Math.ceil(total / pagination.limit);
+    const currentPage = pagination.page;
+
+    const items = [];
+
+    // Previous button
+    items.push(
+      <PaginationItem key="prev">
+        <PaginationPrevious
+          onClick={() => currentPage > 1 && setPage(currentPage - 1)}
+          className={
+            currentPage <= 1
+              ? "pointer-events-none opacity-50"
+              : "cursor-pointer"
+          }
+        />
+      </PaginationItem>
+    );
+
+    // First page
+    if (totalPages > 0) {
+      items.push(
+        <PaginationItem key={1}>
+          <PaginationLink
+            isActive={currentPage === 1}
+            onClick={() => setPage(1)}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Ellipsis if needed
+    if (currentPage > 3) {
+      items.push(
+        <PaginationItem key="ellipsis1">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Pages around current
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    ) {
+      if (i <= 1 || i >= totalPages) continue;
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => setPage(i)}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Ellipsis if needed
+    if (currentPage < totalPages - 2) {
+      items.push(
+        <PaginationItem key="ellipsis2">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Last page
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink
+            isActive={currentPage === totalPages}
+            onClick={() => setPage(totalPages)}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Next button
+    items.push(
+      <PaginationItem key="next">
+        <PaginationNext
+          onClick={() => currentPage < totalPages && setPage(currentPage + 1)}
+          className={
+            currentPage >= totalPages
+              ? "pointer-events-none opacity-50"
+              : "cursor-pointer"
+          }
+        />
+      </PaginationItem>
+    );
+
+    return items;
+  };
 
   // Handle loading state
   if (isLoading) {
@@ -113,9 +242,23 @@ export function ApplicationsTable() {
               #
             </TableCell>
             <TableCell isHeader>Company Name</TableCell>
-            <TableCell isHeader>Application Date</TableCell>
-            {/* <TableCell isHeader>Email</TableCell> */}
-            {/* <TableCell isHeader>Documents</TableCell> */}
+            <TableCell isHeader>
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() => {
+                  // Implement sorting by date if needed
+                  console.log("Sort by date");
+                }}
+              >
+                Application Date
+                {sort.field === "createdAt" &&
+                  (sort.direction === "asc" ? (
+                    <ChevronUp className="ml-1 h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  ))}
+              </div>
+            </TableCell>
             <TableCell isHeader>Status</TableCell>
             <TableCell isHeader className="text-right">
               Actions
@@ -126,7 +269,7 @@ export function ApplicationsTable() {
           {companies.length === 0 ? (
             <TableRow>
               <TableCell className="h-24 text-center">
-                No applications found
+                <td colSpan={5}>No applications found</td>
               </TableCell>
             </TableRow>
           ) : (
@@ -141,13 +284,6 @@ export function ApplicationsTable() {
                 <TableCell>
                   {format(new Date(application.createdAt), "MMM d, yyyy")}
                 </TableCell>
-                {/* <TableCell>{application.email}</TableCell> */}
-                {/* <TableCell>
-                  <div className="flex items-center gap-1">
-                    <File className="h-4 w-4" />
-                    <span>{application.documentUrl ? 1 : 0}</span>
-                  </div>
-                </TableCell> */}
                 <TableCell>
                   {getStatusBadge(application.verificationStatus)}
                 </TableCell>
@@ -194,41 +330,34 @@ export function ApplicationsTable() {
       </Table>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between px-4 py-3 border-t">
-        <div className="text-sm text-muted-foreground">
-          Showing{" "}
-          <span className="font-medium">
-            {companies.length > 0
-              ? (pagination.page - 1) * pagination.limit + 1
-              : 0}
-          </span>{" "}
-          to{" "}
-          <span className="font-medium">
-            {(pagination.page - 1) * pagination.limit + companies.length}
-          </span>{" "}
-          of <span className="font-medium">{total}</span> applications
+      {!isLoading && companies.length > 0 && (
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+            {Math.min(pagination.page * pagination.limit, total)} of {total}{" "}
+            applications
+          </div>
+          <div className="flex items-center space-x-2">
+            <Select
+              value={pagination.limit.toString()}
+              onValueChange={(value) => setLimit(Number.parseInt(value))}
+            >
+              <SelectTrigger className="w-[70px]">
+                <SelectValue placeholder="10" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+            <Pagination>
+              <PaginationContent>{generatePaginationItems()}</PaginationContent>
+            </Pagination>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToPrevPage}
-            disabled={pagination.page === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous Page</span>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToNextPage}
-            disabled={pagination.page === totalPages || totalPages === 0}
-          >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next Page</span>
-          </Button>
-        </div>
-      </div>
+      )}
 
       {selectedApplication && (
         <>
