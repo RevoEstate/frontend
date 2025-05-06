@@ -69,9 +69,16 @@ export function ApplicationDetailsModal({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "initial":
-        return <Badge variant="outline">Pending</Badge>;
-      case "under_review":
-        return <Badge variant="secondary">Under Review</Badge>;
+        return (
+          <Badge
+            className="bg-blue-100 text-blue-800 hover:bg-blue-200"
+            variant="outline"
+          >
+            New
+          </Badge>
+        );
+      case "pending":
+        return <Badge variant="secondary">Pending</Badge>;
       case "approved":
         return (
           <Badge
@@ -90,7 +97,15 @@ export function ApplicationDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent
+        className="max-w-[80vh] m-auto flex flex-col max-h-[90vh] overflow-hidden my-10 mx-auto"
+        style={{ zIndex: 9999 }}
+      >
+        <style jsx global>{`
+          [data-radix-portal] > div {
+            z-index: 9999 !important;
+          }
+        `}</style>
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>{application.companyName}</span>
