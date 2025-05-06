@@ -17,6 +17,7 @@ import {
   PlusSquare,
   LayoutDashboard,
   Shield,
+  CalendarClock,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -204,6 +205,19 @@ const UserMenu = () => {
                       >
                         <Shield className="mr-2 h-4 w-4" />
                         Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
+                  </motion.div>
+                )}
+                {user?.role === "customer" && (
+                  <motion.div variants={itemVariants}>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/my-appointments"
+                        className="w-full cursor-pointer flex items-center rounded-md px-2 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <CalendarClock className="mr-2 h-4 w-4" />
+                        My Appointments
                       </Link>
                     </DropdownMenuItem>
                   </motion.div>

@@ -6,7 +6,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
 } from '@/components/ui/card'
@@ -49,7 +48,6 @@ const RealestateAppointments = () => {
           `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/appointment`,
           { withCredentials: true }
         )
-        console.log("Appointments: ", response)
         setAppointments(response.data.data.appointments || [])
       } catch (error) {
        
