@@ -121,7 +121,7 @@ export default function SignInForm() {
 
               if (userRole === "systemAdmin") {
                 // router.replace("/systemAdmin");
-                router.replace(`/systemAdmin/${userId}`);
+                router.replace(`/dashboard/`);
               } else if (userRole === "support") {
                 // router.replace("/systemManager");
                 router.replace(`/systemManager/${userId}`);

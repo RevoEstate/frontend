@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**", // Allow all paths under this domain
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        pathname: "/**", // Allow all paths under this domain
+      },
     ],
   },
   webpack(config) {

@@ -25,6 +25,9 @@ const env = createEnv({
     // API urls
     NEXT_PUBLIC_API_ENDPOINT: z.string(),
 
+    // environment
+    NEXT_PUBLIC_ENV: z.enum(["development", "production", "test"]),
+
   },
 
   // Linking runtime environment variables
@@ -46,6 +49,9 @@ const env = createEnv({
     
     // API urls
     NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
+
+    // environment
+    NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
 
   },
 });
