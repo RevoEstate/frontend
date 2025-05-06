@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export function ApplicationsTable() {
   const [selectedApplication, setSelectedApplication] = useState<any | null>(
@@ -44,11 +45,15 @@ export function ApplicationsTable() {
 
   const { filter, sort, pagination, setFilter, setSort, setPage, setLimit } =
     useCompanyStore();
-  const { companies, total, isLoading, error } = useCompanies(
-    filter,
-    sort,
-    pagination
-  );
+  const {
+    companies,
+    total,
+    isLoading,
+    error,
+    approveCompany,
+    isApproving,
+    approveError,
+  } = useCompanies(filter, sort, pagination);
 
   const handleViewDetails = (application: any) => {
     setSelectedApplication(application);
@@ -56,9 +61,17 @@ export function ApplicationsTable() {
   };
 
   const handleApprove = (id: string) => {
-    console.log(`Approving application ${id}`);
+    approveCompany(id, {
+      onSuccess: () => {
+        toast.success("Company approved successfully!");
+      },
+      onError: () => {
+        toast.error(
+          approveError || "Failed to approve company. Please try again."
+        );
+      },
+    });
   };
-
   const handleReject = (application: any) => {
     setSelectedApplication(application);
     setIsRejectDialogOpen(true);
