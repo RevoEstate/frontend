@@ -135,9 +135,11 @@ export function ApplicationsTable() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "initial":
-        return <Badge variant="outline">Pending</Badge>;
-      case "under_review":
-        return <Badge variant="secondary">Under Review</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200" variant="outline">
+          New
+        </Badge>;
+      case "pending":
+        return <Badge variant="secondary">Pending</Badge>;
       case "approved":
         return (
           <Badge
