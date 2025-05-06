@@ -35,15 +35,22 @@ const fetchCompanies = async (
   };
 };
 
+// approve company
 const approveCompany = async (companyId: string) => {
   const response = await axiosInstance.patch(`/v1/companies/approvecompay/${companyId}`);
   console.log('Approve Company API Response:', response.data);
   return response.data;
 };
-const rejectCompany = async (companyId: string) => {
-  const response = await axiosInstance.patch(`/v1/companies/rejectcompay/${companyId}`);
-  console.log('Reject Company API Response:', response.data);
-  return response.data;
+
+// Reject company
+const rejectCompany = async ({
+  companyId,
+  rejectionreason,
+}: {
+  companyId: string;
+  rejectionreason: string;
+}): Promise<void> => {
+  await axiosInstance.patch(`/v1/companies/rejectcompay/${companyId}`, { rejectionreason });
 };
 
 // Custom hook
@@ -71,6 +78,19 @@ export function useCompanies(filter: CompanyFilter, sort: CompanySort, paginatio
     },
   });
 
+  const rejectMutation = useMutation({
+    mutationFn: rejectCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+        exact: false,
+      });
+    },
+    onError: (error: any) => {
+      console.error('Error rejecting company:', error);
+    },
+  });
+
   return {
     companies: companiesQuery.data?.items || [],
     total: companiesQuery.data?.total || 0,
@@ -81,5 +101,8 @@ export function useCompanies(filter: CompanyFilter, sort: CompanySort, paginatio
     approveCompany: approveMutation.mutate,
     isApproving: approveMutation.isPending,
     approveError: approveMutation.error?.message || null,
+    rejectCompany: rejectMutation.mutate,
+    isRejecting: rejectMutation.isPending,
+    rejectError: rejectMutation.error?.message || null,
   };
 }

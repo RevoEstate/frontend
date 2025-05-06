@@ -53,6 +53,9 @@ export function ApplicationsTable() {
     approveCompany,
     isApproving,
     approveError,
+    rejectCompany,
+    isRejecting,
+    rejectError,
   } = useCompanies(filter, sort, pagination);
 
   const handleViewDetails = (application: any) => {
@@ -77,6 +80,25 @@ export function ApplicationsTable() {
     setIsRejectDialogOpen(true);
   };
 
+  const handleRejectSubmit = (reason: string) => {
+    if (selectedApplication) {
+      rejectCompany(
+        { companyId: selectedApplication._id, rejectionreason: reason },
+        {
+          onSuccess: () => {
+            toast.success("Company rejected successfully!");
+            setIsRejectDialogOpen(false);
+          },
+          onError: () => {
+            toast.error(
+              rejectError || "Failed to reject company. Please try again."
+            );
+          },
+        }
+      );
+    }
+  };
+  
   const handleSort = (
     field: "realEstateName" | "createdAt" | "verificationStatus"
   ) => {
@@ -327,18 +349,20 @@ export function ApplicationsTable() {
                             size="sm"
                             className="m-1 text-green-600 hover:text-green-700 hover:bg-green-50"
                             onClick={() => handleApprove(application._id)}
+                            disabled={isApproving}
                           >
                             <Check className="h-4 w-4 mr-1" />
-                            Approve
+                            {isApproving ? "Approving..." : "Approve"}
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             className="m-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleReject(application)}
+                            disabled={isRejecting}
                           >
                             <X className="h-4 w-4 mr-1" />
-                            Reject
+                            {isRejecting ? "Rejecting..." : "Reject"}
                           </Button>
                         </>
                       )}
@@ -419,12 +443,7 @@ export function ApplicationsTable() {
             }}
             isOpen={isRejectDialogOpen}
             onClose={() => setIsRejectDialogOpen(false)}
-            onReject={(reason) => {
-              console.log(
-                `Rejecting application ${selectedApplication._id} with reason: ${reason}`
-              );
-              setIsRejectDialogOpen(false);
-            }}
+            onReject={handleRejectSubmit}
           />
         </>
       )}
