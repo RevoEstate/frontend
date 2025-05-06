@@ -446,7 +446,7 @@ export function ApplicationsTable() {
               taxId: selectedApplication.phone,
               documentsUploaded: selectedApplication.documentUrl
                 ? [
-                    selectedApplication.documentUrl.split("/").pop() ||
+                    selectedApplication.documentUrl.slice(0, 20) ||
                       "document.pdf",
                   ]
                 : [],
@@ -456,6 +456,8 @@ export function ApplicationsTable() {
                 email: selectedApplication.email,
                 avatar: "",
               },
+              address: selectedApplication.address.region,
+              website: selectedApplication.socialMedia.linkedin,
             }}
             isOpen={isDetailsModalOpen}
             onClose={() => setIsDetailsModalOpen(false)}
