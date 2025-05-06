@@ -75,7 +75,7 @@ export default async function middleware(request: NextRequest) {
       }
     } catch (err) {
       // Handle API errors (e.g., invalid token)
-      return NextResponse.redirect(new URL('/sign-in', request.url));
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 

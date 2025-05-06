@@ -38,27 +38,15 @@ export function useAuth() {
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-
   // Sign in
   const signinMutation = useMutation({
     mutationFn: async (credentials: SignInCredentials) => {
       const response = await axiosInstance.post('/v1/auth/sign-in', credentials);
-      return response.data.user; // Assume /signin returns user data
+      return response.data.user; // Assume /sign-in returns user data
     },
     onSuccess: (user) => {
       queryClient.setQueryData(['auth', 'user'], user);
-      // Redirect based on role
-      switch (user.role) {
-        case 'systemAdmin':
-        case 'support':
-          router.push('/dashboard');
-          break;
-        case 'agent':
-          router.push('/realestate');
-          break;
-        default:
-          router.push('/');
-      }
+      router.push('/'); // Middleware will redirect to role-specific route
     },
   });
 
@@ -69,11 +57,10 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.setQueryData(['auth', 'user'], null);
-      // Clear session token cookie (adjust based on your auth provider)
+      // Clear session token cookie
       if (typeof window !== 'undefined') {
-        document.cookie = 'better-auth.session_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        window.location.href = '/';
       }
-      router.push('/sign-in');
     },
   });
 
