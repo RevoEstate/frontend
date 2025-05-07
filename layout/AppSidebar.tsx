@@ -347,13 +347,13 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        <Link href="/" className="w-full">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <h1 className="text-green-700 text-4xl flex justify-center">
-                Revostate
+            <div className="w-full">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-800 bg-clip-text text-transparent w-full text-center">
+                RevoEstate
               </h1>
-            </>
+            </div>
           ) : (
             <Image
               src="/images/logo/logo-icon.svg"
