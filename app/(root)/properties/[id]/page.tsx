@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import properties from "@/data/property";
 import { PropertyImageGallery } from "@/components/shared/property-image-gallery";
 import { useProperty } from "@/hooks/useProperty";
-import React from "react";
+import React, { useState } from "react";
 import { usePropertyById } from "@/hooks/usePropertyById";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +17,14 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import dynamic from "next/dynamic"
 import Panorama from "@/components/shared/Panorama";
-
+import { useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
+import axios from "axios";
 
 
 const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const Params = React.use(params);
+  const { data: session } = useSession();
   const id = Params.id;
   const { 
     property,
@@ -29,6 +32,86 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
     isError,
     error
   } = usePropertyById(id);
+
+  // State for tour scheduling
+  const [date, setDate] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!session) {
+      toast.error("Authentication Required", {
+        description: "You must be logged in to schedule a tour",
+      });
+      return;
+    }
+
+    const selectedDate = new Date(date);
+    const dayOfWeek = selectedDate.getDay();
+    
+    // Check if date is on weekend (0 = Sunday, 6 = Saturday)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      toast.error("Invalid Date", {
+        description: "Please select a weekday (Monday to Friday)",
+      });
+      return;
+    }
+
+    // Check if date is in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      toast.error("Invalid Date", {
+        description: "Please select a date in the future",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/appointment/property`,
+        {
+          property: property?._id,
+          company: property?.companyId?._id || property?.userId._id,
+          customer: session.user.id,
+          scheduledDate: selectedDate.toISOString(),
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true 
+        }
+      );
+
+      toast.success("Tour Scheduled!", {
+        description: "Your property tour appointment has been sent to the realestate.",
+      });
+      
+      // Reset form
+      setDate("");
+      setMessage("");
+    } catch (error) {
+      let errorMessage = "Failed to schedule appointment";
+  
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+    
+      toast.error("Error", {
+        description: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
   console.log("Property Details: ", property)
 
@@ -304,28 +387,41 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
                 )}
               </div>
             </div>
-           {/* Schedule Tour Form */}
+         {/* Updated Schedule Tour Form */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
               <h2 className="text-xl font-bold mb-4">Schedule For Physical Tour</h2>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" type="text" required />
+                  <Label htmlFor="date">Appointment Date*</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    required
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={(e) => setDate(e.target.value)}
+                    disabled={!session}
+                    value={date}
+                    className="cursor-pointer"
+                  />
+                  {!session && (
+                    <p className="text-sm text-red-500">
+                      You must be logged in to schedule a tour
+                    </p>
+                  )}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" type="tel" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea id="message" rows={3} />
-                </div>
-                <Button variant="ghost" type="submit" className="w-full bg-sky-600 hover:bg-sky-600/80 cursor-pointer text-white hover:text-white">
-                  Request Physical Tour
+                <Button 
+                  type="submit" 
+                  className="w-full bg-sky-600 hover:bg-sky-600/80 text-white hover:text-white"
+                  disabled={!session || isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Scheduling...
+                    </>
+                  ) : (
+                    'Request Physical Tour'
+                  )}
                 </Button>
               </form>
             </div>

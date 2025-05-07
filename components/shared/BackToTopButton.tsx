@@ -18,7 +18,7 @@ const BackToTopButton = () => {
 
   useEffect(() => {
     const updateVisibility = (y: number) => {
-      const shouldBeVisible = y > 300; // Show after 300px scroll
+      const shouldBeVisible = y > 200; // Show after 300px scroll
       setIsVisible(shouldBeVisible);
       
       if (shouldBeVisible) {
@@ -46,8 +46,7 @@ const BackToTopButton = () => {
     <motion.button
       onClick={scrollToTop}
       aria-label="Back to top"
-      className="cursor-pointer fixed bottom-6 right-6 z-50 p-3 bg-sky-600/60 hover:bg-sky-600/90 backdrop-blur-sm rounded-full shadow-lg transition-all"
-      whileHover={{ scale: 1.1, y: -5 }}
+      className="cursor-pointer fixed bottom-50 right-6 z-50 p-3 bg-sky-600 hover:bg-sky-600/90 backdrop-blur-sm rounded-full shadow-lg transition-all"
       whileTap={{ scale: 0.95 }}
       initial="hidden"
       animate={controls}

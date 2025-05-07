@@ -61,6 +61,15 @@ export default function Navbar() {
               </Link>
             )}
 
+            {user?.role === 'customer' && (
+              <Link
+                href="/my-appointments"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+              >
+                My Appointments
+              </Link>
+            )}
+
             {/* Role-based links */}
             {user?.role === "agent" && (
               <>

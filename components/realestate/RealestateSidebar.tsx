@@ -61,7 +61,7 @@ const navItems = [
     { name: "Dashboard", href: "/realestate", icon: Home },
     { name: "Properties", href: "/realestate/properties", icon: Package },
     { name: "Add Property", href: "/realestate/properties/create", icon: PlusSquare },
-    { name: "Appointments", href: "/realestate/customers", icon: Bell },
+    { name: "Appointments", href: "/realestate/appointments", icon: Bell },
     { name: "Profile", href: "/realestate/profile", icon: RiProfileFill },
     {
         name: "Packages",
