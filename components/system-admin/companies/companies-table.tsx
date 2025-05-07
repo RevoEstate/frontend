@@ -257,22 +257,6 @@ export function CompaniesTable() {
     return items;
   };
 
-  const handleExport = () => {
-    const data = companies.map((company) => ({
-      "Company Name": company.realEstateName,
-      Email: company.email,
-      Phone: company.phone,
-      companyStatus: company.companyStatus,
-      Location: `${company.address.city}, ${company.address.region}`,
-      "Listings Count": company.listingsCount,
-      "Registration Date": format(new Date(company.createdAt), "MMM d, yyyy"),
-    }));
-
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Companies");
-    XLSX.writeFile(wb, "companies.xlsx");
-  };
 
   if (isLoading) {
     return (
@@ -305,12 +289,6 @@ export function CompaniesTable() {
 
   return (
     <div>
-      <div className="mb-4 flex justify-end">
-        <Button variant="outline" onClick={handleExport}>
-          Export to Excel
-        </Button>
-      </div>
-
       <div className="">
         <div className="overflow-x-auto">
           <Table className="[&_tr]:py-4">

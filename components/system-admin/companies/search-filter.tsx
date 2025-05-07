@@ -9,17 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from "@/components/ui/badge"
 
+
 export function SearchAndFilter() {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
   const [activeFilters, setActiveFilters] = useState<{
-    status: string | null
-    location: string | null
-    verificationStatus: string | null
+    status: string | null;
+    location: string | null;
+    verificationStatus: string | null;
   }>({
     status: null,
     location: null,
     verificationStatus: null,
-  })
+  });
 
   const locations = [
     "All Locations",
@@ -32,24 +33,26 @@ export function SearchAndFilter() {
     "San Antonio",
     "San Diego",
     "Dallas",
-  ]
+  ];
 
   const clearFilter = (filterType: keyof typeof activeFilters) => {
     setActiveFilters((prev) => ({
       ...prev,
       [filterType]: null,
-    }))
-  }
+    }));
+  };
 
   const clearAllFilters = () => {
     setActiveFilters({
       status: null,
       location: null,
       verificationStatus: null,
-    })
-  }
+    });
+  };
 
-  const hasActiveFilters = Object.values(activeFilters).some((value) => value !== null)
+  const hasActiveFilters = Object.values(activeFilters).some(
+    (value) => value !== null
+  );
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full md:max-w-3xl">
@@ -70,7 +73,10 @@ export function SearchAndFilter() {
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filter</span>
             {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center">
+              <Badge
+                variant="secondary"
+                className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center"
+              >
                 {Object.values(activeFilters).filter(Boolean).length}
               </Badge>
             )}
@@ -86,7 +92,12 @@ export function SearchAndFilter() {
               </label>
               <Select
                 value={activeFilters.status || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, status: value || null }))}
+                onValueChange={(value) =>
+                  setActiveFilters((prev) => ({
+                    ...prev,
+                    status: value || null,
+                  }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -106,7 +117,12 @@ export function SearchAndFilter() {
               </label>
               <Select
                 value={activeFilters.location || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, location: value || null }))}
+                onValueChange={(value) =>
+                  setActiveFilters((prev) => ({
+                    ...prev,
+                    location: value || null,
+                  }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select location" />
@@ -128,7 +144,12 @@ export function SearchAndFilter() {
               </label>
               <Select
                 value={activeFilters.verificationStatus || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, verificationStatus: value || null }))}
+                onValueChange={(value) =>
+                  setActiveFilters((prev) => ({
+                    ...prev,
+                    verificationStatus: value || null,
+                  }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select verification status" />
@@ -143,7 +164,11 @@ export function SearchAndFilter() {
             </div>
 
             {hasActiveFilters && (
-              <Button variant="ghost" className="w-full text-muted-foreground" onClick={clearAllFilters}>
+              <Button
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={clearAllFilters}
+              >
                 <X className="mr-2 h-4 w-4" />
                 Clear all filters
               </Button>
@@ -158,23 +183,32 @@ export function SearchAndFilter() {
           {activeFilters.status && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Status: {activeFilters.status}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("status")} />
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("status")}
+              />
             </Badge>
           )}
           {activeFilters.location && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Location: {activeFilters.location}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("location")} />
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("location")}
+              />
             </Badge>
           )}
           {activeFilters.verificationStatus && (
             <Badge variant="secondary" className="flex items-center gap-1">
               Verification: {activeFilters.verificationStatus}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("verificationStatus")} />
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("verificationStatus")}
+              />
             </Badge>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }
