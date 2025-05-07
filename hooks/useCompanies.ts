@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '@/lib/axiosInstance';
 import { Company, CompanyFilter, CompanySort, CompanyPagination } from '@/types/company';
+import useCompanyStore from '@/stores/companyStore';
 
 // Fetch companies with pagination
 const fetchCompanies = async (
@@ -15,16 +16,17 @@ const fetchCompanies = async (
   params.append('limit', pagination.limit.toString());
 
   // Add sorting parameters
-  params.append('sortBy', sort.field);
-  params.append('sortDirection', sort.direction);
+  if (sort.field) {
+    params.append('sortBy', sort.field);
+    params.append('sortDirection', sort.direction);
+  }
 
   // Add filter parameters
   if (filter.search) params.append('search', filter.search);
-  if (filter.verificationStatus) params.append('verificationStatus', filter.verificationStatus);
-  if (filter.region) params.append('region', filter.region);
+  if (filter.status) params.append('status', filter.status);
+  if (filter.location) params.append('location', filter.location);
 
-  const response = await axiosInstance.get(`/v1/companies/getAllcompany?${params.toString()}`);
-  console.log('Company API Response:', response.data);
+  const response = await axiosInstance.get(`/v1/companies/getAllCompany?${params.toString()}`);
 
   // Return properly structured data from API response
   return {
@@ -35,59 +37,66 @@ const fetchCompanies = async (
   };
 };
 
-// approve company
-const approveCompany = async (companyId: string) => {
-  const response = await axiosInstance.patch(`/v1/companies/approvecompay/${companyId}`);
-  console.log('Approve Company API Response:', response.data);
-  return response.data;
-};
-
-// Reject company
-const rejectCompany = async ({
+// Suspend company
+const suspendCompany = async ({
   companyId,
-  rejectionreason,
+  reason,
 }: {
   companyId: string;
-  rejectionreason: string;
+  reason: string;
 }): Promise<void> => {
-  await axiosInstance.patch(`/v1/companies/rejectcompay/${companyId}`, { rejectionreason });
+  await axiosInstance.patch(`/v1/companies/suspend/${companyId}`, { reason });
+};
+
+// activate company
+const activateCompany = async ({  
+  companyId,
+}: {
+    companyId: string;
+}): Promise<void> => {
+  await axiosInstance.patch(`/v1/companies/activate/${companyId}`);
+};
+
+// Deactivate company
+const deactivateCompany = async (companyId: string): Promise<void> => {
+  await axiosInstance.delete(`/v1/companies/${companyId}`);
 };
 
 // Custom hook
-export function useCompanies(filter: CompanyFilter, sort: CompanySort, pagination: CompanyPagination) {
-
+export function useCompanies() {
   const queryClient = useQueryClient();
+  const { filter, sort, pagination, setPage } = useCompanyStore();
 
   const companiesQuery = useQuery({
     queryKey: ['companies', filter, sort, pagination],
     queryFn: () => fetchCompanies(filter, sort, pagination),
-    staleTime: 5000, // Smooth pagination by keeping data fresh for 5 seconds
+    staleTime: 5000, // Keep data fresh for 5 seconds
   });
 
-  const approveMutation = useMutation({
-    mutationFn: approveCompany,
-    onSuccess: () => {
-      // Refetch companies to update the table
-      queryClient.invalidateQueries({
-        queryKey: ['companies'],
-        exact: false,
-      });
-    },
-    onError: (error: any) => {
-      console.error('Error approving company:', error);
-    },
-  });
-
-  const rejectMutation = useMutation({
-    mutationFn: rejectCompany,
+  const suspendMutation = useMutation({
+    mutationFn: suspendCompany,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['companies'],
-        exact: false,
       });
     },
-    onError: (error: any) => {
-      console.error('Error rejecting company:', error);
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: activateCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const deactivateMutation = useMutation({
+    mutationFn: deactivateCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
     },
   });
 
@@ -97,12 +106,15 @@ export function useCompanies(filter: CompanyFilter, sort: CompanySort, paginatio
     page: companiesQuery.data?.page || pagination.page,
     limit: companiesQuery.data?.limit || pagination.limit,
     isLoading: companiesQuery.isLoading,
-    error: companiesQuery.error?.message || null,
-    approveCompany: approveMutation.mutate,
-    isApproving: approveMutation.isPending,
-    approveError: approveMutation.error?.message || null,
-    rejectCompany: rejectMutation.mutate,
-    isRejecting: rejectMutation.isPending,
-    rejectError: rejectMutation.error?.message || null,
+    error: companiesQuery.error,
+    suspendCompany: suspendMutation.mutate,
+    isSuspending: suspendMutation.isPending,
+    suspendError: suspendMutation.error,
+    activateCompany: activateMutation.mutate,
+    isActivating: activateMutation.isPending,
+    activateError: activateMutation.error,
+    deactivateCompany: deactivateMutation.mutate,
+    isDeactivating: deactivateMutation.isPending,
+    deactivateError: deactivateMutation.error,
   };
 }

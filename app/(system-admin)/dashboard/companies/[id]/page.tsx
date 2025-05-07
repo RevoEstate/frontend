@@ -31,37 +31,43 @@ import { use } from "react";
 // Mock data for demonstration - in a real app, you would fetch this from an API
 const companies = [
   {
-    id: "1",
-    name: "Acme Real Estate",
+    _id: "681942613dec4f42f1098a5f",
+    realEstateName: "Acme Real Estate",
     logo: "A",
     contactEmail: "contact@acmerealestate.com",
     registrationDate: new Date(2023, 0, 15),
     numberOfListings: 24,
     status: "active",
-    location: "New York",
+    address: {
+      city: "New York",
+      region: "NY",
+      specificLocation: "123 Broadway, New York, NY 10001",
+    },
     verificationStatus: "verified",
     licenseNumber: "RE-12345-NY",
     website: "https://acmerealestate.com",
     phone: "(212) 555-1234",
-    address: "123 Broadway, New York, NY 10001",
   },
   {
-    id: "2",
-    name: "Horizon Properties",
+    _id: "681942613dec4f42f1098a4b",
+    realEstateName: "Horizon Properties",
     logo: "H",
     contactEmail: "info@horizonproperties.com",
     registrationDate: new Date(2023, 1, 22),
     numberOfListings: 18,
     status: "active",
-    location: "Los Angeles",
+    address: {
+      city: "Los Angeles",
+      region: "CA",
+      specificLocation: "456 Sunset Blvd, Los Angeles, CA 90028",
+    },
     verificationStatus: "verified",
     licenseNumber: "RE-67890-CA",
     website: "https://horizonproperties.com",
     phone: "(310) 555-6789",
-    address: "456 Sunset Blvd, Los Angeles, CA 90028",
   },
   // ... other companies
-]
+];
 
 // Mock listings data
 const mockListings = [
@@ -270,7 +276,7 @@ export default function CompanyProfilePage({
 
   useEffect(() => {
     // In a real app, you would fetch the company data from an API
-    const foundCompany = companies.find((c) => c.id === id);
+    const foundCompany = companies.find((c) => c._id === id);
     setCompany(foundCompany || null);
   }, [id]);
 
@@ -392,9 +398,9 @@ export default function CompanyProfilePage({
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle>{company.name}</CardTitle>
+                    <CardTitle>{company.realEstateName}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      {company.location}
+                      {company.address.city}, {company.address.region}
                     </p>
                   </div>
                 </div>
@@ -433,7 +439,9 @@ export default function CompanyProfilePage({
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <span className="text-sm">{company.address}</span>
+                  <span className="text-sm">
+                    {company.address.specificLocation}
+                  </span>
                 </div>
               </div>
 
@@ -639,7 +647,7 @@ export default function CompanyProfilePage({
         onClose={() => setIsSuspendDialogOpen(false)}
         onSuspend={(reason) => {
           console.log(
-            `Suspending company ${company.id} with reason: ${reason}`
+            `Suspending company ${company._id} with reason: ${reason}`
           );
           setIsSuspendDialogOpen(false);
           // In a real application, you would call an API to update the status
@@ -651,7 +659,7 @@ export default function CompanyProfilePage({
         isOpen={isDeactivateDialogOpen}
         onClose={() => setIsDeactivateDialogOpen(false)}
         onDeactivate={() => {
-          console.log(`Deactivating company ${company.id}`);
+          console.log(`Deactivating company ${company._id}`);
           setIsDeactivateDialogOpen(false);
           // In a real application, you would call an API to update the status
         }}

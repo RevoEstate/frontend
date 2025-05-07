@@ -1,16 +1,14 @@
 export type Company = {
   _id: string;
   realEstateName: string;
-  userId: string;
   email: string;
   phone: string;
   description: string;
   imageUrl: string;
   documentUrl: string;
-  verificationStatus: 'initial' | 'pending' | 'approved' | 'rejected';
-  isVerified: boolean;
-  verifiedBy?: string;
-  revoemb: string[];
+  companyStatus: 'active' | 'suspended';
+  verificationStatus: 'pending' | 'approved' | 'rejected';
+  listingsCount: number;
   createdAt: string;
   updatedAt: string;
   address: {
@@ -32,14 +30,13 @@ export type Company = {
 };
 
 export type CompanyFilter = {
-  date?: string;
   search?: string;
-  verificationStatus?: string;
-  region?: string;
+  status?: 'active' | 'suspended' | 'inactive';
+  location?: string;
 };
 
 export type CompanySort = {
-  field: 'realEstateName' | 'createdAt' | 'verificationStatus';
+  field: 'realEstateName' | 'createdAt' | 'status' | 'listingsCount';
   direction: 'asc' | 'desc';
 };
 
