@@ -1,17 +1,76 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from 'framer-motion';
-import { Heart, MapPin, Ruler, Bed, Bath, Car, ThumbsUp } from "lucide-react";
+import { MapPin, Ruler, Bed, Bath, Car, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { Property } from "@/types";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
+import { useBookmarks } from "@/hooks/useBookmark";
 
 
-export function PropertyCard({ property }: { property: Property }) {
+export function PropertyCard({ property, onRemoveBookmark }: { property: Property, onRemoveBookmark?: () => void }) {
+
+  const { data: session } = useSession();
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [bookmarkId, setBookmarkId] = useState<string | null>(null);
+  const { data: bookmarks } = useBookmarks(); 
+
+  // Check if this property is bookmarked when component mounts or bookmarks change
+  useEffect(() => {
+    if (bookmarks && bookmarks.length > 0) {
+      const bookmark = bookmarks.find(b => b.propertyId._id === property._id);
+      if (bookmark) {
+        setIsLiked(true);
+        setBookmarkId(bookmark._id);
+      }
+    }
+  }, [bookmarks, property._id]);
+
 
   const formattedPrice = property.listingType === "For Sale" 
   ? `${property.price.toLocaleString()} ETB` 
   : `${property.price.toLocaleString()} ETB /month`;
+
+  const handleLikeToggle = async () => {
+    if (!session) {
+      toast.error("Please login to bookmark properties");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (isLiked && bookmarkId) {
+        // Unlike/delete bookmark using the bookmark ID
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/bookmark/${bookmarkId}`,
+          { withCredentials: true }
+        );
+        setIsLiked(false);
+        setBookmarkId(null);
+        toast.success("Property removed from bookmarks");
+        onRemoveBookmark?.();
+      } else {
+        // Like/add bookmark
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/bookmark/add-to-bookmark`,
+          { propertyId: property._id },
+          { withCredentials: true }
+        );
+        setIsLiked(true);
+        setBookmarkId(response.data.bookmark._id);
+        toast.success("Property added to bookmarks");
+      }
+    } catch (error) {
+      toast.error(`Failed to ${isLiked ? 'remove from' : 'add to'} bookmarks`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -21,7 +80,6 @@ export function PropertyCard({ property }: { property: Property }) {
       whileHover={{ y: -1 }}
       >
           <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-md rounded-sm transition-shadow">
-
             <CardHeader className="p-0 overflow-hidden mt-[-25px]">
               <Link href={`/properties/${property._id}`} className="block w-full h-[250px] relative">
                 <Image
@@ -74,10 +132,22 @@ export function PropertyCard({ property }: { property: Property }) {
 
             <CardFooter className="flex justify-between items-center px-4 pb-4">
               <span className="text-lg font-bold">{formattedPrice}</span>
-              <button className="text-sky-600 cursor-pointer hover:text-sky-700">
-                <ThumbsUp size={26} />
+              <button 
+                onClick={handleLikeToggle}
+                disabled={isLoading}
+                className={`${isLiked ? 'text-sky-600' : 'text-gray-400'} cursor-pointer hover:text-sky-700 transition-colors`}
+                aria-label={isLiked ? "Remove from bookmarks" : "Add to bookmarks"}
+              >
+                {isLoading ? (
+                  <ThumbsUp className="animate-pulse" size={26} />
+                ) : (
+                  <ThumbsUp 
+                    size={26} 
+                    fill={isLiked ? "currentColor" : "none"}
+                  />
+                )}
               </button>
-            </CardFooter>
+          </CardFooter>
           </Card>
     </motion.div>
   
