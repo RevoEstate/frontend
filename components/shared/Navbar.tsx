@@ -42,8 +42,8 @@ export default function Navbar() {
             </h1>
           </Link>
 
-           {/* Desktop Navigation */}
-           <div className="hidden md:flex items-center space-x-6">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
             {/* Always visible links */}
             <Link
               href="/properties"
@@ -71,7 +71,7 @@ export default function Navbar() {
             )}
 
             {/* Role-based links */}
-            {user?.role === 'agent' && (
+            {user?.role === "agent" && (
               <>
                 {/* <Link
                   href="/properties/create"
@@ -88,9 +88,9 @@ export default function Navbar() {
               </>
             )}
 
-            {user?.role === 'systemAdmin' && (
+            {user?.role === "systemAdmin" && (
               <Link
-                href="/admin"
+                href="/dashboard"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
               >
                 Admin Panel
@@ -103,7 +103,7 @@ export default function Navbar() {
             <div className="md:flex items-center mr-3 md:mr-10">
               <UserMenu />
             </div>
-            
+
             {/* Mobile menu button */}
             {/* <div className="md:hidden">
               <MobileNav />
