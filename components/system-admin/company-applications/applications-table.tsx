@@ -455,7 +455,7 @@ export function ApplicationsTable() {
                 email: selectedApplication.email,
                 avatar: "",
               },
-              address: selectedApplication.address.region,
+              address: selectedApplication.address,
               socialMedia: selectedApplication.socialMedia,
             }}
             isOpen={isDetailsModalOpen}

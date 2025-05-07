@@ -31,7 +31,11 @@ interface ApplicationDetailsModalProps {
       email: string;
       avatar: string;
     };
-    address: string;
+    address: {
+      region: string;
+      city: string;
+      specificLocation: string;
+    };
     socialMedia: {
       facebook?: string;
       linkedin?: string;
@@ -156,7 +160,20 @@ export function ApplicationDetailsModal({
                   <h3 className="text-sm font-medium text-muted-foreground">
                     Address
                   </h3>
-                  <p className="mt-2">{companyDetails.address}</p>
+                  <div className="mt-2 space-y-1">
+                    <p>
+                      <span className="font-medium">Region:</span>{" "}
+                      {companyDetails.address.region}
+                    </p>
+                    <p>
+                      <span className="font-medium">City:</span>{" "}
+                      {companyDetails.address.city}
+                    </p>
+                    <p>
+                      <span className="font-medium">Location:</span>{" "}
+                      {companyDetails.address.specificLocation}
+                    </p>
+                  </div>
                 </div>
 
                 <div>
@@ -227,15 +244,35 @@ export function ApplicationDetailsModal({
                     >
                       <div className="flex items-center gap-2">
                         <File className="h-5 w-5 text-blue-500" />
-                        <span>{doc}</span>
+                        <span>{doc.split("/").pop().slice(-10)}</span>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(doc, "_blank")}
-                      >
-                        View Document
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            window.open(doc, "_blank", "noopener,noreferrer");
+                          }}
+                        >
+                          View Document
+                        </Button>
+                        {/* <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const link = document.createElement("a");
+                            link.href = doc;
+                            link.target = "_blank";
+                            link.rel = "noopener noreferrer";
+                            link.setAttribute("download", ""); // This will force download instead of navigation
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }}
+                        >
+                          Download PDF
+                        </Button> */}
+                      </div>
                     </div>
                   ))
                 ) : (
