@@ -23,6 +23,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { authClient, signOut, useSession } from "@/lib/auth-client";
+import { usePathname, useRouter } from "next/navigation";
 
 // Animation variants
 const dropdownVariants = {
@@ -49,16 +50,23 @@ const itemVariants = {
 };
 
 const UserMenu = () => {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const user = session?.user;
 
   const handleSignOut = async () => {
     try {
-      await signOut({ callbackUrl: "/" });
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+        },
+      });
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };
+  }
 
   // Show loading state while session is being fetched
   if (status === "loading") {
