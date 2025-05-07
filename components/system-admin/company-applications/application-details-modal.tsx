@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { FaFacebook, FaLinkedin, FaTiktok } from "react-icons/fa6";
 
 interface ApplicationDetailsModalProps {
   application: {
@@ -31,7 +32,11 @@ interface ApplicationDetailsModalProps {
       avatar: string;
     };
     address: string;
-    website: string;
+    socialMedia: {
+      facebook?: string;
+      linkedin?: string;
+      tiktok?: string;
+    };
   };
   isOpen: boolean;
   onClose: () => void;
@@ -53,7 +58,7 @@ export function ApplicationDetailsModal({
     contactPhone: application.taxId,
     address: application.address,
     documentsUploaded: application.documentsUploaded,
-    website: application.website,
+    socialMedia: application.socialMedia,
   };
 
   // Mock comments - in a real app, you would fetch these
@@ -170,10 +175,41 @@ export function ApplicationDetailsModal({
                   <h3 className="text-sm font-medium text-muted-foreground">
                     Online Presence
                   </h3>
-                  <p className="mt-2">
-                    <span className="font-medium">Website:</span>{" "}
-                    {companyDetails.website}
-                  </p>
+                  <div className="mt-2 flex gap-4">
+                    {companyDetails.socialMedia?.facebook && (
+                      <FaFacebook
+                        className="h-5 w-5 text-blue-600 hover:text-blue-700"
+                        onClick={() =>
+                          window.open(
+                            companyDetails.socialMedia.facebook,
+                            "_blank"
+                          )
+                        }
+                      />
+                    )}
+                    {companyDetails.socialMedia?.linkedin && (
+                      <FaLinkedin
+                        className="h-5 w-5 text-blue-600 hover:text-blue-700"
+                        onClick={() =>
+                          window.open(
+                            companyDetails.socialMedia.linkedin,
+                            "_blank"
+                          )
+                        }
+                      />
+                    )}
+                    {companyDetails.socialMedia?.tiktok && (
+                      <FaTiktok
+                        className="h-5 w-5 text-blue-600 hover:text-blue-700"
+                        onClick={() =>
+                          window.open(
+                            companyDetails.socialMedia.tiktok,
+                            "_blank"
+                          )
+                        }
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             </TabsContent>
@@ -193,7 +229,11 @@ export function ApplicationDetailsModal({
                         <File className="h-5 w-5 text-blue-500" />
                         <span>{doc}</span>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(doc, "_blank")}
+                      >
                         View Document
                       </Button>
                     </div>

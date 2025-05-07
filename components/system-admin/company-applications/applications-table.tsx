@@ -447,10 +447,7 @@ export function ApplicationsTable() {
               applicationDate: new Date(selectedApplication.createdAt),
               taxId: selectedApplication.phone,
               documentsUploaded: selectedApplication.documentUrl
-                ? [
-                    selectedApplication.documentUrl.slice(0, 20) ||
-                      "document.pdf",
-                  ]
+                ? [selectedApplication.documentUrl || "document.pdf"]
                 : [],
               status: selectedApplication.verificationStatus,
               contentOwner: {
@@ -459,7 +456,7 @@ export function ApplicationsTable() {
                 avatar: "",
               },
               address: selectedApplication.address.region,
-              website: selectedApplication.socialMedia.linkedin,
+              socialMedia: selectedApplication.socialMedia,
             }}
             isOpen={isDetailsModalOpen}
             onClose={() => setIsDetailsModalOpen(false)}
