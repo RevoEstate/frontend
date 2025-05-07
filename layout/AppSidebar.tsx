@@ -27,6 +27,7 @@ import {
 } from "react-icons/fa";
 import { IoBarChartSharp, IoChatboxEllipses, IoHome } from "react-icons/io5";
 import { Inter } from "next/font/google";
+import { useAuth } from "@/hooks/useAuth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,12 +58,12 @@ const navItems: NavItem[] = [
   {
     icon: <FaFlag size={22} />,
     name: "Content Reports",
-    path: "/content-reports",
+    path: "/reports",
   },
   {
     icon: <IoChatboxEllipses size={22} />,
     name: "Issue Resolution",
-    path: "/issue-resolution",
+    path: "/issues",
   },
   {
     icon: <IoBarChartSharp size={22} />,
@@ -75,23 +76,33 @@ const othersItems: NavItem[] = [
   {
     icon: <FaUsers size={22} />,
     name: "Account Management",
-    path: "/account-management",
+    path: "/sub-accounts",
   },
   {
     icon: <FaShieldAlt size={22} />,
     name: "Platform Policy",
-    path: "/platform-policy",
+    path: "/policies",
   },
   {
     icon: <FaSignOutAlt size={22} />,
     name: "Sign out",
-    path: "/sign-out",
   },
 ];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { signout, isLoading: isAuthLoading, error: authError } = useAuth();
   const pathname = usePathname();
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  const handleSignout = async () => {
+    try {
+      setLogoutError(null);
+      await signout();
+    } catch (err) {
+      setLogoutError("Failed to sign out. Please try again.");
+    }
+  };
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -136,30 +147,55 @@ const AppSidebar: React.FC = () => {
                 />
               )}
             </button>
-          ) : (
-            nav.path && (
-              <Link
-                href={`/dashboard${nav.path}`}
-                className={`menu-item group ${
-                  isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+          ) : nav.path ? (
+            <Link
+              href={`/dashboard${nav.path}`}
+              className={`menu-item group ${
+                isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+              }`}
+            >
+              <span
+                className={`${
+                  isActive(nav.path)
+                    ? "menu-item-icon-active"
+                    : "menu-item-icon-inactive"
                 }`}
               >
-                <span
-                  className={`${
-                    isActive(nav.path)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
-                  }`}
-                >
-                  {nav.icon}
+                {nav.icon}
+              </span>
+              {(isExpanded || isHovered || isMobileOpen) && (
+                <span className={`${inter.className} menu-item-text`}>
+                  {nav.name}
                 </span>
-                {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className={`${inter.className} menu-item-text`}>
-                    {nav.name}
-                  </span>
-                )}
-              </Link>
-            )
+              )}
+            </Link>
+          ) : (
+            <button
+              onClick={nav.name === "Sign out" ? handleSignout : undefined}
+              disabled={nav.name === "Sign out" && isAuthLoading}
+              className={`menu-item group ${
+                isAuthLoading && nav.name === "Sign out"
+                  ? "opacity-50 cursor-not-allowed"
+                  : "menu-item-inactive"
+              } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+            >
+              <span
+                className={`${
+                  isAuthLoading && nav.name === "Sign out"
+                    ? "menu-item-icon-inactive"
+                    : "menu-item-icon-inactive"
+                }`}
+              >
+                {nav.icon}
+              </span>
+              {(isExpanded || isHovered || isMobileOpen) && (
+                <span className={`${inter.className} menu-item-text`}>
+                  {nav.name === "Sign out" && isAuthLoading
+                    ? "Signing out..."
+                    : nav.name}
+                </span>
+              )}
+            </button>
           )}
           {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
             <div

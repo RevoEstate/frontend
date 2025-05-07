@@ -1,91 +1,75 @@
-"use client"
-
-import { useState } from "react"
-import { AlertTriangle } from "lucide-react"
-
+import { useState } from "react";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface RejectApplicationDialogProps {
   application: {
-    id: string
-    companyName: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onReject: (reason: string) => void
+    id: string;
+    companyName: string;
+  };
+  isOpen: boolean;
+  onClose: () => void;
+  onReject: (reason: string) => void;
+  isRejecting?: boolean; // Optional, for loading state
 }
 
-export function RejectApplicationDialog({ application, isOpen, onClose, onReject }: RejectApplicationDialogProps) {
-  const [reason, setReason] = useState("")
-  const [error, setError] = useState("")
+export function RejectApplicationDialog({
+  application,
+  isOpen,
+  onClose,
+  onReject,
+  isRejecting,
+}: RejectApplicationDialogProps) {
+  const [rejectionReason, setRejectionReason] = useState("");
 
-  const handleReject = () => {
-    if (!reason.trim()) {
-      setError("Please provide a reason for rejection")
-      return
+  const handleSubmit = () => {
+    if (!rejectionReason.trim()) {
+      alert("Please provide a rejection reason.");
+      return;
     }
-
-    onReject(reason)
-    setReason("")
-    setError("")
-  }
+    onReject(rejectionReason);
+    setRejectionReason(""); // Clear the input
+  };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
-            Reject Application
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            You are about to reject the application from <strong>{application.companyName}</strong>. This action will
-            notify the company and archive the application.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <div className="py-4">
-          <Label htmlFor="rejection-reason" className="mb-2 block">
-            Reason for Rejection <span className="text-red-500">*</span>
-          </Label>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            Reject Application: {application.companyName}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <Label htmlFor="rejectionReason">Rejection Reason</Label>
           <Textarea
-            id="rejection-reason"
-            placeholder="Please provide a detailed reason for rejection..."
-            value={reason}
-            onChange={(e) => {
-              setReason(e.target.value)
-              if (e.target.value.trim()) setError("")
-            }}
-            className={`min-h-[120px] ${error ? "border-red-500" : ""}`}
+            id="rejectionReason"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Enter the reason for rejecting this application"
+            rows={4}
           />
-          {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
         </div>
-
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setReason("")
-              setError("")
-            }}
-          >
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isRejecting}>
             Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleReject} className="bg-red-600 hover:bg-red-700">
-            Reject Application
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  )
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleSubmit}
+            disabled={isRejecting}
+          >
+            {isRejecting ? "Rejecting..." : "Reject"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }

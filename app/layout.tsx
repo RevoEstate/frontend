@@ -6,7 +6,7 @@ import {
   APP_NAME,
   SERVER_URL,
 } from "@/lib/constants/index.ts";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import { Providers } from "@/lib/providers";
 import Chatbot from "@/components/shared/Chatbot";
 
@@ -33,11 +33,10 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={`${inter.className} antialiased`}>
           {children}
-          <Toaster richColors position="top-center" />
+          <Toaster richColors position="top-right" />
           <Chatbot />
         </body>
       </html>
     </Providers>
-   
   );
 }

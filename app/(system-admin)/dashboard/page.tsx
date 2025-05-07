@@ -10,6 +10,9 @@ import DataTable from "@/components/system-admin/overview/DataTable";
 import StatisticsChart from "@/components/system-admin/overview/StatisticsChart";
 // import QuickActions from "@/components/admin/QuickActions";
 import RecentActivity from "@/components/system-admin/overview/RecentActivity";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { HydrationBoundary } from "@tanstack/react-query";
+import { fetchOverviewStats } from "@/hooks/useStats";
 
 export const metadata: Metadata = {
   title: {
@@ -35,28 +38,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Ecommerce() {
+export default async function AdminsDashboard() {
+  const queryClient = new QueryClient();
+
+  // Pre-fetch overview stats
+  await queryClient.prefetchQuery({
+    queryKey: ["overviewStats"],
+    queryFn: fetchOverviewStats,
+  });
+
+  const dehydratedState = dehydrate(queryClient);
+
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-12">
-        <SummaryCard />
-      </div>
-      {/* 
-      <div className="col-span-12 xl:col-span-12">
-        <QuickActions />
-      </div> */}
+    <HydrationBoundary state={dehydratedState}>
+      <div className="grid grid-cols-12 gap-4 md:gap-6">
+        <div className="col-span-12 space-y-6 xl:col-span-12">
+          <SummaryCard />
+        </div>
+        {/* 
+        <div className="col-span-12 xl:col-span-12">
+          <QuickActions />
+        </div> */}
 
-      <div className="col-span-12 xl:col-span-12">
-        <RecentActivity />
-      </div>
+        <div className="col-span-12 xl:col-span-12">
+          <RecentActivity />
+        </div>
 
-      <div className="col-span-12 xl:col-span-12">
-        <DataTable />
-      </div>
+        <div className="col-span-12 xl:col-span-12">
+          <DataTable />
+        </div>
 
-      <div className="col-span-12">
-        <StatisticsChart />
+        <div className="col-span-12">
+          <StatisticsChart />
+        </div>
       </div>
-    </div>
+    </HydrationBoundary>
   );
 }
