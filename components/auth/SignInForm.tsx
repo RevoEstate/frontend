@@ -117,7 +117,7 @@ export default function SignInForm() {
             try {
               const session = await authClient.getSession();
               const userRole = session?.data?.user?.role;
-              const userId = session?.data?.user?.id
+              const userId = session?.data?.user?.id;
 
               if (userRole === "systemAdmin") {
                 // router.replace("/systemAdmin");

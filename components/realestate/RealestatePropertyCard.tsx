@@ -1,28 +1,43 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { MapPin, Bed, Bath, Ruler, Pencil, Trash } from "lucide-react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-
 export const RealestatePropertyCard = ({ property, onDelete }: any) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const location = `${property.address.region}, ${property.address.city}`;
-  const formattedPrice = property.listingType === "For Sale" 
-    ? `$${property.price.toLocaleString()}` 
-    : `$${property.price.toLocaleString()}/mo`;
+  const formattedPrice =
+    property.listingType === "For Sale"
+      ? `$${property.price.toLocaleString()}`
+      : `$${property.price.toLocaleString()}/mo`;
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/${property._id}`,
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/deleteproprty/${property._id}`,
         { withCredentials: true }
       );
       toast.success("Property deleted successfully.");
@@ -37,7 +52,10 @@ export const RealestatePropertyCard = ({ property, onDelete }: any) => {
   return (
     <Card className="w-full max-w-sm flex flex-col overflow-hidden group hover:shadow-md rounded-sm transition-shadow">
       <CardHeader className="p-0 overflow-hidden mt-[-25px]">
-        <Link href={`/properties/${property._id}`} className="block w-full h-[250px] relative">
+        <Link
+          href={`/properties/${property._id}`}
+          className="block w-full h-[250px] relative"
+        >
           <Image
             src={property.images[0] || "/images/default-property.jpg"}
             alt={property.title}
@@ -65,14 +83,15 @@ export const RealestatePropertyCard = ({ property, onDelete }: any) => {
             <Bath className="w-4 h-4 mr-1" /> {property.bathrooms} Baths
           </span>
           <span className="flex items-center">
-            <Ruler className="w-4 h-4 mr-1" /> {property.area.toLocaleString()} sqft
+            <Ruler className="w-4 h-4 mr-1" /> {property.area.toLocaleString()}{" "}
+            sqft
           </span>
         </div>
         {property.amenities && property.amenities.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {property.amenities.slice(0, 3).map((amenity, index) => (
-              <span 
-                key={index} 
+              <span
+                key={index}
                 className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded"
               >
                 {amenity}
@@ -90,14 +109,17 @@ export const RealestatePropertyCard = ({ property, onDelete }: any) => {
       <CardFooter className="flex justify-between items-center px-4 pb-4">
         <span className="text-lg font-bold">{formattedPrice}</span>
         <div className="flex gap-5 justify-end items-center">
-          <Link href={`/realestate/properties/${property._id}`} title="Edit Property">
+          <Link
+            href={`/realestate/properties/${property._id}`}
+            title="Edit Property"
+          >
             <Pencil className="w-5 h-5 text-sky-600 hover:text-sky-800 transition-colors cursor-pointer" />
           </Link>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button disabled={isDeleting} title="Delete Property">
                 <Trash
-                  className={`w-5 h-5 ${isDeleting ? 'text-gray-400' : 'text-red-600 hover:text-red-800'} transition-colors cursor-pointer`} 
+                  className={`w-5 h-5 ${isDeleting ? "text-gray-400" : "text-red-600 hover:text-red-800"} transition-colors cursor-pointer`}
                 />
               </button>
             </AlertDialogTrigger>
@@ -105,12 +127,19 @@ export const RealestatePropertyCard = ({ property, onDelete }: any) => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the property "{property.title}".
+                  This action cannot be undone. This will permanently delete the
+                  property "{property.title}".
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-                <AlertDialogAction className="bg-red-600 text-white hover:bg-red-700 hover:text-white cursor-pointer" onClick={handleDelete} disabled={isDeleting}>
+                <AlertDialogCancel className="cursor-pointer">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 text-white hover:bg-red-700 hover:text-white cursor-pointer"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
                   {isDeleting ? "Deleting..." : "Delete"}
                 </AlertDialogAction>
               </AlertDialogFooter>
