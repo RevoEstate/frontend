@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState,useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
   BoxCubeIcon,
@@ -28,7 +28,7 @@ import {
 import { IoBarChartSharp, IoChatboxEllipses, IoHome } from "react-icons/io5";
 import { Inter } from "next/font/google";
 import { useAuth } from "@/hooks/useAuth";
-
+import { signOut } from "@/lib/auth-client";
 const inter = Inter({ subsets: ["latin"] });
 
 type NavItem = {
@@ -93,14 +93,20 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const { signout, isLoading: isAuthLoading, error: authError } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const handleSignout = async () => {
     try {
-      setLogoutError(null);
-      await signout();
-    } catch (err) {
-      setLogoutError("Failed to sign out. Please try again.");
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
   };
 
