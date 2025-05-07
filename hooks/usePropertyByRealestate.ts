@@ -15,13 +15,13 @@ export const usePropertyByRealestate = (page: number = 1) => {
         }
 
         try {
-          const response = await axios.get(
-              `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/companyproperties`,
-              { 
-                  params: { page },
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/companyproperties`,
+                { 
+                  params: page ? { page } : {}, // Only include page if it exists
                   withCredentials: true,
-              },
-          );
+                }
+              );
 
           // Handle empty case gracefully
           if (response.status === 404) {

@@ -35,7 +35,7 @@ import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
 
 // Ethiopian regions and cities data
-const ETHIOPIA_REGIONS = [
+export const ETHIOPIA_REGIONS = [
   {
     name: "Addis Ababa",
     cities: [
@@ -170,8 +170,9 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       toast.error("Error submitting form: " + (error as Error).message);
     }
   }
+
+
   //Price prediction
-  // Inside PropertyForm component
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictedPrice, setpredictedprice] = useState();
 

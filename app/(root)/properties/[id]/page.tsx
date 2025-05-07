@@ -33,6 +33,8 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
     error
   } = usePropertyById(id);
 
+  console.log("Property Details", property)
+
   // State for tour scheduling
   const [date, setDate] = useState("");
   const [message, setMessage] = useState("");

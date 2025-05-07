@@ -38,7 +38,7 @@ export type Realestate = z.infer<typeof realestateSchema>
     address: {
       geoPoint?: {
         coordinates?: [number, number];
-        type: string;
+        type: "Point";
       };
       region: string;
       city: string;
@@ -48,22 +48,22 @@ export type Realestate = z.infer<typeof realestateSchema>
     bathrooms: number;
     area: number;
     landArea: number;
-    propertyType: string;
+    propertyType: "Apartment" | "House" | "Commercial" | "Land" | "Villa";
     listingType: string;
-    furnished: string;
+    furnished: "Yes" | "No";
     builtInYear: number;
     amenities: string[];
     images: string[];
     panoramicImages: string[];
     isActive: boolean;
     isFeatured: boolean;
-    status: string;
-    viewCount: number;
-    createdAt: string;
-    updatedAt: string;
-    expireDate: string;
+    status: "available" | "sold" | "rented";
+    viewCount?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    expireDate?: string;
     purchaseId?: string;
-    userId: {
+    userId?: {
       _id: string;
       id: string;
       firstName: string;
@@ -81,26 +81,22 @@ export type Realestate = z.infer<typeof realestateSchema>
       description: string;
       email: string;
       phone: string;
-      isVerified: boolean;
+      isVerified?: boolean;
       verificationStatus: string;
       verifiedAt?: string;
       verifiedBy?: string;
       imageUrl?: string;
       documentUrl?: string;
-      createdAt: string;
-      updatedAt: string;
+      createdAt?: string;
+      updatedAt?: string;
       address: {
         geoPoint?: {
-          lat?: number;
-          lng?: number;
+          coordinates?: [number, number];
+          type: "Point";
         };
         region: string;
         city: string;
         specificLocation: string;
-        coordinates?: {
-          latitude?: number;
-          longitude?: number;
-        };
       };
       socialMedia?: {
         facebook?: string;

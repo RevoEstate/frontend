@@ -36,7 +36,7 @@ export const usePropertyById = (propertyId?: string) => {
       if (error.message.includes('404')) return false;
       return failureCount < 2;
     },
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   return {

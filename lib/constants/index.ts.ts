@@ -70,3 +70,29 @@ export const createPropertyDefaultValues = {
   furnished: "No" as const,
   amenities: [] as string[],
 };
+export const updatePropertyDefaultValues = {
+  title: undefined,
+  description: undefined,
+  price: undefined,
+  area: undefined,
+  address: {
+    region: "",
+    city: "",
+    specificLocation: "",
+    geoPoint: {
+      type: "Point" as const,
+      coordinates: [0, 0] as [number, number],
+    },
+  },
+  propertyType: "Apartment" as const,
+  status: "available" as const,
+  images: [] as File[],
+  bedrooms: 0,
+  bathrooms: 0,
+  builtInYear: undefined as number | undefined,
+  landArea: 0,
+  panoramicImages: [] as File[],
+  listingType: "For Sale" as const,
+  furnished: "No" as const,
+  amenities: [] as string[],
+};
