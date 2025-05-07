@@ -31,12 +31,13 @@ export type Company = {
 
 export type CompanyFilter = {
   search?: string;
-  status?: 'active' | 'suspended' | 'inactive';
+  companyStatus?: 'active' | 'suspended';
+  verificationStatus?: 'pending' | 'approved' | 'rejected';
   location?: string;
 };
 
 export type CompanySort = {
-  field: 'realEstateName' | 'createdAt' | 'status' | 'listingsCount';
+  field: 'realEstateName' | 'createdAt' | 'companyStatus' | 'listingsCount' | 'verificationStatus';
   direction: 'asc' | 'desc';
 };
 

@@ -23,7 +23,8 @@ const fetchCompanies = async (
 
   // Add filter parameters
   if (filter.search) params.append('search', filter.search);
-  if (filter.status) params.append('status', filter.status);
+  if (filter.companyStatus) params.append('companyStatus', filter.companyStatus);
+  if (filter.verificationStatus) params.append('verificationStatus', filter.verificationStatus);
   if (filter.location) params.append('location', filter.location);
 
   const response = await axiosInstance.get(`/v1/companies/getAllCompany?${params.toString()}`);

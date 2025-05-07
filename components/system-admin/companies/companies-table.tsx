@@ -127,7 +127,7 @@ export function CompaniesTable() {
   };
 
   const handleSort = (
-    field: "realEstateName" | "createdAt" | "status" | "listingsCount"
+    field: "realEstateName" | "createdAt" | "companyStatus" | "listingsCount"
   ) => {
     const newDirection =
       sort.field === field && sort.direction === "asc" ? "desc" : "asc";
@@ -257,7 +257,6 @@ export function CompaniesTable() {
     return items;
   };
 
-
   if (isLoading) {
     return (
       <div className="rounded-md border">
@@ -345,10 +344,10 @@ export function CompaniesTable() {
                 <TableCell isHeader>
                   <div
                     className="flex items-center cursor-pointer"
-                    onClick={() => handleSort("status")}
+                    onClick={() => handleSort("companyStatus")}
                   >
                     Status
-                    {sort.field === "status" &&
+                    {sort.field === "companyStatus" &&
                       (sort.direction === "asc" ? (
                         <ChevronDown className="ml-1 h-4 w-4" />
                       ) : (
