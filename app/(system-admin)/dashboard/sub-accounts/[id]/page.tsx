@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ResetPasswordDialog } from "@/components/system-admin/sub-accounts/reset-password-dialog"
-
+import { use } from "react";
 // Mock data for demonstration - in a real app, you would fetch this from an API
 const subAccounts = [
   {
@@ -48,11 +48,16 @@ const subAccounts = [
       managePayments: false,
     },
   },
-]
+];
 
-export default function EditSubAccountPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const [account, setAccount] = useState<(typeof subAccounts)[0] | null>(null)
+export default function EditSubAccountPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  const router = useRouter();
+  const [account, setAccount] = useState<(typeof subAccounts)[0] | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,90 +70,94 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
       accessAnalytics: false,
       managePayments: false,
     },
-  })
-  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSaving, setIsSaving] = useState(false)
+  });
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
+    useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     // In a real app, you would fetch the account data from an API
-    const foundAccount = subAccounts.find((a) => a.id === params.id)
+    const foundAccount = subAccounts.find((a) => a.id === id);
     if (foundAccount) {
-      setAccount(foundAccount)
+      setAccount(foundAccount);
       setFormData({
         name: foundAccount.name,
         email: foundAccount.email,
         role: foundAccount.role,
         permissions: { ...foundAccount.permissions },
-      })
+      });
     }
-  }, [params.id])
+  }, [id]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when field is edited
     if (errors[field]) {
       setErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
-  }
+  };
 
-  const handlePermissionChange = (permission: keyof typeof formData.permissions, checked: boolean) => {
+  const handlePermissionChange = (
+    permission: keyof typeof formData.permissions,
+    checked: boolean
+  ) => {
     setFormData((prev) => ({
       ...prev,
       permissions: {
         ...prev.permissions,
         [permission]: checked,
       },
-    }))
-  }
+    }));
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Full name is required"
+      newErrors.name = "Full name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.role) {
-      newErrors.role = "Role is required"
+      newErrors.role = "Role is required";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      setIsSaving(true)
+      setIsSaving(true);
       try {
         // In a real app, you would send this data to your API
         console.log("Updating sub-account:", {
           id: account?.id,
           ...formData,
-        })
+        });
 
         // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Show success message or redirect
-        router.back()
+        router.back();
       } catch (error) {
-        console.error("Error updating account:", error)
+        console.error("Error updating account:", error);
       } finally {
-        setIsSaving(false)
+        setIsSaving(false);
       }
     }
-  }
+  };
 
   if (!account) {
     return (
@@ -159,7 +168,7 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
           Back to sub-accounts
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -198,7 +207,9 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 className={errors.name ? "border-red-500" : ""}
               />
-              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -212,25 +223,37 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className={errors.email ? "border-red-500" : ""}
               />
-              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="role">
                 Role <span className="text-red-500">*</span>
               </Label>
-              <Select value={formData.role} onValueChange={(value) => handleInputChange("role", value)}>
-                <SelectTrigger id="role" className={errors.role ? "border-red-500" : ""}>
+              <Select
+                value={formData.role}
+                onValueChange={(value) => handleInputChange("role", value)}
+              >
+                <SelectTrigger
+                  id="role"
+                  className={errors.role ? "border-red-500" : ""}
+                >
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Manager">Manager</SelectItem>
                   <SelectItem value="Sub-Admin">Sub-Admin</SelectItem>
                   <SelectItem value="Support">Support</SelectItem>
-                  <SelectItem value="Content Moderator">Content Moderator</SelectItem>
+                  <SelectItem value="Content Moderator">
+                    Content Moderator
+                  </SelectItem>
                 </SelectContent>
               </Select>
-              {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
+              {errors.role && (
+                <p className="text-sm text-red-500">{errors.role}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -266,7 +289,12 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="approveListings"
                   checked={formData.permissions.approveListings}
-                  onCheckedChange={(checked) => handlePermissionChange("approveListings", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange(
+                      "approveListings",
+                      checked as boolean
+                    )
+                  }
                 />
                 <Label htmlFor="approveListings">Approve Listings</Label>
               </div>
@@ -274,7 +302,9 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="viewReports"
                   checked={formData.permissions.viewReports}
-                  onCheckedChange={(checked) => handlePermissionChange("viewReports", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange("viewReports", checked as boolean)
+                  }
                 />
                 <Label htmlFor="viewReports">View Reports</Label>
               </div>
@@ -282,7 +312,9 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="manageUsers"
                   checked={formData.permissions.manageUsers}
-                  onCheckedChange={(checked) => handlePermissionChange("manageUsers", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange("manageUsers", checked as boolean)
+                  }
                 />
                 <Label htmlFor="manageUsers">Manage Users</Label>
               </div>
@@ -290,7 +322,9 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="manageContent"
                   checked={formData.permissions.manageContent}
-                  onCheckedChange={(checked) => handlePermissionChange("manageContent", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange("manageContent", checked as boolean)
+                  }
                 />
                 <Label htmlFor="manageContent">Manage Content</Label>
               </div>
@@ -298,7 +332,12 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="accessAnalytics"
                   checked={formData.permissions.accessAnalytics}
-                  onCheckedChange={(checked) => handlePermissionChange("accessAnalytics", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange(
+                      "accessAnalytics",
+                      checked as boolean
+                    )
+                  }
                 />
                 <Label htmlFor="accessAnalytics">Access Analytics</Label>
               </div>
@@ -306,7 +345,9 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
                 <Checkbox
                   id="managePayments"
                   checked={formData.permissions.managePayments}
-                  onCheckedChange={(checked) => handlePermissionChange("managePayments", checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    handlePermissionChange("managePayments", checked as boolean)
+                  }
                 />
                 <Label htmlFor="managePayments">Manage Payments</Label>
               </div>
@@ -317,7 +358,11 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
           <Button variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isSaving} className="flex items-center gap-1">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSaving}
+            className="flex items-center gap-1"
+          >
             <Save className="h-4 w-4" />
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
@@ -330,5 +375,5 @@ export default function EditSubAccountPage({ params }: { params: { id: string } 
         onClose={() => setIsResetPasswordDialogOpen(false)}
       />
     </div>
-  )
+  );
 }
