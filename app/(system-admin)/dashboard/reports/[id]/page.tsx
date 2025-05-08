@@ -290,13 +290,12 @@ export default function ReportDetailsPage() {
                 <div className="flex items-center gap-3">
                   <Avatar>
                     <AvatarFallback>
-                      {report.reporter?.firstName?.charAt(0) || "U"}
+                      {report.reporter?.name?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">
-                      {`${report.reporter?.firstName || ""} ${report.reporter?.lastName || ""}`?.trim() ||
-                        "Unknown"}
+                      {`${report.reporter?.name || ""}`?.trim() || "Unknown"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {report.reporter?.email || "No email"}
@@ -311,13 +310,12 @@ export default function ReportDetailsPage() {
                   <div className="flex items-center gap-3">
                     <Avatar>
                       <AvatarFallback>
-                        {report.resolver?.firstName?.charAt(0) || "U"}
+                        {report.resolver?.name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="font-medium">
-                        {`${report.resolver?.firstName || ""} ${report.resolver?.lastName || ""}`?.trim() ||
-                          "Unknown"}
+                        {`${report.resolver?.name || ""}`?.trim() || "Unknown"}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {report.resolver?.email || "No email"}

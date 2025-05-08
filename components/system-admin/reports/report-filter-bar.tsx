@@ -30,6 +30,7 @@ import { ReportReason, ReportStatus } from "@/types/report";
 
 export function ReportFilterBar() {
   const { filters, setFilters } = useReportsStore();
+  console.log("filters in filter bar :", filters);
   const [searchTerm, setSearchTerm] = useState(filters.search || "");
   const [dateOpen, setDateOpen] = useState(false);
 
@@ -95,11 +96,12 @@ export function ReportFilterBar() {
                 Status
               </label>
               <Select
-                value={filters.status || ""}
+                value={filters.status || "all"}
                 onValueChange={(value) =>
                   setFilters({
                     ...filters,
-                    status: (value as ReportStatus) || undefined,
+                    status:
+                      value === "all" ? undefined : (value as ReportStatus),
                   })
                 }
               >
@@ -107,7 +109,7 @@ export function ReportFilterBar() {
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="open">Open</SelectItem>
                   <SelectItem value="resolved">Resolved</SelectItem>
                   <SelectItem value="dismissed">Dismissed</SelectItem>
@@ -120,11 +122,12 @@ export function ReportFilterBar() {
                 Reason
               </label>
               <Select
-                value={filters.reason || ""}
+                value={filters.reason || "all"}
                 onValueChange={(value) =>
                   setFilters({
                     ...filters,
-                    reason: (value as ReportReason) || undefined,
+                    reason:
+                      value === "all" ? undefined : (value as ReportReason),
                   })
                 }
               >
@@ -132,7 +135,7 @@ export function ReportFilterBar() {
                   <SelectValue placeholder="Select reason" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Reasons</SelectItem>
+                  <SelectItem value="all">All Reasons</SelectItem>
                   <SelectItem value="Violent content">
                     Violent content
                   </SelectItem>
