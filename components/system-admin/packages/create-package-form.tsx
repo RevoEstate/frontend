@@ -81,7 +81,10 @@ export default function CreatePackageForm() {
   // Create package mutation
   const createPackage = useMutation({
     mutationFn: async (data: FormValues) => {
-      const response = await axiosInstance.post("/v1/packages", data);
+      const response = await axiosInstance.post(
+        "/v1/system-admin/createPackage",
+        data
+      );
       return response.data;
     },
     onSuccess: () => {

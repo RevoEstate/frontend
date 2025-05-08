@@ -144,7 +144,10 @@ export default function PackageFilterBar() {
                 onValueChange={(value) =>
                   setLocalFilter((prev) => ({
                     ...prev,
-                    packageType: value as "premium" | "standard" | undefined,
+                    packageType:
+                      value === "all"
+                        ? undefined
+                        : (value as "premium" | "standard"),
                   }))
                 }
               >
