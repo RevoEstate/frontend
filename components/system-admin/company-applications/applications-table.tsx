@@ -113,7 +113,8 @@ export function ApplicationsTable() {
         },
         onError: () => {
           toast.error(
-            rejectError || "Failed to reject company. Please try again."
+            rejectError?.message ||
+              "Failed to reject company. Please try again."
           );
           setLoadingStates((prev) => ({
             ...prev,
@@ -135,9 +136,14 @@ export function ApplicationsTable() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "initial":
-        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200" variant="outline">
-          New
-        </Badge>;
+        return (
+          <Badge
+            className="bg-blue-100 text-blue-800 hover:bg-blue-200"
+            variant="outline"
+          >
+            New
+          </Badge>
+        );
       case "pending":
         return <Badge variant="secondary">Pending</Badge>;
       case "approved":
@@ -271,7 +277,9 @@ export function ApplicationsTable() {
           <h3 className="text-lg font-medium text-red-600">
             Error loading applications
           </h3>
-          <p className="mt-1 text-sm text-gray-500">{error}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {error?.message || "An error occurred"}
+          </p>
           <Button className="mt-4" onClick={() => window.location.reload()}>
             Try Again
           </Button>

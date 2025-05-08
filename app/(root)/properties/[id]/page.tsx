@@ -20,6 +20,7 @@ import Panorama from "@/components/shared/Panorama";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import axios from "axios";
+import { ReportProperty } from "@/components/shared/ReportProperty";
 
 
 const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -221,7 +222,7 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
                     </div>
                   </div>
                 )}
-                {property?.furnished && (
+                {property?.furnished === 'Yes' && (
                   <div className="flex items-center">
                     <Recycle className="w-6 h-6 text-sky-500 mr-2" />
                     <div>
@@ -427,6 +428,11 @@ const PropertyDetailsPage = ({ params }: { params: Promise<{ id: string }> }) =>
                 </Button>
               </form>
             </div>
+          {/* Report */}
+          <div className="rounded-xl shadow-md p-6">
+            <ReportProperty propertyId={property._id} />
+          </div>
+
           </div>
         </div>
       </div>

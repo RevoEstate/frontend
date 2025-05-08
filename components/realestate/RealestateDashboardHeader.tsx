@@ -23,6 +23,7 @@ import { useRealestateByUserId } from "@/hooks/useRealestateByUser";
 import { Alert, AlertDescription } from "../ui/alert";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { IssueReport } from "./IssueReport";
 
 export function RealestateDashboardHeader({ realestate, error, isLoading }) {
   const notificationCount = 5;
@@ -30,9 +31,13 @@ export function RealestateDashboardHeader({ realestate, error, isLoading }) {
 
   return (
     <header className="flex items-center justify-between">
+      {/* Issue Section */}
+      <div>
+        <IssueReport />
+      </div>
+
       <div className="flex items-center gap-15">
         {/* Show verification prompt if NOT verified */}
-
         {realestate?.verificationStatus === "initial" ? (
           <Button className="bg-sky-500 hover:bg-sky-600">
             Verification Status: Pending

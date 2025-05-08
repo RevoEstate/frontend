@@ -33,7 +33,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={`${inter.className} antialiased`}>
           {children}
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="top-center" />
           <Chatbot />
         </body>
       </html>
