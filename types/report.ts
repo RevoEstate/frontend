@@ -26,8 +26,14 @@ export interface Report {
 
   // Populated fields
   property?: Property;
-  reporter?: User;
-  resolver?: User;
+  reporter?: {
+    name: string;
+    email: string;
+  };
+  resolver?: {
+    name: string;
+    email: string;
+  };
 }
 
 export interface CreateReportDto {

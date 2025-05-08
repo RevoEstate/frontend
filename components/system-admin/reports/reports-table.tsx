@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function ContentReportsTable() {
   const router = useRouter();
   const { reports, isLoading } = useReports();
+  console.log("reports in table :", reports);
   const reportsList = reports?.data?.reports || [];
   const totalItems = reports?.data?.total || 0;
   const { setSelectedReport, selectedReport } = useReportsStore();
@@ -127,12 +128,12 @@ export function ContentReportsTable() {
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarFallback>
-                          {report.reporter?.firstName?.charAt(0) || "U"}
+                          {report.reporter?.name?.charAt(0) || "U"}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
                         <span className="font-medium">
-                          {`${report.reporter?.firstName || ""} ${report.reporter?.lastName || ""}`?.trim() ||
+                          {`${report.reporter?.name || ""}`?.trim() ||
                             "Unknown"}
                         </span>
                         <span className="text-sm text-muted-foreground">
