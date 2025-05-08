@@ -89,6 +89,7 @@ export interface IssueFilters {
   search?: string;
   sortBy?: keyof Issue;
   sortOrder?: "asc" | "desc";
+  dateRaised?: Date;
 }
 
 export interface CreateIssueDTO {
