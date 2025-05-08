@@ -78,7 +78,24 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+  isHeader?: boolean;
+}
+
+function TableCell({ className, isHeader, ...props }: TableCellProps) {
+  if (isHeader) {
+    return (
+      <th
+        data-slot="table-head"
+        className={cn(
+          "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+
   return (
     <td
       data-slot="table-cell"
@@ -88,7 +105,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableCaption({
