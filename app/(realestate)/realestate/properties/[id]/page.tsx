@@ -11,16 +11,27 @@ const PropertyUpdatePage = ({ params }: { params: Promise<{ id: string }> }) => 
       property,
       isLoading,
       isError,
-      error
+      error,
+      refetch
     } = usePropertyById(id);
-    console.log("Realestate Property", property)
     
+    if (isLoading) {
+      return <div>Loading property details...</div>;
+    }
+
+    if (isError) {
+      return <div>Error loading property: {error?.message}</div>;
+    }
+
   return (
     <div>
         <h1 className="text-xl md:text-4xl font-bold text-center border-b-1 pb-2 shadow-xs mb-6 p-3 rounded-xl">
         Update Property
       </h1>
-      <PropertyUpdateForm property={property} propertyId={property?._id} />
+      <PropertyUpdateForm 
+        property={property} 
+        onSuccess={() => refetch()} 
+      />
     </div>
   )
 }
