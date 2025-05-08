@@ -13,8 +13,9 @@ import {
   Bell, 
   BellOff,
   AlertCircle, 
-  Delete,
-  Trash2
+  Trash2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
@@ -52,6 +53,9 @@ const NotificationList = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedNotifications, setExpandedNotifications] = useState<string[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!userId) return;
@@ -90,14 +94,42 @@ const NotificationList = () => {
           ? { ...n, readBy: [...n.readBy, userId] } 
           : n
       ));
-
-      console.log("Opening notification:", notificationId);
-      // router.push(`/notification/${notificationId}`);
-
     } catch (err) {
       console.error("Error marking notification as read:", err);
     }
   };
+
+  const toggleNotificationExpansion = (notificationId: string) => {
+    setExpandedNotifications(prev => 
+      prev.includes(notificationId)
+        ? prev.filter(id => id !== notificationId)
+        : [...prev, notificationId]
+    );
+  };
+
+  const handleRowClick = async (notificationId: string, e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    
+    await handleNotificationClick(notificationId);
+    toggleNotificationExpansion(notificationId);
+  };
+
+  const handleDelete = async (notificationId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      setDeletingId(notificationId);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/notification/${notificationId}`,
+        { withCredentials: true }
+      );
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  
 
   const getNotificationIcon = (from: string) => {
     const iconClass = 'h-4 w-4';
@@ -178,47 +210,81 @@ const NotificationList = () => {
       <TableBody>
         {notifications.map((notification) => {
           const isRead = notification.readBy.includes(userId);
+          const isExpanded = expandedNotifications.includes(notification._id);
+          
           return (
-            <TableRow 
-              key={notification._id}
-              className={`cursor-pointer ${!isRead ? 'bg-accent/50' : ''}`}
-              onClick={() => handleNotificationClick(notification._id)}
-            >
-              <TableCell className="w-[50px]">
-                <div className="flex items-center justify-center">
-                  {getNotificationIcon(notification.from)}
-                  {!isRead && (
-                    <span className="ml-2">
-                      <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full" />
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                  <div className={`font-medium ${!isRead ? 'font-semibold' : ''}`}>
-                    {notification.from}
+            <React.Fragment key={notification._id}>
+              <TableRow 
+                className={`cursor-pointer ${!isRead ? 'bg-accent/50' : ''}`}
+                onClick={(e) => handleRowClick(notification._id, e)}
+              >
+                <TableCell className="w-[50px]">
+                  <div className="flex items-center justify-center">
+                    {getNotificationIcon(notification.from)}
+                    {!isRead && (
+                      <span className="ml-2">
+                        <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full" />
+                      </span>
+                    )}
                   </div>
-                    <div className={`text-sm ${!isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
-                    {notification.text.length > 100 
-                    ? `${notification.text.substring(0, 100)}...` 
-                    : notification.text}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col">
+                    <div className={`font-medium ${!isRead ? 'font-semibold' : ''}`}>
+                      {notification.from}
                     </div>
-                </div>
-              </TableCell>
-              <TableCell className="text-right text-muted-foreground text-sm">
-                {formatTime(notification.createdAt)}
-              </TableCell>
-              <TableCell className="text-right text-muted-foreground text-sm">
-                <Button
-                    className='cursor-pointer p-3 font-bold rounded-full text-red-600 hover:bg-red-100 hover:text-red-800'
-                    variant='ghost'
-                    onClick={() => {}}
+                    <div className={`text-sm ${!isRead ? 'text-foreground font-bold' : 'text-muted-foreground'}`}>
+                      {notification.text.length > 100 
+                        ? `${notification.text.substring(0, 80)}...` 
+                        : notification.text}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right text-muted-foreground text-sm">
+                  {formatTime(notification.createdAt)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="text-red-600 hover:bg-red-100 hover:text-red-800 rounded-full p-3 cursor-pointer"
+                      onClick={(e) => handleDelete(notification._id, e)}
                     >
-                    <Trash2 />
-                </Button>
-              </TableCell>
-            </TableRow>
+                       {deletingId === notification._id ? (
+                            <RefreshCw className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash2 className="h-4 w-4" />
+                        )}
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleNotificationExpansion(notification._id);
+                      }}
+                    >
+                      {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+              
+              {isExpanded && (
+                <TableRow className="bg-muted/50">
+                  <TableCell colSpan={4}>
+                    <div className="p-4 text-sm">
+                      <div className="font-medium mb-2">Full Message:</div>
+                      <div className="whitespace-pre-wrap">{notification.text}</div>
+                      <div className="text-xs text-muted-foreground mt-2">
+                        Received: {new Date(notification.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </React.Fragment>
           );
         })}
       </TableBody>
