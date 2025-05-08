@@ -79,7 +79,7 @@ export function RealEstateAnalytics() {
           setLoading(false);
         }
       } catch (err) {
-        setError("Error fetching statistics");
+        setError(err?.response?.data?.message || "Failed to fetch data");
         setLoading(false);
       }
     };
