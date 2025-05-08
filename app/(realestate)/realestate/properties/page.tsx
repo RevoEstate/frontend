@@ -12,7 +12,7 @@ import Link from 'next/link';
 const RealestatePropertyPage = () => {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
-  const { data: response, isLoading, error } = usePropertyByRealestate(page);
+  const { data: response, isLoading, error, refetch } = usePropertyByRealestate(page);
   console.log("Realestate Properties Response: ", response);
 
   // Extract properties array and total from response

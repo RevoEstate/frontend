@@ -27,7 +27,7 @@ import { createPropertySchema, updatePropertySchema } from "@/lib/validators";
 import { createPropertyDefaultValues } from "@/lib/constants/index.ts";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Plus, Trash2, X } from "lucide-react";
+import { Loader2, Plus, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
 import { Switch } from "../ui/switch";
@@ -36,11 +36,11 @@ import { useRouter } from "next/navigation";
 import { ETHIOPIA_REGIONS } from "./PropertyForm";
 
 const PropertyUpdateForm = ({
-  propertyId,
+  onSuccess,
   property,
 }: {
-  propertyId?: string;
   property?: any;
+  onSuccess?: () => void;
 }) => {
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [existingImages, setExistingImages] = useState<string[]>(
@@ -53,6 +53,10 @@ const PropertyUpdateForm = ({
   const [panoramicPreviews, setPanoramicPreviews] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState<string[]>([]);
+  const [deletingImages, setDeletingImages] = useState<string[]>([]);
+  const [deletingPanoramicImages, setDeletingPanoramicImages] = useState<string[]>([]);
+
+
 
   const router = useRouter();
 
@@ -151,12 +155,22 @@ const PropertyUpdateForm = ({
 
       const data = await response.json();
       toast.success("Property updated successfully!");
-      form.reset();
-      router.push("/realestate/properties");
+      // Update local state with new images from response
+      if (data.images) {
+        setExistingImages(data.images);
+      }
+      if (data.panoramicImages) {
+        setExistinPanoramicgImages(data.panoramicImages);
+      }
       setImagePreviews([]);
       setPanoramicPreviews([]);
       setAmenities([]);
       setAmenityInput("");
+      // Call onSuccess callback if it exists
+      if (onSuccess) {
+        onSuccess(); // This will trigger the refetch in parent component
+      }
+      router.push("/realestate/properties");
     } catch (error) {
       toast.error("Error submitting form: " + (error as Error).message);
     }
@@ -164,6 +178,8 @@ const PropertyUpdateForm = ({
 
   const handleImageDelete = async (imageurl: string) => {
     try {
+      setDeletingImages(prev => [...prev, imageurl]); // Track deleting image
+      
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/${property._id}/image`,
         {
@@ -175,21 +191,32 @@ const PropertyUpdateForm = ({
           credentials: "include",
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
+        throw new Error(errorData.message || "Failed to delete image");
       }
-
+  
       const data = await response.json();
       toast.success("Image Deleted Successfully");
+      
+      // Update local state
+      setExistingImages(prev => prev.filter(img => img !== imageurl));
+      
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
-      toast.error("Error submitting form: " + (error as Error).message);
+      toast.error("Error deleting image: " + (error as Error).message);
+    } finally {
+      setDeletingImages(prev => prev.filter(url => url !== imageurl)); // Clear deleting state
     }
   };
 
   const handlePanaromicImageDelete = async (imageurl: string) => {
     try {
+      setDeletingPanoramicImages(prev => [...prev, imageurl]);
+      
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/v1/properties/${property._id}/panaromicimage`,
         {
@@ -201,16 +228,25 @@ const PropertyUpdateForm = ({
           credentials: "include",
         }
       );
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
+        throw new Error(errorData.message || "Failed to delete image");
       }
-
+  
       const data = await response.json();
-      toast.success("Image Deleted Successfully");
+      toast.success("Panoramic Image Deleted Successfully");
+      
+      // Update local state
+      setExistinPanoramicgImages(prev => prev.filter(img => img !== imageurl));
+      
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
-      toast.error("Error submitting form: " + (error as Error).message);
+      toast.error("Error deleting panoramic image: " + (error as Error).message);
+    } finally {
+      setDeletingPanoramicImages(prev => prev.filter(url => url !== imageurl));
     }
   };
 
@@ -243,6 +279,9 @@ const PropertyUpdateForm = ({
       setAmenities(newAmenities);
       form.setValue("amenities", newAmenities); // This updates the form values
       setAmenityInput("");
+      if (onSuccess) {
+        onSuccess(); // This will trigger the refetch in parent component
+      }
     }
   };
 
@@ -250,6 +289,9 @@ const PropertyUpdateForm = ({
     const newAmenities = amenities.filter((_, i) => i !== index);
     setAmenities(newAmenities);
     form.setValue("amenities", newAmenities); // This updates the form values
+    if (onSuccess) {
+      onSuccess(); // This will trigger the refetch in parent component
+    }
   };
 
   // Remove preview and file
@@ -785,26 +827,34 @@ const PropertyUpdateForm = ({
               <div>
                 <h4 className="text-sm font-medium mb-2">Current Images</h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {existingImages.map((imageUrl, index) => (
-                    <div key={index} className="relative group">
-                      <div className="aspect-square overflow-hidden rounded-lg border">
-                        <Image
-                          src={imageUrl}
-                          alt={`Property image ${index + 1}`}
-                          width={200}
-                          height={200}
-                          className="w-full h-full object-cover"
-                        />
+                  {existingImages.map((imageUrl, index) => {
+                    const isDeleting = deletingImages.includes(imageUrl); // Track which image is being deleted
+                    return (
+                      <div key={index} className="relative group">
+                        <div className="aspect-square overflow-hidden rounded-lg border">
+                          <Image
+                            src={imageUrl}
+                            alt={`Property image ${index + 1}`}
+                            width={200}
+                            height={200}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleImageDelete(imageUrl)}
+                          disabled={isDeleting}
+                          className="absolute top-2 right-2 p-1 bg-red-500 rounded-full md:opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                        >
+                          {isDeleting ? (
+                            <Loader2 className="h-4 w-4 text-white animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4 text-white" />
+                          )}
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleImageDelete(imageUrl)}
-                        className="absolute top-2 right-2 p-1 bg-red-500 rounded-full md:opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                      >
-                        <Trash2 className="h-4 w-4 text-white" />
-                      </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -816,7 +866,9 @@ const PropertyUpdateForm = ({
                   Current Panoramic Images
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {existingPanoramicImages.map((imageUrl, index) => (
+                {existingPanoramicImages.map((imageUrl, index) => {
+                  const isDeleting = deletingPanoramicImages.includes(imageUrl);
+                  return (
                     <div key={index} className="relative group">
                       <div className="aspect-square overflow-hidden rounded-lg border">
                         <Image
@@ -830,12 +882,18 @@ const PropertyUpdateForm = ({
                       <button
                         type="button"
                         onClick={() => handlePanaromicImageDelete(imageUrl)}
+                        disabled={isDeleting}
                         className="absolute top-2 right-2 p-1 bg-red-500 rounded-full md:opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                       >
-                        <Trash2 className="h-4 w-4 text-white" />
+                        {isDeleting ? (
+                          <Loader2 className="h-4 w-4 text-white animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4 text-white" />
+                        )}
                       </button>
                     </div>
-                  ))}
+                  );
+                })}
                 </div>
               </div>
             )}

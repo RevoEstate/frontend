@@ -17,20 +17,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useReports } from "@/hooks/use-reports";
+import { useReportsStore } from "@/store/reports";
 
 interface DismissReportDialogProps {
-  report: {
-    id: string
-    contentDescription: string
-    propertyId: string
-    reportedBy: {
-      name: string
-      email: string
-    }
-  }
-  isOpen: boolean
-  onClose: () => void
-  onDismiss: (reason: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const dismissReasons = [
@@ -40,34 +32,51 @@ const dismissReasons = [
   "Issue already resolved by content owner",
   "No action required",
   "Other",
-]
+];
 
-export function DismissReportDialog({ report, isOpen, onClose, onDismiss }: DismissReportDialogProps) {
-  const [reasonType, setReasonType] = useState("")
-  const [reasonDetails, setReasonDetails] = useState("")
-  const [notifyReporter, setNotifyReporter] = useState(true)
-  const [error, setError] = useState("")
+export function DismissReportDialog({
+  open,
+  onOpenChange,
+}: DismissReportDialogProps) {
+  const { selectedReport, setSelectedReport } = useReportsStore();
+  const { dismissReport } = useReports();
+  const [reasonType, setReasonType] = useState("");
+  const [reasonDetails, setReasonDetails] = useState("");
+  const [notifyReporter, setNotifyReporter] = useState(true);
+  const [error, setError] = useState("");
 
   const handleDismiss = () => {
     if (!reasonType) {
-      setError("Please select a reason type")
-      return
+      setError("Please select a reason type");
+      return;
     }
 
     if (!reasonDetails.trim()) {
-      setError("Please provide details for dismissing this report")
-      return
+      setError("Please provide details for dismissing this report");
+      return;
     }
 
-    const fullReason = `${reasonType}: ${reasonDetails}`
-    onDismiss(fullReason)
-    setReasonType("")
-    setReasonDetails("")
-    setError("")
-  }
+    if (!selectedReport) return;
+
+    const notes = `${reasonType}: ${reasonDetails}`;
+    dismissReport({ id: selectedReport._id, notes });
+    onOpenChange(false);
+    setReasonType("");
+    setReasonDetails("");
+    setError("");
+  };
+
+  const handleClose = () => {
+    setReasonType("");
+    setReasonDetails("");
+    setError("");
+    onOpenChange(false);
+  };
+
+  if (!selectedReport) return null;
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog open={open} onOpenChange={handleClose}>
       <AlertDialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
@@ -75,8 +84,9 @@ export function DismissReportDialog({ report, isOpen, onClose, onDismiss }: Dism
             Dismiss Report
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are dismissing the report for <strong>{report.propertyId}</strong>. This will mark the report as
-            resolved without taking action against the content.
+            You are dismissing the report for property{" "}
+            <strong>{selectedReport.propertyId}</strong>. This will mark the
+            report as resolved without taking action against the content.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -88,11 +98,14 @@ export function DismissReportDialog({ report, isOpen, onClose, onDismiss }: Dism
             <Select
               value={reasonType}
               onValueChange={(value) => {
-                setReasonType(value)
-                if (value) setError("")
+                setReasonType(value);
+                if (value) setError("");
               }}
             >
-              <SelectTrigger id="dismiss-reason-type" className={error && !reasonType ? "border-red-500" : ""}>
+              <SelectTrigger
+                id="dismiss-reason-type"
+                className={error && !reasonType ? "border-red-500" : ""}
+              >
                 <SelectValue placeholder="Select reason type" />
               </SelectTrigger>
               <SelectContent>
@@ -114,8 +127,8 @@ export function DismissReportDialog({ report, isOpen, onClose, onDismiss }: Dism
               placeholder="Please explain why this report is being dismissed..."
               value={reasonDetails}
               onChange={(e) => {
-                setReasonDetails(e.target.value)
-                if (e.target.value.trim()) setError("")
+                setReasonDetails(e.target.value);
+                if (e.target.value.trim()) setError("");
               }}
               className={`min-h-[100px] ${error && !reasonDetails.trim() ? "border-red-500" : ""}`}
             />
@@ -126,29 +139,27 @@ export function DismissReportDialog({ report, isOpen, onClose, onDismiss }: Dism
             <Checkbox
               id="notify-reporter"
               checked={notifyReporter}
-              onCheckedChange={(checked) => setNotifyReporter(checked as boolean)}
+              onCheckedChange={(checked) =>
+                setNotifyReporter(checked as boolean)
+              }
             />
             <Label htmlFor="notify-reporter" className="text-sm">
-              Notify reporter ({report.reportedBy.name})
+              Notify reporter ({selectedReport.reporter?.name || "Unknown"})
             </Label>
           </div>
         </div>
 
         <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setReasonType("")
-              setReasonDetails("")
-              setError("")
-            }}
+          <AlertDialogCancel onClick={handleClose}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDismiss}
+            className="bg-primary hover:bg-primary/90"
           >
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleDismiss} className="bg-primary hover:bg-primary/90">
             Dismiss Report
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
+

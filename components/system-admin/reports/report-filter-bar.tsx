@@ -1,47 +1,63 @@
 "use client"
 
-import { useState } from "react"
-import { Calendar, ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react'
+import { useEffect, useState } from "react";
+import {
+  Calendar as CalendarIcon,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Badge } from "@/components/ui/badge"
-import { format } from "date-fns"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { useReportsStore } from "@/store/reports";
+import { ReportReason, ReportStatus } from "@/types/report";
 
 export function ReportFilterBar() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [activeFilters, setActiveFilters] = useState<{
-    status: string | null
-    reportDate: Date | null
-    propertyId: string | null
-  }>({
-    status: null,
-    reportDate: null,
-    propertyId: null,
-  })
+  const { filters, setFilters } = useReportsStore();
+  console.log("filters in filter bar :", filters);
+  const [searchTerm, setSearchTerm] = useState(filters.search || "");
+  const [dateOpen, setDateOpen] = useState(false);
 
-  const [dateOpen, setDateOpen] = useState(false)
+  // Update search term with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters({ ...filters, search: searchTerm || undefined });
+    }, 500);
 
-  const clearFilter = (filterType: keyof typeof activeFilters) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      [filterType]: null,
-    }))
-  }
+    return () => clearTimeout(timer);
+  }, [searchTerm, setFilters]);
+
+  const clearFilter = (filterType: keyof typeof filters) => {
+    setFilters({
+      ...filters,
+      [filterType]: undefined,
+    });
+  };
 
   const clearAllFilters = () => {
-    setActiveFilters({
-      status: null,
-      reportDate: null,
-      propertyId: null,
-    })
-  }
+    setFilters({});
+    setSearchTerm("");
+  };
 
-  const hasActiveFilters = Object.values(activeFilters).some((value) => value !== null)
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value !== undefined
+  );
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full md:max-w-3xl">
@@ -62,8 +78,11 @@ export function ReportFilterBar() {
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filter</span>
             {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center">
-                {Object.values(activeFilters).filter(Boolean).length}
+              <Badge
+                variant="secondary"
+                className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center"
+              >
+                {Object.values(filters).filter(Boolean).length}
               </Badge>
             )}
           </Button>
@@ -77,8 +96,14 @@ export function ReportFilterBar() {
                 Status
               </label>
               <Select
-                value={activeFilters.status || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, status: value || null }))}
+                value={filters.status || "all"}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    status:
+                      value === "all" ? undefined : (value as ReportStatus),
+                  })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -94,7 +119,48 @@ export function ReportFilterBar() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Report Date
+                Reason
+              </label>
+              <Select
+                value={filters.reason || "all"}
+                onValueChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    reason:
+                      value === "all" ? undefined : (value as ReportReason),
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reason" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Reasons</SelectItem>
+                  <SelectItem value="Violent content">
+                    Violent content
+                  </SelectItem>
+                  <SelectItem value="Sexually explicit content">
+                    Sexually explicit content
+                  </SelectItem>
+                  <SelectItem value="Fraudulent listing">
+                    Fraudulent listing
+                  </SelectItem>
+                  <SelectItem value="Hate speech or discrimination">
+                    Hate speech or discrimination
+                  </SelectItem>
+                  <SelectItem value="Spam or misleading information">
+                    Spam or misleading information
+                  </SelectItem>
+                  <SelectItem value="Inaccurate property details">
+                    Inaccurate property details
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Date Range
               </label>
               <Popover open={dateOpen} onOpenChange={setDateOpen}>
                 <PopoverTrigger asChild>
@@ -102,41 +168,44 @@ export function ReportFilterBar() {
                     variant="outline"
                     className="w-full justify-start text-left font-normal"
                   >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {activeFilters.reportDate ? (
-                      format(activeFilters.reportDate, "PPP")
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {filters.startDate ? (
+                      <span>
+                        {format(filters.startDate, "MMM d, yyyy")}
+                        {filters.endDate &&
+                          ` - ${format(filters.endDate, "MMM d, yyyy")}`}
+                      </span>
                     ) : (
-                      <span>Pick a date</span>
+                      <span>Pick a date range</span>
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent
-                    mode="single"
-                    selected={activeFilters.reportDate || undefined}
-                    onSelect={(date) => {
-                      setActiveFilters((prev) => ({ ...prev, reportDate: date }))
-                      setDateOpen(false)
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={{
+                      from: filters.startDate || undefined,
+                      to: filters.endDate || undefined,
                     }}
+                    onSelect={(range) =>
+                      setFilters({
+                        ...filters,
+                        startDate: range?.from,
+                        endDate: range?.to,
+                      })
+                    }
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Property ID
-              </label>
-              <Input
-                placeholder="Enter property ID"
-                value={activeFilters.propertyId || ""}
-                onChange={(e) => setActiveFilters((prev) => ({ ...prev, propertyId: e.target.value || null }))}
-              />
-            </div>
-
             {hasActiveFilters && (
-              <Button variant="ghost" className="w-full text-muted-foreground" onClick={clearAllFilters}>
+              <Button
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={clearAllFilters}
+              >
                 <X className="mr-2 h-4 w-4" />
                 Clear all filters
               </Button>
@@ -148,26 +217,52 @@ export function ReportFilterBar() {
       {/* Active filter badges */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
-          {activeFilters.status && (
+          {filters.status && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Status: {activeFilters.status}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("status")} />
+              Status: {filters.status}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("status")}
+              />
             </Badge>
           )}
-          {activeFilters.reportDate && (
+          {filters.reason && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Date: {format(activeFilters.reportDate, "MMM d, yyyy")}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("reportDate")} />
+              Reason: {filters.reason}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("reason")}
+              />
             </Badge>
           )}
-          {activeFilters.propertyId && (
+          {filters.startDate && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Property ID: {activeFilters.propertyId}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("propertyId")} />
+              Date: {format(filters.startDate, "MMM d, yyyy")}
+              {filters.endDate &&
+                ` - ${format(filters.endDate, "MMM d, yyyy")}`}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => {
+                  clearFilter("startDate");
+                  clearFilter("endDate");
+                }}
+              />
+            </Badge>
+          )}
+          {filters.search && (
+            <Badge variant="secondary" className="flex items-center gap-1">
+              Search: {filters.search}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => {
+                  clearFilter("search");
+                  setSearchTerm("");
+                }}
+              />
             </Badge>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }
