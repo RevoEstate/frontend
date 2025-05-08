@@ -52,7 +52,10 @@ export function CreatePackageForm() {
   // Create package mutation
   const createPackageMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      const response = await axiosInstance.post("/v1/packages", data);
+      const response = await axiosInstance.post(
+        "/v1/system-admin/createpackage",
+        data
+      );
       return response.data;
     },
     onSuccess: () => {

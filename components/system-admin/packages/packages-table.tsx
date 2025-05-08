@@ -31,17 +31,32 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { usePackages } from "@/hooks/usePackages";
 import usePackageStore from "@/store/packageStore";
+import { useDeletePackage } from "@/hooks/useDeletePackage";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function PackagesTable() {
   const router = useRouter();
+  const [packageToDelete, setPackageToDelete] = useState<string | null>(null);
   const { filter, sort, pagination, setSort, setPage } = usePackageStore();
   const { packages, total, isLoading, error } = usePackages(
     filter,
     sort,
     pagination
   );
+  const { deletePackage, isDeleting, error: deleteError } = useDeletePackage();
 
   // Calculate total pages
   const totalPages = Math.ceil(total / pagination.limit);
@@ -205,16 +220,6 @@ export default function PackagesTable() {
                         <Edit className="mr-2 h-4 w-4" />
                         Edit Package
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => {
-                          // Handle delete action
-                          console.log("Delete package:", pkg._id);
-                        }}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete Package
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -255,6 +260,52 @@ export default function PackagesTable() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={!!packageToDelete}
+        onOpenChange={() => setPackageToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              package and remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (!packageToDelete) return;
+
+                deletePackage(packageToDelete, {
+                  onSuccess: () => {
+                    toast.success("Package deleted successfully");
+                    setPackageToDelete(null);
+                  },
+                  onError: (error) => {
+                    toast.error("Failed to delete package. Please try again.");
+                    setPackageToDelete(null);
+                  },
+                });
+              }}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isDeleting ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  Deleting...
+                </div>
+              ) : (
+                "Delete Package"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

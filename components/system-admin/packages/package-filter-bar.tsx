@@ -37,15 +37,15 @@ export default function PackageFilterBar() {
   );
   const [priceRange, setPriceRange] = useState<[number, number]>([
     filter.minPrice || 0,
-    filter.maxPrice || 1000,
+    filter.maxPrice || 10000,
   ]);
   const [durationRange, setDurationRange] = useState<[number, number]>([
     filter.minDuration || 1,
-    filter.maxDuration || 24,
+    filter.maxDuration || 48,
   ]);
   const [propertiesRange, setPropertiesRange] = useState<[number, number]>([
     filter.minProperties || 1,
-    filter.maxProperties || 100,
+    filter.maxProperties || 10000,
   ]);
 
   // Handle search input
