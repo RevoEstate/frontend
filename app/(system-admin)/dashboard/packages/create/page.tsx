@@ -1,27 +1,20 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreatePackageForm from "@/components/system-admin/packages/create-package-form";
-
-export const metadata: Metadata = {
-  title: "Create Package | Dashboard",
-  description: "Create a new subscription package",
-};
+import { Separator } from "@/components/ui/separator";
+import { CreatePackageForm } from "@/components/system-admin/packages/create-package-form";
 
 export default function CreatePackagePage() {
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-2 mb-6">
-        <Button variant="outline" size="icon" asChild>
-          <Link href="/dashboard/packages">
-            <ArrowLeft className="h-4 w-4" />
-            <span className="sr-only">Back to packages</span>
-          </Link>
-        </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Create Package</h1>
+        <Button variant="outline" size="sm" asChild>
+          <a href="/dashboard/packages">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Packages
+          </a>
+        </Button>
       </div>
-
+      <Separator />
       <CreatePackageForm />
     </div>
   );

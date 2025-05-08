@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axiosInstance";
+import { usePackage } from "@/hooks/usePackage";
+import {
+  useUpdatePackage,
+  type UpdatePackageData,
+} from "@/hooks/useUpdatePackage";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -43,34 +46,20 @@ const formSchema = z.object({
     .min(10, "Description must be at least 10 characters"),
 });
 
-export function CreatePackageForm() {
+interface EditPackageFormProps {
+  packageId: string;
+}
+
+export function EditPackageForm({ packageId }: EditPackageFormProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const {
+    package: packageData,
+    isLoading,
+    error: fetchError,
+  } = usePackage(packageId);
+  const { updatePackage, isUpdating, error: updateError } = useUpdatePackage();
   const [exchangeRate, setExchangeRate] = useState(55); // Default ETB to USD exchange rate
-
-  // Create package mutation
-  const createPackageMutation = useMutation({
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
-      const response = await axiosInstance.post("/v1/packages", data);
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["packages"] });
-      toast({
-        title: "Package created",
-        description: "The package has been created successfully.",
-      });
-      router.push("/dashboard/packages");
-    },
-    onError: (error: any) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Failed to create package: ${error.message}`,
-      });
-    },
-  });
 
   // Initialize form with default values
   const form = useForm<z.infer<typeof formSchema>>({
@@ -88,6 +77,30 @@ export function CreatePackageForm() {
     },
   });
 
+  // Update form values when package data is loaded
+  useEffect(() => {
+    if (packageData) {
+      form.reset({
+        packageName: packageData.packageName,
+        packagePrice: {
+          usd: packageData.packagePrice.usd,
+          etb: packageData.packagePrice.etb,
+        },
+        packageDuration: packageData.packageDuration,
+        packageType: packageData.packageType,
+        numberOfProperties: packageData.numberOfProperties,
+        packageDescription: packageData.packageDescription,
+      });
+
+      // Calculate exchange rate from existing data
+      if (packageData.packagePrice.usd > 0) {
+        const calculatedRate =
+          packageData.packagePrice.etb / packageData.packagePrice.usd;
+        setExchangeRate(calculatedRate);
+      }
+    }
+  }, [packageData, form]);
+
   // Handle USD price change to auto-calculate ETB
   const handleUsdPriceChange = (value: string) => {
     const usdPrice = Number.parseFloat(value) || 0;
@@ -104,19 +117,73 @@ export function CreatePackageForm() {
 
   // Handle form submission
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    createPackageMutation.mutate(values);
+    if (!packageId) return;
+
+    const updateData: UpdatePackageData = {
+      packageName: values.packageName,
+      packagePrice: {
+        usd: values.packagePrice.usd,
+        etb: values.packagePrice.etb,
+      },
+      packageDuration: values.packageDuration,
+      packageType: values.packageType,
+      numberOfProperties: values.numberOfProperties,
+      packageDescription: values.packageDescription,
+    };
+
+    updatePackage(
+      { id: packageId, data: updateData },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Package updated",
+            description: "The package has been updated successfully.",
+          });
+          router.push(`/dashboard/packages/${packageId}`);
+        },
+        onError: (error) => {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: `Failed to update package: ${error.message}`,
+          });
+        },
+      }
+    );
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <div className="text-red-500 text-lg">
+          Error loading package: {fetchError}
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/dashboard/packages")}
+        >
+          Back to Packages
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {createPackageMutation.error && (
+        {(fetchError || updateError) && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              {(createPackageMutation.error as Error).message}
-            </AlertDescription>
+            <AlertDescription>{fetchError || updateError}</AlertDescription>
           </Alert>
         )}
 
@@ -275,15 +342,11 @@ export function CreatePackageForm() {
         />
 
         <div className="flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => router.push("/dashboard/packages")}
-          >
+          <Button variant="outline" type="button" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button type="submit" disabled={createPackageMutation.isPending}>
-            {createPackageMutation.isPending ? "Creating..." : "Create Package"}
+          <Button type="submit" disabled={isUpdating}>
+            {isUpdating ? "Updating..." : "Update Package"}
           </Button>
         </div>
       </form>
