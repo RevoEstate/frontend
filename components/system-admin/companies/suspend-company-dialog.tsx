@@ -19,12 +19,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface SuspendCompanyDialogProps {
   company: {
-    id: string
-    name: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onSuspend: (reason: string) => void
+    _id: string;
+    realEstateName: string;
+  };
+  isOpen: boolean;
+  onClose: () => void;
+  onSuspend: (reason: string) => void;
 }
 
 const suspensionReasons = [
@@ -68,9 +68,9 @@ export function SuspendCompanyDialog({ company, isOpen, onClose, onSuspend }: Su
             Suspend Company
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to suspend <strong>{company.name}</strong>. This will
-            temporarily disable their account and prevent them from accessing
-            the platform.
+            You are about to suspend <strong>{company.realEstateName}</strong>.
+            This will temporarily disable their account and prevent them from
+            accessing the platform.
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -29,7 +29,10 @@ export function SearchBar() {
   const handleStatusChange = (value: string) => {
     setStatusFilter(value);
     setFilter({
-      verificationStatus: value === "all" ? undefined : value,
+      verificationStatus:
+        value === "all"
+          ? undefined
+          : (value as "pending" | "approved" | "rejected"),
     });
   };
 

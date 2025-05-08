@@ -18,12 +18,12 @@ import { useState } from "react"
 
 interface DeactivateCompanyDialogProps {
   company: {
-    id: string
-    name: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onDeactivate: () => void
+    _id: string;
+    realEstateName: string;
+  };
+  isOpen: boolean;
+  onClose: () => void;
+  onDeactivate: () => void;
 }
 
 export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate }: DeactivateCompanyDialogProps) {
@@ -54,8 +54,9 @@ export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate
           </AlertDialogTitle>
           <AlertDialogDescription>
             You are about to permanently deactivate{" "}
-            <strong>{company.name}</strong>. This action cannot be undone. All
-            company data, listings, and account information will be archived.
+            <strong>{company.realEstateName}</strong>. This action cannot be
+            undone. All company data, listings, and account information will be
+            archived.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
