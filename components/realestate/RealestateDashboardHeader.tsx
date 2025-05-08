@@ -10,24 +10,63 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { RealestateForm } from "./RealestateForm";
-import { ScrollArea } from "../ui/scroll-area";
-import { useRealestateByUserId } from "@/hooks/useRealestateByUser";
-import { Alert, AlertDescription } from "../ui/alert";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IssueReport } from "./IssueReport";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
+
+interface Notification {
+  _id: string;
+  receiverIds: string[];
+  text: string;
+  from: string;
+  readBy: string[];
+  // Add other fields as needed
+}
 
 export function RealestateDashboardHeader({ realestate, error, isLoading }) {
-  const notificationCount = 5;
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
+  const [notificationError, setNotificationError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchNotifications = async () => {
+      try {
+        setLoadingNotifications(true);
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/notification/not-viewed/${userId}`,
+          { withCredentials: true }
+        );
+        
+        if (response.data.success && response.data.data) {
+          setNotifications(response?.data?.data);
+          console.log("Notifications: ", response.data.data)
+        }
+      } catch (err) {
+        setNotificationError(err instanceof Error ? err.message : 'Failed to fetch notifications');
+        console.error("Notification fetch error:", err);
+      } finally {
+        setLoadingNotifications(false);
+      }
+    };
+
+    fetchNotifications();
+
+    // Set up polling every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [userId]);
+
+  // Calculate unread count
+  const unreadCount = notifications.filter(notification => 
+    !notification.readBy.includes(userId)
+  ).length;
 
   return (
     <header className="flex items-center justify-between">
@@ -56,21 +95,29 @@ export function RealestateDashboardHeader({ realestate, error, isLoading }) {
                 </Button>
               </>
             ) : (
-              /* Show notifications and profile when verified */
+              /* Show notifications with real data */
               <div className="flex justify-center items-center gap-8">
                 <Button
+                  onClick={() => router.push('/realestate/notifications')}
                   variant="ghost"
                   size="icon"
                   className="relative cursor-pointer rounded-full h-10 w-10"
+                  disabled={loadingNotifications}
                 >
-                  <BellIcon size={24} className="text-foreground" />
-                  {notificationCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 flex items-center justify-center"
-                    >
-                      {notificationCount}
-                    </Badge>
+                  {loadingNotifications ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <BellIcon size={24} className="text-foreground" />
+                      {unreadCount > 0 && (
+                        <Badge
+                          variant="destructive"
+                          className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 flex items-center justify-center"
+                        >
+                          {unreadCount}
+                        </Badge>
+                      )}
+                    </>
                   )}
                 </Button>
 
