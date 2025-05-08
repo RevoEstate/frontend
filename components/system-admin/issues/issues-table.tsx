@@ -38,11 +38,11 @@ export function IssuesTable() {
   const { data, isLoading, isError } = useIssues();
 
   const handleViewDetails = (issue: Issue) => {
-    router.push(`/dashboard/issues/${issue.issueId}`);
+    router.push(`/dashboard/issues/${issue._id}`);
   };
 
   const handleRespond = (issue: Issue) => {
-    router.push(`/dashboard/issues/${issue.issueId}?respond=true`);
+    router.push(`/dashboard/issues/${issue._id}?respond=true`);
   };
 
   const getStatusBadge = (status: IssueStatus) => {

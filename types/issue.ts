@@ -1,8 +1,8 @@
 import { User } from "./user";
 
 export type IssueStatus = "open" | "in-progress" | "resolved" | "closed";
-export type IssueType = "technical" | "billing" | "account" | "property" | "other";
-export type IssuePriority = "low" | "medium" | "high" | "critical";
+export type IssueType = "technical" | "payment" | "account" | "property" | "other";
+export type IssuePriority = "low" | "medium" | "high" | "urgent";
 export type SenderType = "user" | "admin" | "support";
 
 export interface Attachment {
@@ -28,24 +28,56 @@ export interface RaisedBy {
   type: "user" | "agent" | "admin";
 }
 
+export interface IssueAttachment {
+  name: string;
+  url: string;
+  size: string;
+}
+
+export interface IssueMessage {
+  id: string;
+  sender: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    type: 'user' | 'admin' | 'company';
+  };
+  message: string;
+  timestamp: string;
+  attachments: IssueAttachment[];
+}
+
 export interface Issue {
   _id: string;
   issueId: string;
-  raisedBy: RaisedBy;
+  raisedBy: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    type: 'user' | 'company';
+  };
   summary: string;
   description: string;
-  dateRaised: Date;
+  dateRaised: string;
   status: IssueStatus;
   type: IssueType;
   priority: IssuePriority;
-  attachments: Attachment[];
-  conversation: ConversationMessage[];
+  attachments: IssueAttachment[];
+  conversation: IssueMessage[];
   resolvedBy?: string;
   resolvedAt?: Date;
   lastUpdated: Date;
   createdAt: Date;
   updatedAt: Date;
-  resolver?: User;
+  resolver?: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    type: 'user' | 'company';
+  }
 }
 
 export interface IssueFilters {
