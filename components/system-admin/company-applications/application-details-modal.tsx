@@ -127,10 +127,10 @@ export function ApplicationDetailsModal({
         </DialogHeader>
 
         <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Company Details</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="comments">Comments</TabsTrigger>
+            {/* <TabsTrigger value="comments">Comments</TabsTrigger> */}
           </TabsList>
 
           <div className="flex-1 overflow-auto">
@@ -282,7 +282,7 @@ export function ApplicationDetailsModal({
                 )}
               </div>
             </TabsContent>
-
+            {/* 
             <TabsContent
               value="comments"
               className="space-y-4 pt-4 h-full overflow-auto"
@@ -311,7 +311,7 @@ export function ApplicationDetailsModal({
                 />
                 <Button className="mt-2">Add Comment</Button>
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </div>
         </Tabs>
 
