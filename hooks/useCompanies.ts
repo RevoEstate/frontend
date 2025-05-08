@@ -63,10 +63,35 @@ const deactivateCompany = async (companyId: string): Promise<void> => {
   await axiosInstance.delete(`/v1/companies/${companyId}`);
 };
 
+// Approve company
+const approveCompany = async (companyId: string): Promise<void> => {
+  await axiosInstance.patch(`/v1/companies/approve/${companyId}`);
+};
+
+// Reject company
+const rejectCompany = async ({
+  companyId,
+  rejectionreason,
+}: {
+  companyId: string;
+  rejectionreason: string;
+}): Promise<void> => {
+  await axiosInstance.patch(`/v1/companies/reject/${companyId}`, { rejectionreason });
+};
+
 // Custom hook
-export function useCompanies() {
+export function useCompanies(
+  filterParam?: CompanyFilter,
+  sortParam?: CompanySort,
+  paginationParam?: Omit<CompanyPagination, 'total'>
+) {
   const queryClient = useQueryClient();
-  const { filter, sort, pagination, setPage } = useCompanyStore();
+  const store = useCompanyStore();
+
+  // Use provided params or fall back to store values
+  const filter = filterParam || store.filter;
+  const sort = sortParam || store.sort;
+  const pagination = paginationParam || store.pagination;
 
   const companiesQuery = useQuery({
     queryKey: ['companies', filter, sort, pagination],
@@ -101,6 +126,24 @@ export function useCompanies() {
     },
   });
 
+  const approveMutation = useMutation({
+    mutationFn: approveCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: rejectCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
   return {
     companies: companiesQuery.data?.items || [],
     total: companiesQuery.data?.total || 0,
@@ -117,5 +160,11 @@ export function useCompanies() {
     deactivateCompany: deactivateMutation.mutate,
     isDeactivating: deactivateMutation.isPending,
     deactivateError: deactivateMutation.error,
+    approveCompany: approveMutation.mutate,
+    isApproving: approveMutation.isPending,
+    approveError: approveMutation.error,
+    rejectCompany: rejectMutation.mutate,
+    isRejecting: rejectMutation.isPending,
+    rejectError: rejectMutation.error,
   };
 }
