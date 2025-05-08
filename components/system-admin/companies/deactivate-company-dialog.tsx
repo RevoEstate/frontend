@@ -18,12 +18,12 @@ import { useState } from "react"
 
 interface DeactivateCompanyDialogProps {
   company: {
-    id: string
-    name: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onDeactivate: () => void
+    _id: string;
+    realEstateName: string;
+  };
+  isOpen: boolean;
+  onClose: () => void;
+  onDeactivate: () => void;
 }
 
 export function DeactivateCompanyDialog({ company, isOpen, onClose, onDeactivate }: DeactivateCompanyDialogProps) {

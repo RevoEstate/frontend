@@ -3,40 +3,54 @@
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import * as XLSX from "xlsx";
+import { useCompanies } from "@/hooks/useCompanies";
+import { format } from "date-fns";
 
 export function ExportButton() {
-  const handleExport = (format: string) => {
-    // In a real application, this would trigger an API call to generate the export
-    console.log(`Exporting companies in ${format} format`)
 
-    // Mock download for demonstration
-    if (format === "csv") {
-      const element = document.createElement("a")
-      element.setAttribute(
-        "href",
-        "data:text/csv;charset=utf-8,Company Name,Contact Email,Registration Date,Number of Listings,Status\nAcme Real Estate,contact@acmerealestate.com,2023-01-15,24,Active",
-      )
-      element.setAttribute("download", "companies.csv")
-      element.style.display = "none"
-      document.body.appendChild(element)
-      element.click()
-      document.body.removeChild(element)
-    }
-  }
+  const {
+    companies,
+    total,
+    isLoading,
+    error,
+    suspendCompany,
+    isSuspending,
+    activateCompany,
+    isActivating,
+    deactivateCompany,
+    isDeactivating,
+  } = useCompanies();
+
+  const handleExport = () => {
+    const data = companies.map((company) => ({
+      "Company Name": company.realEstateName,
+      Email: company.email,
+      Phone: company.phone,
+      companyStatus: company.companyStatus,
+      Location: `${company.address.city}, ${company.address.region}`,
+      "Listings Count": company.listingsCount,
+      "Registration Date": format(new Date(company.createdAt), "MMM d, yyyy"),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Companies");
+    XLSX.writeFile(wb, "companies.xlsx");
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button
+          onClick={handleExport}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
           <Download className="h-4 w-4" />
           <span>Export</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleExport("csv")}>Export as CSV</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleExport("excel")}>Export as Excel</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleExport("pdf")}>Export as PDF</DropdownMenuItem>
-      </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

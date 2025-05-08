@@ -5,7 +5,7 @@ interface CompanyUIState {
   filter: CompanyFilter;
   sort: CompanySort;
   pagination: CompanyPagination;
-  setFilter: (filter: Partial<CompanyFilter>) => void; // Fixed type
+  setFilter: (filter: Partial<CompanyFilter>) => void;
   setSort: (sort: CompanySort) => void;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
