@@ -71,7 +71,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const [panoramicPreviews, setPanoramicPreviews] = useState<string[]>([]);
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState<string[]>([]);
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof createPropertySchema>>({
     resolver: zodResolver(createPropertySchema),
@@ -161,7 +161,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       const data = await response.json();
       toast.success("Property created successfully!");
       form.reset();
-      router.push('/realestate/properties')
+      router.push("/realestate/properties");
       setImagePreviews([]);
       setPanoramicPreviews([]);
       setAmenities([]);
@@ -170,7 +170,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       toast.error("Error submitting form: " + (error as Error).message);
     }
   }
-
 
   //Price prediction
   const [isPredicting, setIsPredicting] = useState(false);
@@ -267,14 +266,13 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       const data = await response.json();
       // console.log("Prediction response:", data);
       const predictedPrice = data.PredictedPrice;
-      toast.success(`Price pridicted successfully!`, {
-        description: `According to the property data you provided, Your property is estimated to be ${predictedPrice?.toLocaleString()} ETB`,
+      toast.success(`Price pridicted ${predictedPrice?.toLocaleString()} ETB`, {
+        // description: `According to the property data you provided, Your property is estimated to be ${predictedPrice?.toLocaleString()} ETB`,
         action: {
-          label: "Set the pridicted price as your default price",
+          label: "Set price as default",
           onClick: () => form.setValue("price", predictedPrice),
         },
       });
-      
     } catch (error) {
       toast.error(`Error predicting price: ${(error as Error).message}`);
     } finally {
@@ -351,7 +349,9 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(
+          file.type
+        )
       );
       const currentFiles = form.getValues("images") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -369,7 +369,9 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
   const handleAddPanoramicFiles = useCallback(
     (newFiles: File[]) => {
       const validFiles = newFiles.filter((file) =>
-        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type)
+        ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(
+          file.type
+        )
       );
       const currentFiles = form.getValues("panoramicImages") || [];
       const updatedFiles = [...currentFiles, ...validFiles];
@@ -401,7 +403,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
-      "image/webp": [".webp"]
+      "image/webp": [".webp"],
     },
     maxFiles: 20,
   });
@@ -424,7 +426,7 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
       "image/gif": [".gif"],
-      "image/webp": [".webp"]
+      "image/webp": [".webp"],
     },
     maxFiles: 10,
   });
@@ -1129,7 +1131,6 @@ const PropertyForm = ({ packageId }: { packageId: string }) => {
                 : `Create Property`}
             </Button>
           </div>
-         
         </form>
       </Form>
     </div>
