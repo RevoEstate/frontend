@@ -3,12 +3,14 @@ import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState ,useEffect,useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
@@ -123,8 +125,8 @@ const AppHeader: React.FC = () => {
           <div className="w-full hidden lg:block">
             <div className="hidden lg:block">
               <div className="relative flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/30 backdrop-blur-md text-gray-800 dark:text-white rounded-lg p-6 shadow-sm">
-                <div className="text-3xl font-bold tracking-wide">
-                  Welcome, Admin
+                <div className="text-2xl font-bold tracking-wide">
+                  Welcome, {user?.name || "Guest"}
                 </div>
                 <div className="text-sm font-light mt-2">
                   {new Date().toLocaleDateString("en-US", {
