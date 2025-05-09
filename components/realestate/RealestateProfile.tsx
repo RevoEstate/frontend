@@ -9,18 +9,33 @@ import {
   BadgeCheck,
   ExternalLink,
   FileText,
-  Globe,
-  Hourglass,
   Mail,
   MapPin,
   Phone,
-  SquareChartGantt,
   Verified,
 } from "lucide-react";
 import Link from "next/link";
 import { useRealestateByUserId } from "@/hooks/useRealestateByUser";
 import { useRealestateById } from "@/hooks/useRealestateById";
 import { RealEstateProfileSkeleton } from "./RealEstateProfileSkeleton";
+import dynamic from "next/dynamic";
+import "leaflet/dist/leaflet.css";
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 export function RealEstateProfile() {
   const { realestate: userRealestate, isLoading: userLoading } =
@@ -28,7 +43,7 @@ export function RealEstateProfile() {
   const { realestate, isLoading, error } = useRealestateById(
     userRealestate?._id
   );
-  console.log("Realestate Profile", realestate);
+
   if (isLoading || userLoading) {
     return <RealEstateProfileSkeleton />;
   }
@@ -51,10 +66,10 @@ export function RealEstateProfile() {
       <div className="border-1 py-10 px-5 text-gray-900 flex justify-center items-center mt-10">
         <div className="flex flex-col gap-2 items-center justify-center text-center">
           <h1 className="md:text-2xl text-xl font-bold text-zinc-600">
-            There's no realestate account associated with you!
+            There's no real estate account associated with you!
           </h1>
           <p className="text-sm text-zinc-500">
-            Create your realestate account{" "}
+            Create your real estate account{" "}
             <Link
               className="text-sky-600 hover:text-sky-400 hover:underline"
               href="/realestate/create"
@@ -97,17 +112,15 @@ export function RealEstateProfile() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="">
-                  <CardTitle className="text-xl md:text-2xl flex  gap-2 items-center justify-between">
+                  <CardTitle className="text-xl md:text-2xl flex gap-2 items-center justify-between">
                     {realestate?.realEstateName}
-                    {realestate?.isVerified ? (
+                    {realestate?.isVerified && (
                       <BadgeCheck
                         size={48}
                         color="#00db04"
                         strokeWidth={3}
                         className="h-6 w-6"
                       />
-                    ) : (
-                      <Badge></Badge>
                     )}
                   </CardTitle>
                   <p className="text-muted-foreground text-sm mt-3 text-justify">
@@ -119,11 +132,7 @@ export function RealEstateProfile() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <MapPin
-                    size={28}
-                    strokeWidth={2}
-                    className="text-muted-foreground"
-                  />
+                  <MapPin className="text-muted-foreground" />
                   <span>
                     {realestate?.address.specificLocation},{" "}
                     {realestate?.address.city}, {realestate?.address.region}
@@ -145,42 +154,30 @@ export function RealEstateProfile() {
                   <div className="flex justify-center gap-4">
                     {realestate?.socialMedia.instagram && (
                       <Link
-                        href={realestate?.socialMedia.instagram}
+                        href={realestate.socialMedia.instagram}
                         target="_blank"
                       >
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="cursor-pointer hover:text-rose-500"
-                        >
+                        <Button variant="outline" size="icon">
                           <InstagramIcon className="h-4 w-4" />
                         </Button>
                       </Link>
                     )}
                     {realestate?.socialMedia.facebook && (
                       <Link
-                        href={realestate?.socialMedia.facebook}
+                        href={realestate.socialMedia.facebook}
                         target="_blank"
                       >
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="cursor-pointer hover:text-sky-500"
-                        >
+                        <Button variant="outline" size="icon">
                           <FacebookIcon className="h-4 w-4" />
                         </Button>
                       </Link>
                     )}
                     {realestate?.socialMedia.linkedin && (
                       <Link
-                        href={realestate?.socialMedia.linkedin}
+                        href={realestate.socialMedia.linkedin}
                         target="_blank"
                       >
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="cursor-pointer hover:text-sky-500"
-                        >
+                        <Button variant="outline" size="icon">
                           <LinkedinIcon className="h-4 w-4" />
                         </Button>
                       </Link>
@@ -209,22 +206,24 @@ export function RealEstateProfile() {
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Verified On</p>
                   <p className="font-medium">
-                    {new Date(realestate?.verifiedAt).toLocaleDateString()}
+                    {new Date(realestate.verifiedAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Verified By</p>
                   <p className="font-medium">
-                    {realestate?.verifiedBy || "System Administrator"}
+                    {realestate.verifiedBy.firstName}{" "}
+                    {realestate.verifiedBy.lastName}
                   </p>
                 </div>
-                {/* Documents */}
-                {realestate?.documentUrl && (
+                {realestate.documentUrl && (
                   <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">Property Documents</span>
+                        <span className="text-sm font-medium">
+                          Property Documents
+                        </span>
                       </div>
                       <Button
                         asChild
@@ -232,8 +231,8 @@ export function RealEstateProfile() {
                         size="sm"
                         className="p-0 h-auto justify-start text-primary"
                       >
-                        <Link 
-                          href={realestate.documentUrl} 
+                        <Link
+                          href={realestate.documentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1"
@@ -255,15 +254,38 @@ export function RealEstateProfile() {
               <CardTitle>Location</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <Globe className="h-8 w-8 mx-auto text-muted-foreground" />
-                  <p className="text-muted-foreground">Map view coming soon</p>
-                  <p className="text-sm">
-                    {realestate?.address.specificLocation},{" "}
-                    {realestate?.address.city}
-                  </p>
-                </div>
+              <div className="h-64 rounded-lg">
+                <MapContainer
+                  center={[
+                    realestate.address.geoPoint.coordinates[1],
+                    realestate.address.geoPoint.coordinates[0],
+                  ]}
+                  zoom={13}
+                  style={{ height: "100%", width: "100%" }}
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                  <Marker
+                    position={[
+                      realestate.address.geoPoint.coordinates[1],
+                      realestate.address.geoPoint.coordinates[0],
+                    ]}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <h3 className="font-semibold">
+                          {realestate.realEstateName}
+                        </h3>
+                        <p className="text-sm">
+                          {realestate.address.specificLocation},<br />
+                          {realestate.address.city}, {realestate.address.region}
+                        </p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
               </div>
             </CardContent>
           </Card>
@@ -273,7 +295,6 @@ export function RealEstateProfile() {
   );
 }
 
-// Social Media Icons
 function InstagramIcon(props: any) {
   return (
     <svg

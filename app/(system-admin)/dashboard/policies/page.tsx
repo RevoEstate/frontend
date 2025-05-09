@@ -16,7 +16,7 @@ export default function PlatformPoliciesPage() {
       </div>
 
       <PoliciesTable />
-      <PolicyAuditLog />
+      {/* <PolicyAuditLog /> */}
     </div>
   )
 }

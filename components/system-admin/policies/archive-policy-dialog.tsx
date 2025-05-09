@@ -1,6 +1,7 @@
 "use client"
 
-import { Archive } from "lucide-react"
+import { useState } from "react"
+import { Archive, Loader2 } from "lucide-react"
 
 import {
   AlertDialog,
@@ -14,21 +15,20 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { useArchivePolicy } from "@/hooks/usePolicy"
+import { Policy } from "@/types/policy"
 
 interface ArchivePolicyDialogProps {
-  policy: {
-    id: string
-    title: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onArchive: () => void
+  policy: Policy;
+  isOpen: boolean;
+  onClose: () => void;
+  onArchive: () => void;
 }
 
 export function ArchivePolicyDialog({ policy, isOpen, onClose, onArchive }: ArchivePolicyDialogProps) {
   const [reason, setReason] = useState("")
   const [error, setError] = useState("")
+  const { mutate: archivePolicy, isPending } = useArchivePolicy()
 
   const handleArchive = () => {
     if (!reason.trim()) {
@@ -36,9 +36,13 @@ export function ArchivePolicyDialog({ policy, isOpen, onClose, onArchive }: Arch
       return
     }
 
-    onArchive()
-    setReason("")
-    setError("")
+    archivePolicy(policy._id, {
+      onSuccess: () => {
+        onArchive()
+        setReason("")
+        setError("")
+      }
+    })
   }
 
   return (
@@ -69,6 +73,7 @@ export function ArchivePolicyDialog({ policy, isOpen, onClose, onArchive }: Arch
                 if (e.target.value.trim()) setError("")
               }}
               className={`min-h-[100px] ${error ? "border-red-500" : ""}`}
+              disabled={isPending}
             />
             {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
@@ -80,11 +85,21 @@ export function ArchivePolicyDialog({ policy, isOpen, onClose, onArchive }: Arch
               setReason("")
               setError("")
             }}
+            disabled={isPending}
           >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleArchive} className="bg-amber-600 hover:bg-amber-700">
-            Archive Policy
+          <AlertDialogAction 
+            onClick={handleArchive} 
+            className="bg-amber-600 hover:bg-amber-700"
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Archiving...
+              </>
+            ) : "Archive Policy"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

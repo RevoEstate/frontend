@@ -6,9 +6,10 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "../ui/button";
+import { User } from "lucide-react";
 
 export default function UserDropdown() {
-  const { signout, isLoading, error } = useAuth();
+  const { user, signout, isLoading } = useAuth();
   const [logoutError, setLogoutError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,22 +31,39 @@ export default function UserDropdown() {
     }
   };
 
+  // Get initials for avatar fallback
+  const getInitials = () => {
+    if (!user || !user.name) return "U";
+    return user.name
+      .split(" ")
+      .map(part => part[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <div className="relative">
       <button
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <Image
-            width={44}
-            height={44}
-            src="/images/user/mike.png"
-            alt="User"
-          />
+        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 bg-primary/10 flex items-center justify-center">
+          {user?.profileImageUrl ? (
+            <Image
+              width={44}
+              height={44}
+              src={user.profileImageUrl}
+              alt={user?.name || "User"}
+            />
+          ) : (
+            <span className="font-medium text-primary">{getInitials()}</span>
+          )}
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Mikiyas</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {user?.name?.split(" ")[0] || "User"}
+        </span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -74,14 +92,14 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Mikiyas Girma
+            {user?.name || "User"}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            mikiyasgirmaet@gmail.com
+            {user?.email || "user@example.com"}
           </span>
         </div>
 
-        <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+        <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800 hidden">
           <li>
             <DropdownItem
               onItemClick={closeDropdown}
@@ -160,7 +178,8 @@ export default function UserDropdown() {
         </ul>
         <Button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+          disabled={isLoading}
+          className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 hidden"
         >
           <svg
             className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
@@ -177,8 +196,12 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          Sign out
+          {isLoading ? "Signing out..." : "Sign out"}
         </Button>
+        
+        {logoutError && (
+          <p className="mt-2 text-xs text-red-500">{logoutError}</p>
+        )}
       </Dropdown>
     </div>
   );

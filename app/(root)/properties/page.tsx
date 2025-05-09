@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { PropertyFilters, useProperty } from "@/hooks/useProperty";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -61,9 +67,9 @@ export default function PropertiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Get cities based on selected region
-  const selectedRegionCities = ETHIOPIA_REGIONS.find(
-    (region) => region.name === filters.region
-  )?.cities || [];
+  const selectedRegionCities =
+    ETHIOPIA_REGIONS.find((region) => region.name === filters.region)?.cities ||
+    [];
 
   const { data, isLoading, error } = useProperty(
     { ...filters, searchQuery },
@@ -84,9 +90,10 @@ export default function PropertiesPage() {
     setPage(1);
   };
 
-  const activeFiltersCount = Object.keys(filters).filter(
-    (key) => key !== "listingType" && filters[key as keyof PropertyFilters]
-  ).length + (searchQuery ? 1 : 0);
+  const activeFiltersCount =
+    Object.keys(filters).filter(
+      (key) => key !== "listingType" && filters[key as keyof PropertyFilters]
+    ).length + (searchQuery ? 1 : 0);
 
   return (
     <div className="container py-8 mt-18">
@@ -111,6 +118,7 @@ export default function PropertiesPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          <Button>search</Button>
         </div>
       </div>
 
@@ -146,7 +154,10 @@ export default function PropertiesPage() {
                 />
               </div>
               <Slider
-                defaultValue={[filters.minPrice || 0, filters.maxPrice || 1000000]}
+                defaultValue={[
+                  filters.minPrice || 0,
+                  filters.maxPrice || 1000000,
+                ]}
                 max={1000000}
                 step={10000}
                 onValueChange={(value) => {
@@ -187,7 +198,9 @@ export default function PropertiesPage() {
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={filters.region ? "Select City" : "Select region first"}
+                    placeholder={
+                      filters.region ? "Select City" : "Select region first"
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,7 +219,9 @@ export default function PropertiesPage() {
             <h4 className="text-sm font-medium mb-2">Property Type</h4>
             <Select
               value={filters.propertyType}
-              onValueChange={(value) => handleFilterChange("propertyType", value)}
+              onValueChange={(value) =>
+                handleFilterChange("propertyType", value)
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Types" />
@@ -227,13 +242,21 @@ export default function PropertiesPage() {
             <ToggleGroup
               type="single"
               value={filters.listingType}
-              onValueChange={(value) => handleFilterChange("listingType", value)}
+              onValueChange={(value) =>
+                handleFilterChange("listingType", value)
+              }
               className="grid grid-cols-2 gap-2"
             >
-              <ToggleGroupItem value="For Sale" className="w-full cursor-pointer">
+              <ToggleGroupItem
+                value="For Sale"
+                className="w-full cursor-pointer"
+              >
                 For Sale
               </ToggleGroupItem>
-              <ToggleGroupItem value="For Rent" className="w-full cursor-pointer">
+              <ToggleGroupItem
+                value="For Rent"
+                className="w-full cursor-pointer"
+              >
                 For Rent
               </ToggleGroupItem>
             </ToggleGroup>
@@ -246,7 +269,10 @@ export default function PropertiesPage() {
               <Select
                 value={filters.bedrooms ? filters.bedrooms.toString() : ""}
                 onValueChange={(value) =>
-                  handleFilterChange("bedrooms", value ? Number(value) : undefined)
+                  handleFilterChange(
+                    "bedrooms",
+                    value ? Number(value) : undefined
+                  )
                 }
               >
                 <SelectTrigger>
@@ -264,7 +290,10 @@ export default function PropertiesPage() {
               <Select
                 value={filters.bathrooms ? filters.bathrooms.toString() : ""}
                 onValueChange={(value) =>
-                  handleFilterChange("bathrooms", value ? Number(value) : undefined)
+                  handleFilterChange(
+                    "bathrooms",
+                    value ? Number(value) : undefined
+                  )
                 }
               >
                 <SelectTrigger>
@@ -368,7 +397,9 @@ export default function PropertiesPage() {
             </div>
           ) : error ? (
             <div className="text-center py-12 border rounded-lg shadow-sm">
-              <p className="text-destructive text-lg font-medium">{error.message}</p>
+              <p className="text-destructive text-lg font-medium">
+                {error.message}
+              </p>
               <Button
                 variant="ghost"
                 className="mt-4 cursor-pointer"
@@ -396,7 +427,7 @@ export default function PropertiesPage() {
                 )}
 
                 {filters.region !== "Addis Ababa" && (
-                   <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground mt-2">
                     Most of our properties found in addis ababa.
                   </p>
                 )}
@@ -417,7 +448,9 @@ export default function PropertiesPage() {
                 </h2>
                 <Select
                   value={filters.listingType}
-                  onValueChange={(value) => handleFilterChange("listingType", value)}
+                  onValueChange={(value) =>
+                    handleFilterChange("listingType", value)
+                  }
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Sort by" />
