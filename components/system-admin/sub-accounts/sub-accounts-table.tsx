@@ -214,13 +214,13 @@ export function SubAccountsTable() {
                                 <Edit className="mr-2 h-4 w-4" />
                                 <span>Edit</span>
                               </DropdownMenuItem>
-                              <DropdownMenuItem
+                              {/* <DropdownMenuItem
                                 onClick={() => handleDeactivateAccount(account)}
                                 disabled={account.status === "inactive"}
                               >
                                 <ShieldOff className="mr-2 h-4 w-4" />
                                 <span>Deactivate</span>
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 onClick={() => handleDeleteAccount(account)}

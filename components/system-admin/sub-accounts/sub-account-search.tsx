@@ -52,20 +52,8 @@ export function SubAccountSearch() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="Manager">Manager</SelectItem>
-            <SelectItem value="Sub-Admin">Sub-Admin</SelectItem>
-            <SelectItem value="Support">Support</SelectItem>
-            <SelectItem value="Content Moderator">Content Moderator</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={statusFilter} onValueChange={handleStatusChange}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="manager">Manager</SelectItem>
+            <SelectItem value="support">Support</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -11,6 +11,7 @@ export interface Staff {
   email: string;
   role: "manager" | "support";
   status: "active" | "inactive";
+  phone?: string;
   lastLogin: string;
   permissions: string[];
   createdAt: string;
@@ -47,12 +48,19 @@ export interface StaffFilters {
   sortOrder?: "asc" | "desc";
 }
 
+export interface CreateStaffDTO {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: "manager" | "support";
+}
+
 export interface UpdateStaffDTO {
-  name?: string;
-  email?: string;
-  role?: string;
-  permissions?: string[];
-  status?: "active" | "inactive";
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  role?: "manager" | "support";
 }
 
 // Zustand store for staff filters and pagination
@@ -114,6 +122,11 @@ const deleteStaff = async (staffId: string): Promise<{ success: boolean; message
   return response.data;
 };
 
+const createStaff = async (data: CreateStaffDTO): Promise<SingleStaffResponse> => {
+  const response = await axiosInstance.post('/v1/system-admin/staff/create', data);
+  return response.data;
+};
+
 // React Query hooks
 export const useStaff = () => {
   const filters = useStaffStore((state) => state.filters);
@@ -164,31 +177,58 @@ export const useDeleteStaff = () => {
   };
 };
 
-// Utility functions
-export const useDeactivateStaff = () => {
-  const updateStaffMutation = useUpdateStaff();
+export const useCreateStaff = () => {
+  const queryClient = useQueryClient();
+  
+  const mutation = useMutation({
+    mutationFn: (data: CreateStaffDTO) => createStaff(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+    },
+  });
 
   return {
-    deactivateStaff: (staffId: string) =>
-      updateStaffMutation.mutate({
-        staffId,
-        data: { status: "inactive" }
-      }),
-    isDeactivating: updateStaffMutation.isPending,
-    isError: updateStaffMutation.isError,
-    error: updateStaffMutation.error
+    createStaff: mutation.mutate,
+    isPending: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    isSuccess: mutation.isSuccess
+  };
+};
+
+// Utility functions
+export const useDeactivateStaff = () => {
+  const queryClient = useQueryClient();
+  
+  const mutation = useMutation({
+    mutationFn: (staffId: string) => 
+      axiosInstance.patch(`/v1/system-admin/staff/${staffId}/deactivate`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+    },
+  });
+
+  return {
+    deactivateStaff: mutation.mutate,
+    isDeactivating: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error
   };
 };
 
 export const useActivateStaff = () => {
-  const updateStaffMutation = useUpdateStaff();
+  const queryClient = useQueryClient();
+  
+  const mutation = useMutation({
+    mutationFn: (staffId: string) => 
+      axiosInstance.patch(`/v1/system-admin/staff/${staffId}/activate`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
+    },
+  });
 
   return {
-    activateStaff: (staffId: string) =>
-      updateStaffMutation.mutate({
-        staffId,
-        data: { status: "active" }
-      }),
-    isActivating: updateStaffMutation.isPending,
+    activateStaff: mutation.mutate,
+    isActivating: mutation.isPending,
   };
 }; 
