@@ -1,7 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { FileText } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { format } from "date-fns"
+import { CalendarIcon, FileText, Loader2 } from "lucide-react"
 
 import {
   Dialog,
@@ -15,66 +19,68 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { useCreatePolicy } from "@/hooks/usePolicy"
+import { 
+  Form, 
+  FormControl, 
+  FormDescription, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "@/components/ui/form"
 
 interface AddPolicyDialogProps {
   isOpen: boolean
   onClose: () => void
 }
 
+// Create a schema for policy creation
+const formSchema = z.object({
+  title: z.string().min(2, "Title must be at least 2 characters").max(100, "Title cannot exceed 100 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  effectiveDate: z.date({
+    required_error: "Effective date is required",
+  }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export function AddPolicyDialog({ isOpen, onClose }: AddPolicyDialogProps) {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    effectiveDate: new Date(),
-    notifyUsers: true,
-    notifyEmail: false,
-  })
-
-  const [errors, setErrors] = useState<Record<string, string>>({})
   const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const { mutate: createPolicy, isPending } = useCreatePolicy()
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    // Clear error when field is edited
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors[field]
-        return newErrors
-      })
-    }
-  }
+  // Initialize the form
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      effectiveDate: new Date(),
+    },
+  });
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-
-    if (!formData.title.trim()) {
-      newErrors.title = "Policy title is required"
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Policy description is required"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      // In a real app, you would send this data to your API
-      console.log("Adding new policy:", formData)
-      onClose()
-    }
-  }
+  const onSubmit = (values: FormValues) => {
+    createPolicy({
+      title: values.title,
+      description: values.description,
+      effectiveDate: values.effectiveDate.toISOString(),
+    }, {
+      onSuccess: () => {
+        onClose();
+        form.reset();
+      }
+    });
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) {
+        onClose();
+      }
+    }}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -84,89 +90,106 @@ export function AddPolicyDialog({ isOpen, onClose }: AddPolicyDialogProps) {
           <DialogDescription>Create a new platform policy or terms of service.</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">
-              Policy Title <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-              className={errors.title ? "border-red-500" : ""}
-              placeholder="e.g., Privacy Policy, Terms of Service"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Policy Title <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g., Privacy Policy, Terms of Service" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">
-              Policy Description <span className="text-red-500">*</span>
-            </Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className={`min-h-[200px] ${errors.description ? "border-red-500" : ""}`}
-              placeholder="Enter the full policy text here..."
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Policy Description <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Enter the full policy text here..." 
+                      className="min-h-[200px]" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="effectiveDate">Effective Date</Label>
-            <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-              <PopoverTrigger asChild>
-                <Button id="effectiveDate" variant="outline" className="w-full justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(formData.effectiveDate, "PPP")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={formData.effectiveDate}
-                  onSelect={(date) => {
-                    if (date) {
-                      setFormData((prev) => ({ ...prev, effectiveDate: date }))
-                      setDatePickerOpen(false)
-                    }
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+            <FormField
+              control={form.control}
+              name="effectiveDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>
+                    Effective Date <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className="w-full pl-3 text-left font-normal"
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setDatePickerOpen(false);
+                        }}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-3">
-            <Label>Notification Options</Label>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="notifyUsers"
-                  checked={formData.notifyUsers}
-                  onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, notifyUsers: checked as boolean }))}
-                />
-                <Label htmlFor="notifyUsers">Send platform notification to all users</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="notifyEmail"
-                  checked={formData.notifyEmail}
-                  onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, notifyEmail: checked as boolean }))}
-                />
-                <Label htmlFor="notifyEmail">Send email notification to all users</Label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit}>Add Policy</Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Add Policy"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )

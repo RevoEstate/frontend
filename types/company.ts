@@ -6,6 +6,7 @@ export type Company = {
   description: string;
   imageUrl: string;
   documentUrl: string;
+  website?: string;
   companyStatus: 'active' | 'suspended';
   verificationStatus: 'pending' | 'approved' | 'rejected';
   listingsCount: number;

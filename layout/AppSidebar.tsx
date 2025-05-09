@@ -71,11 +71,11 @@ const navItems: NavItem[] = [
     name: "Packages",
     path: "/packages",
   },
-  {
-    icon: <IoBarChartSharp size={22} />,
-    name: "Analytics",
-    path: "/analytics",
-  },
+  // {
+  //   icon: <IoBarChartSharp size={22} />,
+  //   name: "Analytics",
+  //   path: "/analytics",
+  // },
 ];
 
 const othersItems: NavItem[] = [
