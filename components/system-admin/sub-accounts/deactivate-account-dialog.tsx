@@ -48,7 +48,7 @@ export function DeactivateAccountDialog({
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Name:</span>
-                <span className="text-sm">{account.name}</span>
+                <span className="text-sm">{account.firstName} { account.lastName }</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Email:</span>
