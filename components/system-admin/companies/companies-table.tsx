@@ -451,7 +451,7 @@ export function CompaniesTable() {
                               </span>
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuSeparator />
+                          {/* <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => handleDeactivate(company)}
                             className="text-red-600 focus:text-red-600"
@@ -463,7 +463,7 @@ export function CompaniesTable() {
                                 ? "Deactivating..."
                                 : "Deactivate"}
                             </span>
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
