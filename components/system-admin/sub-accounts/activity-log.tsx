@@ -55,7 +55,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 15, 10, 30),
   },
   {
-    id: "ACT-1004",
+    id: "ACT-1005",
     user: {
       id: "SA-1005",
       name: "David Brown",
@@ -66,7 +66,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 15, 10, 30),
   },
   {
-    id: "ACT-1005",
+    id: "ACT-1006",
     user: {
       id: "SA-1002",
       name: "Maria Johnson",
@@ -77,7 +77,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 15, 9, 15),
   },
   {
-    id: "ACT-1006",
+    id: "ACT-1007",
     user: {
       id: "SA-1001",
       name: "John Smith",
@@ -88,7 +88,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 14, 16, 45),
   },
   {
-    id: "ACT-1007",
+    id: "ACT-1008",
     user: {
       id: "SA-1007",
       name: "Michael Taylor",
@@ -99,7 +99,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 14, 15, 30),
   },
   {
-    id: "ACT-1008",
+    id: "ACT-1009",
     user: {
       id: "SA-1009",
       name: "James Anderson",
@@ -110,7 +110,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 14, 14, 20),
   },
   {
-    id: "ACT-1009",
+    id: "ACT-1010",
     user: {
       id: "SA-1004",
       name: "Emily Davis",
@@ -121,7 +121,7 @@ const activityLogs = [
     timestamp: new Date(2023, 10, 14, 13, 10),
   },
   {
-    id: "ACT-1010",
+    id: "ACT-1011",
     user: {
       id: "SA-1002",
       name: "Maria Johnson",
@@ -131,7 +131,7 @@ const activityLogs = [
     details: "Deactivated sub-account ID: SA-1003",
     timestamp: new Date(2023, 10, 14, 11, 45),
   },
-]
+];
 
 export function ActivityLog() {
   // Pagination state

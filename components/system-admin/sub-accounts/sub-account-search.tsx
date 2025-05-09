@@ -1,15 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useStaffStore } from "@/hooks/useStaff";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export function SubAccountSearch() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [roleFilter, setRoleFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const { filters, setFilters } = useStaffStore();
+  const [searchTerm, setSearchTerm] = useState(filters.search || "");
+  const [roleFilter, setRoleFilter] = useState(filters.role || "all");
+  const [statusFilter, setStatusFilter] = useState(filters.status || "all");
+
+  const debouncedSearch = useDebounce(searchTerm, 300);
+
+  // Update search term in store when debounced value changes
+  useEffect(() => {
+    setFilters({ search: debouncedSearch || undefined });
+  }, [debouncedSearch, setFilters]);
+
+  // Update role filter in store
+  const handleRoleChange = (value: string) => {
+    setRoleFilter(value);
+    setFilters({ role: value === "all" ? undefined : value });
+  };
+
+  // Update status filter in store
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    setFilters({ status: value === "all" ? undefined : value });
+  };
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row w-full md:max-w-3xl">
@@ -24,19 +46,19 @@ export function SubAccountSearch() {
         />
       </div>
       <div className="flex gap-2">
-        <Select value={roleFilter} onValueChange={setRoleFilter}>
+        <Select value={roleFilter} onValueChange={handleRoleChange}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Role" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="manager">Manager</SelectItem>
-            <SelectItem value="sub-admin">Sub-Admin</SelectItem>
-            <SelectItem value="support">Support</SelectItem>
-            <SelectItem value="content-moderator">Content Moderator</SelectItem>
+            <SelectItem value="Manager">Manager</SelectItem>
+            <SelectItem value="Sub-Admin">Sub-Admin</SelectItem>
+            <SelectItem value="Support">Support</SelectItem>
+            <SelectItem value="Content Moderator">Content Moderator</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -48,5 +70,5 @@ export function SubAccountSearch() {
         </Select>
       </div>
     </div>
-  )
+  );
 }
