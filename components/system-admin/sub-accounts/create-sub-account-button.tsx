@@ -11,11 +11,11 @@ export function CreateSubAccountButton() {
 
   return (
     <>
-      <Button onClick={() => setIsDialogOpen(true)}>
+      {/* <Button onClick={() => setIsDialogOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
         Create Sub-Account
-      </Button>
-      <CreateSubAccountDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
+      </Button> */}
+      <CreateSubAccountDialog />
     </>
   )
 }

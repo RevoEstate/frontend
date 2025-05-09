@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertTriangle } from "lucide-react"
+import { Trash2 } from "lucide-react";
 
 import {
   AlertDialog,
@@ -12,90 +12,81 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { Staff } from "@/hooks/useStaff";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface DeleteAccountDialogProps {
-  account: {
-    id: string
-    name: string
-    email: string
-    role: string
-  }
-  isOpen: boolean
-  onClose: () => void
-  onDelete: () => void
+  account: Staff;
+  isOpen: boolean;
+  onClose: () => void;
+  onDelete: () => void;
+  isDeleting?: boolean;
 }
 
-export function DeleteAccountDialog({ account, isOpen, onClose, onDelete }: DeleteAccountDialogProps) {
-  const [confirmText, setConfirmText] = useState("")
-  const [error, setError] = useState("")
-
-  const expectedText = "delete"
-  const isConfirmed = confirmText.toLowerCase() === expectedText
-
-  const handleDelete = () => {
-    if (!isConfirmed) {
-      setError(`Please type "${expectedText}" to confirm`)
-      return
-    }
-
-    onDelete()
-    setConfirmText("")
-    setError("")
-  }
-
+export function DeleteAccountDialog({
+  account,
+  isOpen,
+  onClose,
+  onDelete,
+  isDeleting = false,
+}: DeleteAccountDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
+          <AlertDialogTitle className="flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-red-500" />
             Delete Account
           </AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to permanently delete <strong>{account.name}</strong> ({account.role}). This action cannot be
-            undone. All account data and access permissions will be permanently removed.
+            Are you sure you want to delete this account? This action cannot be
+            undone and will permanently remove all data associated with this
+            account.
           </AlertDialogDescription>
         </AlertDialogHeader>
-
-        <div className="py-4 space-y-4">
-          <div className="p-3 bg-red-50 text-red-800 rounded-md text-sm">
-            <p>Warning: This is a permanent action and cannot be reversed.</p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirm-deletion">
-              Type <span className="font-mono bg-muted px-1 rounded">{expectedText}</span> to confirm
-            </Label>
-            <Input
-              id="confirm-deletion"
-              value={confirmText}
-              onChange={(e) => {
-                setConfirmText(e.target.value)
-                setError("")
-              }}
-              className={error ? "border-red-500" : ""}
-            />
-            {error && <p className="text-sm text-red-500">{error}</p>}
+        <div className="py-4">
+          <div className="rounded-lg border border-red-100 bg-red-50 p-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Name:</span>
+                <span className="text-sm">{account.firstName} { account.lastName }</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Email:</span>
+                <span className="text-sm">{account.email}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Role:</span>
+                <span className="text-sm">{account.role}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">ID:</span>
+                <span className="text-sm">{account.staffId}</span>
+              </div>
+            </div>
           </div>
         </div>
-
         <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setConfirmText("")
-              setError("")
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(e) => {
+              e.preventDefault();
+              onDelete();
             }}
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            disabled={isDeleting}
           >
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700" disabled={!isConfirmed}>
-            Delete Account
+            {isDeleting ? (
+              <div className="flex items-center gap-2">
+                <LoadingSpinner className="h-4 w-4" />
+                <span>Deleting...</span>
+              </div>
+            ) : (
+              "Delete Account"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

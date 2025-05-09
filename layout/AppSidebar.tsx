@@ -24,6 +24,7 @@ import {
   FaUsers,
   FaShieldAlt,
   FaSignOutAlt,
+  FaBox,
 } from "react-icons/fa";
 import { IoBarChartSharp, IoChatboxEllipses, IoHome } from "react-icons/io5";
 import { Inter } from "next/font/google";
@@ -64,6 +65,11 @@ const navItems: NavItem[] = [
     icon: <IoChatboxEllipses size={22} />,
     name: "Issue Resolution",
     path: "/issues",
+  },
+  {
+    icon: <FaBox size={22} />,
+    name: "Packages",
+    path: "/packages",
   },
   {
     icon: <IoBarChartSharp size={22} />,

@@ -17,7 +17,7 @@ export default function SubAccountManagementPage() {
       </div>
 
       <SubAccountsTable />
-      <ActivityLog />
+      {/* <ActivityLog /> */}
     </div>
   )
 }
