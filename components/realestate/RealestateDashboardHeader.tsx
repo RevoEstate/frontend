@@ -15,6 +15,7 @@ import { IssueReport } from "./IssueReport";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
+import axiosInstance from '@/lib/axiosInstance';
 
 interface Notification {
   _id: string;
@@ -39,8 +40,8 @@ export function RealestateDashboardHeader({ realestate, error, isLoading }) {
     const fetchNotifications = async () => {
       try {
         setLoadingNotifications(true);
-        const response = await axios.get(
-          `http://localhost:3000/api/v1/notification/not-viewed/${userId}`,
+        const response = await axiosInstance.get(
+          `/v1/notification/not-viewed/${userId}`,
           { withCredentials: true }
         );
         

@@ -92,7 +92,9 @@ export function CustomerSignupForm() {
           password: values.password,
           firstName: values.firstName,
           lastName: values.lastName,
-          callbackURL: "http://localhost:5173/sign-in",
+          callbackURL: process.env.NEXT_PUBLIC_ENV === "production" 
+  ? "https://revostate.mikegirma.dev/sign-in" 
+  : "http://localhost:5173/sign-in"
         } as SignupValues,
         {
           onResponse: () => {
