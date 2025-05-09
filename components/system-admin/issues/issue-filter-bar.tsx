@@ -1,46 +1,47 @@
 "use client"
 
-import { useState } from "react"
-import { Calendar, Search, SlidersHorizontal, X } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Calendar, Search, SlidersHorizontal, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Badge } from "@/components/ui/badge"
-import { format } from "date-fns"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { useIssuesStore } from "@/store/issues";
+import { IssueStatus, IssueType } from "@/types/issue";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export function IssueFilterBar() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [activeFilters, setActiveFilters] = useState<{
-    status: string | null
-    issueType: string | null
-    dateRaised: Date | null
-  }>({
-    status: null,
-    issueType: null,
-    dateRaised: null,
-  })
+  const { filters, setFilters, resetFilters } = useIssuesStore();
+  const [searchTerm, setSearchTerm] = useState(filters.search || "");
+  const debouncedSearch = useDebounce(searchTerm, 300);
+  const [dateOpen, setDateOpen] = useState(false);
 
-  const [dateOpen, setDateOpen] = useState(false)
+  // Update search term in store when debounced value changes
+  useEffect(() => {
+    setFilters({ search: debouncedSearch || undefined });
+  }, [debouncedSearch, setFilters]);
 
-  const clearFilter = (filterType: keyof typeof activeFilters) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      [filterType]: null,
-    }))
-  }
+  const clearFilter = (filterType: keyof typeof filters) => {
+    setFilters({ [filterType]: undefined });
+  };
 
-  const clearAllFilters = () => {
-    setActiveFilters({
-      status: null,
-      issueType: null,
-      dateRaised: null,
-    })
-  }
-
-  const hasActiveFilters = Object.values(activeFilters).some((value) => value !== null)
+  const hasActiveFilters = Boolean(
+    filters.search || filters.status || filters.type || filters.dateRaised
+  );
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full md:max-w-3xl">
@@ -61,8 +62,11 @@ export function IssueFilterBar() {
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filter</span>
             {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center">
-                {Object.values(activeFilters).filter(Boolean).length}
+              <Badge
+                variant="secondary"
+                className="ml-1 rounded-full h-5 w-5 p-0 flex items-center justify-center"
+              >
+                {Object.values(filters).filter(Boolean).length}
               </Badge>
             )}
           </Button>
@@ -76,8 +80,10 @@ export function IssueFilterBar() {
                 Status
               </label>
               <Select
-                value={activeFilters.status || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, status: value || null }))}
+                value={filters.status || "all"}
+                onValueChange={(value: IssueStatus | "all") =>
+                  setFilters({ status: value === "all" ? undefined : value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -87,6 +93,7 @@ export function IssueFilterBar() {
                   <SelectItem value="open">Open</SelectItem>
                   <SelectItem value="in-progress">In Progress</SelectItem>
                   <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -96,8 +103,10 @@ export function IssueFilterBar() {
                 Issue Type
               </label>
               <Select
-                value={activeFilters.issueType || ""}
-                onValueChange={(value) => setActiveFilters((prev) => ({ ...prev, issueType: value || null }))}
+                value={filters.type || "all"}
+                onValueChange={(value: IssueType | "all") =>
+                  setFilters({ type: value === "all" ? undefined : value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select issue type" />
@@ -105,7 +114,7 @@ export function IssueFilterBar() {
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="technical">Technical</SelectItem>
-                  <SelectItem value="listing">Listing Related</SelectItem>
+                  <SelectItem value="property">Property</SelectItem>
                   <SelectItem value="payment">Payment</SelectItem>
                   <SelectItem value="account">Account</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
@@ -113,33 +122,12 @@ export function IssueFilterBar() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Date Raised
-              </label>
-              <Popover open={dateOpen} onOpenChange={setDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {activeFilters.dateRaised ? format(activeFilters.dateRaised, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent
-                    mode="single"
-                    selected={activeFilters.dateRaised || undefined}
-                    onSelect={(date) => {
-                      setActiveFilters((prev) => ({ ...prev, dateRaised: date }))
-                      setDateOpen(false)
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
             {hasActiveFilters && (
-              <Button variant="ghost" className="w-full text-muted-foreground" onClick={clearAllFilters}>
+              <Button
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={resetFilters}
+              >
                 <X className="mr-2 h-4 w-4" />
                 Clear all filters
               </Button>
@@ -151,26 +139,35 @@ export function IssueFilterBar() {
       {/* Active filter badges */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
-          {activeFilters.status && (
+          {filters.search && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Status: {activeFilters.status}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("status")} />
+              Search: {filters.search}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("search")}
+              />
             </Badge>
           )}
-          {activeFilters.issueType && (
+          {filters.status && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Type: {activeFilters.issueType}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("issueType")} />
+              Status: {filters.status}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("status")}
+              />
             </Badge>
           )}
-          {activeFilters.dateRaised && (
+          {filters.type && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Date: {format(activeFilters.dateRaised, "MMM d, yyyy")}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => clearFilter("dateRaised")} />
+              Type: {filters.type}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => clearFilter("type")}
+              />
             </Badge>
           )}
         </div>
       )}
     </div>
-  )
+  );
 }
