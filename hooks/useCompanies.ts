@@ -38,6 +38,12 @@ const fetchCompanies = async (
   };
 };
 
+// Fetch a single company by ID
+const fetchCompanyById = async (companyId: string): Promise<Company> => {
+  const response = await axiosInstance.get(`/v1/companies/getCompany/${companyId}`);
+  return response.data.data;
+};
+
 // Suspend company
 const suspendCompany = async ({
   companyId,
@@ -79,7 +85,7 @@ const rejectCompany = async ({
   await axiosInstance.patch(`/v1/companies/reject/${companyId}`, { rejectionreason });
 };
 
-// Custom hook
+// Custom hook for company list
 export function useCompanies(
   filterParam?: CompanyFilter,
   sortParam?: CompanySort,
@@ -151,6 +157,97 @@ export function useCompanies(
     limit: companiesQuery.data?.limit || pagination.limit,
     isLoading: companiesQuery.isLoading,
     error: companiesQuery.error,
+    suspendCompany: suspendMutation.mutate,
+    isSuspending: suspendMutation.isPending,
+    suspendError: suspendMutation.error,
+    activateCompany: activateMutation.mutate,
+    isActivating: activateMutation.isPending,
+    activateError: activateMutation.error,
+    deactivateCompany: deactivateMutation.mutate,
+    isDeactivating: deactivateMutation.isPending,
+    deactivateError: deactivateMutation.error,
+    approveCompany: approveMutation.mutate,
+    isApproving: approveMutation.isPending,
+    approveError: approveMutation.error,
+    rejectCompany: rejectMutation.mutate,
+    isRejecting: rejectMutation.isPending,
+    rejectError: rejectMutation.error,
+  };
+}
+
+// Custom hook for a single company
+export function useCompany(companyId: string) {
+  const queryClient = useQueryClient();
+  
+  const companyQuery = useQuery({
+    queryKey: ['company', companyId],
+    queryFn: () => fetchCompanyById(companyId),
+    staleTime: 5000,
+    enabled: !!companyId, // Only run the query if companyId is provided
+  });
+
+  const suspendMutation = useMutation({
+    mutationFn: suspendCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['company', companyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: activateCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['company', companyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const deactivateMutation = useMutation({
+    mutationFn: deactivateCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: approveCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['company', companyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: rejectCompany,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['company', companyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['companies'],
+      });
+    },
+  });
+
+  return {
+    company: companyQuery.data,
+    isLoading: companyQuery.isLoading,
+    isError: companyQuery.isError,
+    error: companyQuery.error,
     suspendCompany: suspendMutation.mutate,
     isSuspending: suspendMutation.isPending,
     suspendError: suspendMutation.error,
