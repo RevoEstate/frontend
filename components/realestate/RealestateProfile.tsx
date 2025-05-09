@@ -250,45 +250,62 @@ export function RealEstateProfile() {
 
           {/* Location Map */}
           <Card>
-            <CardHeader>
-              <CardTitle>Location</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 rounded-lg">
-                <MapContainer
-                  center={[
-                    realestate.address.geoPoint.coordinates[1],
-                    realestate.address.geoPoint.coordinates[0],
-                  ]}
-                  zoom={13}
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <Marker
-                    position={[
-                      realestate.address.geoPoint.coordinates[1],
-                      realestate.address.geoPoint.coordinates[0],
-                    ]}
-                  >
-                    <Popup>
-                      <div className="p-2">
-                        <h3 className="font-semibold">
-                          {realestate.realEstateName}
-                        </h3>
-                        <p className="text-sm">
-                          {realestate.address.specificLocation},<br />
-                          {realestate.address.city}, {realestate.address.region}
-                        </p>
-                      </div>
-                    </Popup>
-                  </Marker>
-                </MapContainer>
+  <CardHeader>
+    <CardTitle>Location</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="h-64 rounded-lg">
+      {/* Default coordinates for Addis Ababa, Ethiopia */}
+      <MapContainer
+        center={[
+          realestate?.address?.geoPoint?.coordinates?.[1] ?? 9.005401, // latitude (fallback to Addis Ababa)
+          realestate?.address?.geoPoint?.coordinates?.[0] ?? 38.763611, // longitude (fallback to Addis Ababa)
+        ]}
+        zoom={13}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {realestate?.address?.geoPoint?.coordinates ? (
+          <Marker
+            position={[
+              realestate.address.geoPoint.coordinates[1],
+              realestate.address.geoPoint.coordinates[0],
+            ]}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-semibold">
+                  {realestate.realEstateName || "Location"}
+                </h3>
+                <p className="text-sm">
+                  {realestate.address?.specificLocation}
+                  {realestate.address?.specificLocation && <br />}
+                  {realestate.address?.city}
+                  {realestate.address?.region && `, ${realestate.address.region}`}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+            </Popup>
+          </Marker>
+        ) : (
+          <Marker position={[9.005401, 38.763611]}>
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-semibold">Addis Ababa, Ethiopia</h3>
+                <p className="text-sm">
+                  Default location shown<br />
+                  No coordinates available for this property
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
+      </MapContainer>
+    </div>
+  </CardContent>
+</Card>
         </div>
       </div>
     </div>

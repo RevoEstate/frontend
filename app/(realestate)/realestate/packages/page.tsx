@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 
 const PackagePage = () => {
   const [packages, setPackages] = useState<any[]>([])
+  console.log('packages here', packages)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()
@@ -26,7 +27,7 @@ const PackagePage = () => {
         const result = await response.json();
         console.log("API Response: ", result);
         
-        setPackages(result.data || []); 
+        setPackages(result.data.packages || []); 
         
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
